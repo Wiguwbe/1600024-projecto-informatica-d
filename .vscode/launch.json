@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "astar_sequential",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/astar_sequencial",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "preLaunchTask": "build makefile",
+        "miDebuggerPath": "gdb"
+      }
+    ]
+  }
+  

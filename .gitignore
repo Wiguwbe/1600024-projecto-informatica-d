@@ -1,0 +1,26 @@
+# Compiled object files
+*.o
+
+# Executables
+/bin/
+/bin/*
+
+# Generated files
+/output/
+/output/*
+
+# Dependency directories
+/obj/
+/obj/*
+
+# Subfolder-specific generated files
+/astar_sequencial/bin/
+/astar_sequencial/bin/*
+/astar_sequencial/output/
+/astar_sequencial/output/*
+/astar_sequencial/obj/
+/astar_sequencial/obj/*
+
+# Ignore specific files or directories
+# /path/to/ignored_file
+# /path/to/ignored_directory/
