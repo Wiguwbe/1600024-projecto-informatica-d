@@ -1,13 +1,6 @@
 #include <stdio.h>
 #include "min_heap.h"
 
-// Função de comparação para ordenar os elementos do heap pelo custo
-int compare(const void* a, const void* b) {
-    const heap_node* node_a = (const heap_node*)a;
-    const heap_node* node_b = (const heap_node*)b;
-    return node_a->cost - node_b->cost;
-}
-
 int main() {
     // Cria um novo min-heap
     min_heap* heap = create_min_heap();

@@ -13,7 +13,7 @@ DEPS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.d,$(SRCS))
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
 TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRCS))
 
-TARGET := $(BIN_DIR)/executable
+TARGET := $(BIN_DIR)/astar_sequencial
 
 .PHONY: all clean tests
 
