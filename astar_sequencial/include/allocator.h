@@ -1,19 +1,25 @@
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H
 
-#include <stddef.h>  // Adicione esta linha
+#include <stdbool.h>
+#include <stddef.h>
 
 typedef struct {
-    void* ptr;          // Ponteiro para o bloco de memória alocado
-    size_t block_size;  // Tamanho de cada bloco
-    size_t num_blocks;  // Número total de blocos alocados
-    size_t used_blocks; // Número de blocos atualmente em uso
-} Allocator;
+    size_t struct_size;  // Tamanho da estrutura a ser alocada
+    size_t page_size;    // Tamanho da página em bytes
+    void** pages;        // Array de ponteiros para as páginas alocadas
+    size_t num_pages;    // Número total de páginas alocadas
+    size_t current_page; // Índice da página atual
+    size_t offset;       // Deslocamento atual dentro da página
+} allocator_t;
 
-Allocator* allocator_create(size_t block_size, size_t num_blocks);
-void allocator_destroy(Allocator* allocator);
-void* allocator_alloc(Allocator* allocator);
-void* allocator_realloc(Allocator* allocator, void* ptr);
-void allocator_free(Allocator* allocator, void* ptr);
+// Inicializa o alocador de memória
+allocator_t* allocator_init(size_t struct_size);
+
+// Libera o alocador de memória e todas as páginas alocadas
+void allocator_free(allocator_t* allocator);
+
+// Aloca uma estrutura de memória no alocador
+void* allocator_alloc(allocator_t* allocator);
 
 #endif  // ALLOCATOR_H

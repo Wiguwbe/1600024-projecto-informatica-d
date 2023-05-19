@@ -2,12 +2,6 @@
 #include <check.h>
 #include "min_heap.h"
 
-struct min_heap {
-    heap_node* data;
-    int capacity;
-    int size;
-};
-
 // Configuração do ambiente de teste
 void setup(void) {
     // Inicializar recursos necessários para os testes
@@ -109,7 +103,7 @@ END_TEST
 
 // Criação do conjunto de testes
 Suite* min_heap_suite(void) {
-    Suite* suite = suite_create("MinHeap");
+    Suite* suite = suite_create("min_heap");
     
     // Adicionar casos de teste ao conjunto
     TCase* tc_insert = tcase_create("insert");

@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "check.h": "c"
+        "check.h": "c",
+        "stdlib.h": "c",
+        "iosfwd": "c"
     }
 }

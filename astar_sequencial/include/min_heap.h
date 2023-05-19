@@ -8,7 +8,11 @@ typedef struct {
 } heap_node;
 
 // Estrutura para representar o min-heap
-typedef struct min_heap min_heap;
+typedef struct {
+    heap_node* data;
+    int capacity;
+    int size;
+} min_heap;
 
 // Cria um novo min-heap
 min_heap* create_min_heap();

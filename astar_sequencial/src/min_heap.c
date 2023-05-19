@@ -1,14 +1,58 @@
+/*
+   Min-Heap
+  
+   Este é um projeto de implementação de um min-heap, uma estrutura de dados fundamental
+   utilizada em ciência da computação. Um min-heap é uma árvore binária completa onde
+   cada nó possui um valor menor ou igual aos seus filhos. Ele é frequentemente usado
+   para manter o elemento mínimo em tempo constante.
+  
+   Funcionalidades:
+    - Inserir elemento: adiciona um novo elemento ao heap, mantendo a propriedade do min-heap.
+    - Extrair mínimo: remove e retorna o elemento mínimo do heap.
+    - Remover nó: remove um nó específico do heap.
+    - Atualizar custo: atualiza o custo de um nó específico no heap e reorganiza a estrutura.
+  
+   Uso:
+   1. Crie um min-heap usando a função `create_min_heap()`.
+   2. Insira elementos usando a função `insert()`.
+   3. Extraia o elemento mínimo usando a função `extract_min()`.
+   4. Remova um nó específico usando a função `remove_node()`.
+   5. Atualize o custo de um nó usando a função `update_cost()`.
+   6. Destrua o min-heap usando a função `destroy_min_heap()` quando não for mais necessário.
+  
+   Exemplo de uso:
+   ```
+   min_heap* heap = create_min_heap();
+   insert(heap, 5, NULL);
+   insert(heap, 10, NULL);
+   insert(heap, 3, NULL);
+   heap_node min_node = extract_min(heap);
+   remove_node(heap, 10, NULL);
+   update_cost(heap, 3, 7, NULL);
+   destroy_min_heap(heap);
+   ```
+  
+   Estrutura de Dados:
+   O min-heap é implementado como uma estrutura `min_heap` contendo o tamanho atual do heap
+   e um array de `heap_node`. Cada `heap_node` possui um custo (inteiro) e um ponteiro para um estado (void*).
+  
+   Limitações:
+    - Não há verificação de erros para operações inválidas, como remover ou atualizar um nó inexistente.
+  
+   Observações:
+   
+   - Este alocador foi implementado com propósitos educacionais no âmbito do projecto final do curso
+     de engenharia informática, não é recomendado para uso em cenários de produção real.
+   - Mão foi otimizado para eficiência máxima ou lidar com casos de uso complexos.
+   - É importante compreender e analisar o código antes de utilizá-lo em outro projecto,
+     fazendo as adaptações necessárias para atender aos requisitos específicos do projeto. 
+*/
+
 #include "min_heap.h"
 #include <stdlib.h>
 #include <stdbool.h>
 
 #define INITIAL_CAPACITY 1024
-
-struct min_heap {
-    heap_node* data;
-    int capacity;
-    int size;
-};
 
 min_heap* create_min_heap() {
     // Aloca memória para a estrutura min_heap
