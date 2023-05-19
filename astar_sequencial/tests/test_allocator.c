@@ -31,7 +31,7 @@ START_TEST(test_allocator_alloc)
 END_TEST
 
 Suite* allocator_suite() {
-    Suite* suite = suite_create("allocator");
+    Suite* suite = suite_create("allocator_t");
     TCase* test_case = tcase_create("allocation");
 
     tcase_add_test(test_case, test_allocator_alloc);

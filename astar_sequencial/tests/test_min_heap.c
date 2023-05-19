@@ -15,7 +15,7 @@ void teardown(void) {
 // Caso de teste: Testar a inserção de elementos no min-heap
 START_TEST(test_insert) {
     // Criar um novo min-heap
-    min_heap* heap = create_min_heap();
+    min_heap_t* heap = create_min_heap();
     
     // Inserir elementos no heap
     insert(heap, 5, NULL);
@@ -37,7 +37,7 @@ END_TEST
 // Caso de teste: Testar a extração do elemento mínimo do min-heap
 START_TEST(test_extract_min) {
     // Criar um novo min-heap
-    min_heap* heap = create_min_heap();
+    min_heap_t* heap = create_min_heap();
     
     // Inserir elementos no heap
     insert(heap, 5, NULL);
@@ -45,7 +45,7 @@ START_TEST(test_extract_min) {
     insert(heap, 3, NULL);
     
     // Extrair o elemento mínimo do heap
-    heap_node min_node = extract_min(heap);
+    heap_node_t min_node = extract_min(heap);
     
     // Verificar o elemento mínimo extraído
     ck_assert_int_eq(min_node.cost, 3);
@@ -60,7 +60,7 @@ END_TEST
 
 // Teste para remover um nó específico do heap
 START_TEST(test_remove_node) {
-    min_heap* heap = create_min_heap();
+    min_heap_t* heap = create_min_heap();
 
     // Insere elementos no heap
     insert(heap, 5, NULL);
@@ -74,7 +74,7 @@ START_TEST(test_remove_node) {
     ck_assert_int_eq(heap->size, 2);
 
     // Extrai o elemento mínimo do heap
-    heap_node min_node = extract_min(heap);
+    heap_node_t min_node = extract_min(heap);
     ck_assert_int_eq(min_node.cost, 3);
 
     destroy_min_heap(heap);
@@ -83,7 +83,7 @@ END_TEST
 
 // Teste para atualizar o custo de um nó no heap
 START_TEST(test_update_cost) {
-    min_heap* heap = create_min_heap();
+    min_heap_t* heap = create_min_heap();
 
     // Insere elementos no heap
     insert(heap, 5, NULL);
@@ -94,7 +94,7 @@ START_TEST(test_update_cost) {
     update_cost(heap, 10, 2, NULL);
 
     // Extrai o elemento mínimo do heap após a atualização
-    heap_node min_node = extract_min(heap);
+    heap_node_t min_node = extract_min(heap);
     ck_assert_int_eq(min_node.cost, 2);
 
     destroy_min_heap(heap);
@@ -103,7 +103,7 @@ END_TEST
 
 // Criação do conjunto de testes
 Suite* min_heap_suite(void) {
-    Suite* suite = suite_create("min_heap");
+    Suite* suite = suite_create("min_heap_t");
     
     // Adicionar casos de teste ao conjunto
     TCase* tc_insert = tcase_create("insert");

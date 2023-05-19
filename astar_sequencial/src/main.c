@@ -3,7 +3,7 @@
 
 int main() {
     // Cria um novo min-heap
-    min_heap* heap = create_min_heap();
+    min_heap_t* heap = create_min_heap();
     
     // Insere alguns elementos no heap
     int cost1 = 5;
@@ -17,7 +17,7 @@ int main() {
     insert(heap, cost4, NULL);
     
     // Extrai e imprime o elemento de custo mínimo do heap
-    heap_node min_node = extract_min(heap);
+    heap_node_t min_node = extract_min(heap);
     printf("Custo mínimo: %d\n", min_node.cost);
     
     // Destroi o min-heap e libera a memória

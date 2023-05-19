@@ -8,10 +8,10 @@ Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.g
 
 ## Notas de desenvolvimento
 
-### 18 e 19 de maio de 2003 
+### 18 e 19 de maio de 2023 
 
 * Desenvolvimento inicial de um alocador de paginas de 1 GB para alocar os estados expandido
 * Desenvolvimento inicial de um min-heap para ser utilizada no algoritmo A* na sua forma sequencial
+* Desenvolvimento inicial de uma hashtable para ser utilizada para manter informação de quais nós já foram expandidos
 * Organização do projecto utilizando Makefiles
 * Inclusão de testes unitários para o min-heap e para o alocador de memória
-
