@@ -17,10 +17,10 @@ Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.g
 * Inclusão de testes unitários para o min-heap e para o alocador de memória
 
 ### 20 e 21 de maio de 2023
-* Implementação inicial de uma linked-list
-* Implementação inicial do algoritmo A*
+* Desenvolvimento inicial de uma linked-list para guardar temporariamente os vizinhos expandidos
+* Desenvolvimento inicial do algoritmo A*
 * Adicionada task para correr tests (vscode)
 * Adicionada formatação por clang
 * Mudanças de nomes de variveis e funções para standardização
 * Adicionada a flag -Wno-unused-parameter no makefile
-* Melhoria de alguns comentários  
+* Melhoria dos comentários de alguns ficheiros para conter descrição da suas funcionalidades
