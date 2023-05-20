@@ -15,3 +15,12 @@ Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.g
 * Desenvolvimento inicial de uma hashtable para ser utilizada para manter informação de quais nós já foram expandidos
 * Organização do projecto utilizando Makefiles
 * Inclusão de testes unitários para o min-heap e para o alocador de memória
+
+### 20 e 21 de maio de 2023
+* Implementação inicial de uma linked-list
+* Implementação inicial do algoritmo A*
+* Adicionada task para correr tests (vscode)
+* Adicionada formatação por clang
+* Mudanças de nomes de variveis e funções para standardização
+* Adicionada a flag -Wno-unused-parameter no makefile
+* Melhoria de alguns comentários  

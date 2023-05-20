@@ -9,7 +9,16 @@
           "kind": "build",
           "isDefault": true
         }
+      },
+      {
+        "label": "run tests",
+        "type": "shell",
+        "command": "make tests",
+        "group": {
+          "kind": "test"
+        }
       }
+
     ]
   }
   

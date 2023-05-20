@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -I./include
+CFLAGS := -Wall -Wextra -I./include -Wno-unused-parameter
 LDFLAGS := -lcheck -lm -lpthread
 
 SRC_DIR := src

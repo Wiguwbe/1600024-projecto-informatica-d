@@ -2,6 +2,22 @@
     "files.associations": {
         "check.h": "c",
         "stdlib.h": "c",
-        "iosfwd": "c"
-    }
+        "iosfwd": "c",
+        "*.tcc": "c",
+        "deque": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "functional": "c",
+        "stdbool.h": "c",
+        "array": "c",
+        "bitset": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "__hash_table": "c",
+        "__split_buffer": "c",
+        "list": "c",
+        "queue": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled",
 }
