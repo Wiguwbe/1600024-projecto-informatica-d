@@ -10,7 +10,7 @@ typedef struct
 
 START_TEST(test_allocator_alloc)
 {
-  allocator_t* allocator = allocator_init(sizeof(my_struct_t));
+  allocator_t* allocator = allocator_create(sizeof(my_struct_t));
 
   my_struct_t* struct1 = (my_struct_t*)allocator_alloc(allocator);
   struct1->id = 1;
@@ -26,8 +26,7 @@ START_TEST(test_allocator_alloc)
   ck_assert_int_eq(struct2->id, 2);
   ck_assert_str_eq(struct2->name, "Maria");
 
-  allocator_free(allocator);
-  free(allocator);
+  allocator_destroy(allocator);
 }
 END_TEST
 

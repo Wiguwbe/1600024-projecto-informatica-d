@@ -27,7 +27,7 @@ static size_t hash(hashtable_t* hashtable, const void* data)
 }
 
 // Inicializa uma nova hashtable
-hashtable_t* hashtable_create(size_t struct_size)
+hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_func)
 {
   // Aloca memória para a estrutura da hashtable
   hashtable_t* hashtable = (hashtable_t*)malloc(sizeof(hashtable_t));
@@ -48,6 +48,8 @@ hashtable_t* hashtable_create(size_t struct_size)
     free(hashtable);
     return NULL;
   }
+
+  hashtable->cmp_func = cmp_func;
 
   return hashtable;
 }
@@ -82,21 +84,38 @@ void* hashtable_contains(hashtable_t* hashtable, const void* data)
 
   // Percorre as entradas no bucket
   entry_t* entry = hashtable->buckets[index];
-  while(entry != NULL)
+
+  // Se não fornecemos um comparador utilizamos o comparador por defeito
+  if(hashtable->cmp_func == NULL)
   {
-    // Compara os dados da struct
-    if(memcmp(entry->data, data, hashtable->struct_size) == 0)
+    while(entry != NULL)
     {
-      return entry->data;
+      // Compara os dados da struct
+      if(memcmp(entry->data, data, hashtable->struct_size) == 0)
+      {
+        return entry->data;
+      }
+      entry = entry->next;
     }
-    entry = entry->next;
+  }
+  else
+  {
+    while(entry != NULL)
+    {
+      // utiliza o comparador fornecido para verificar se os elementos são iguais
+      if(hashtable->cmp_func(entry->data, data))
+      {
+        return entry->data;
+      }
+      entry = entry->next;
+    }
   }
 
   return NULL;
 }
 
 // Liberta a memória utilizada pela hashtable, atenção, não liberta os dados apenas a hashtable
-void hashtable_destroy(hashtable_t* hashtable)
+void hashtable_destroy(hashtable_t* hashtable, bool free_data)
 {
   // Percorre todos os buckets e Liberta as entradas
   for(size_t i = 0; i < hashtable->capacity; ++i)
@@ -105,6 +124,8 @@ void hashtable_destroy(hashtable_t* hashtable)
     while(entry != NULL)
     {
       entry_t* next = entry->next;
+      if(free_data)
+        free(entry->data);
       free(entry);
       entry = next;
     }

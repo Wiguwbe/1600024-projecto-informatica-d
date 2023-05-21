@@ -7,8 +7,8 @@
 
    Funcionalidades:
 
-   - `allocator_init`: Inicializa o alocador de memória com o tamanho da estrutura a ser alocada.
-   - `allocator_free`: Liberta o alocador de memória e todas as páginas alocadas.
+   - `allocator_create`: Inicializa o alocador de memória com o tamanho da estrutura a ser alocada.
+   - `allocator_destroy`: Liberta o alocador de memória e todas as páginas alocadas.
 
    Estrutura do Alocador:
 
@@ -21,7 +21,7 @@
 
    Utilização:
 
-   1. Chame `allocator_init` para criar uma instância do alocador de memória, especificando o tamanho
+   1. Chame `allocator_create` para criar uma instância do alocador de memória, especificando o tamanho
       da estrutura a ser alocada.
    2. Use `allocator_alloc` para alocar uma estrutura de memória no alocador. A função retornará um
       ponteiro para a memória alocada.
@@ -42,13 +42,12 @@
    Exemplo de Uso:
 
    ```
-   allocator_t* allocator = allocator_init(sizeof(my_struct_t));
+   allocator_t* allocator = allocator_create(sizeof(my_struct_t));
 
    my_struct_t* my_struct = (my_struct_t*)allocator_alloc(allocator);
    // Utilize my_struct normalmente...
 
-   allocator_free(allocator);
-   free(allocator);
+   allocator_destroy(allocator);
    ```
 */
 #ifndef ALLOCATOR_H
@@ -68,10 +67,10 @@ typedef struct
 } allocator_t;
 
 // Inicializa o alocador de memória
-allocator_t* allocator_init(size_t struct_size);
+allocator_t* allocator_create(size_t struct_size);
 
 // Liberta o alocador de memória e todas as páginas alocadas, incluindo os dados existentes
-void allocator_free(allocator_t* allocator);
+void allocator_destroy(allocator_t* allocator);
 
 // Aloca uma estrutura de memória no alocador
 void* allocator_alloc(allocator_t* allocator);

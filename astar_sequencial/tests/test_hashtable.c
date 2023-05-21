@@ -10,11 +10,11 @@ typedef struct
   char name[20];
 } Person;
 
-// Teste básico da hashtable
-START_TEST(test_hashtable)
+// Teste básico da hashtable sem libertar dados
+START_TEST(test_hashtable) 
 {
   // Inicializa a hashtable
-  hashtable_t* hashtable = hashtable_create(sizeof(Person));
+  hashtable_t* hashtable = hashtable_create(sizeof(Person), NULL);
 
   // Cria algumas pessoas
   Person person1 = { 1, "Alice" };
@@ -38,9 +38,13 @@ START_TEST(test_hashtable)
   ck_assert(!hashtable_contains(hashtable, &person4));
 
   // Liberta a memória utilizada pela hashtable
-  hashtable_destroy(hashtable);
+  hashtable_destroy(hashtable,false);
 }
 END_TEST
+
+// TODO: Escrever teste para quando se usam ponteiros e precisamos de libertar dados
+
+// TODO: Escrever teste para testar uso de comparador
 
 // Função principal dos testes
 int main(void)

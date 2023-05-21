@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 // Inicializa o alocador de memória
-allocator_t* allocator_init(size_t struct_size)
+allocator_t* allocator_create(size_t struct_size)
 {
   allocator_t* allocator = (allocator_t*)malloc(sizeof(allocator_t));
   if(allocator == NULL)
@@ -21,7 +21,7 @@ allocator_t* allocator_init(size_t struct_size)
 }
 
 // Liberta o alocador de memória e todas as páginas alocadas
-void allocator_free(allocator_t* allocator)
+void allocator_destroy(allocator_t* allocator)
 {
   for(size_t i = 0; i < allocator->num_pages; i++)
   {
@@ -32,6 +32,7 @@ void allocator_free(allocator_t* allocator)
   allocator->num_pages = 0;
   allocator->current_page = 0;
   allocator->offset = 0;
+  free(allocator);
 }
 
 // Aloca uma estrutura de memória no alocador

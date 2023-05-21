@@ -16,7 +16,7 @@ Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.g
 * Organização do projecto utilizando Makefiles
 * Inclusão de testes unitários para o min-heap e para o alocador de memória
 
-### 20 e 21 de maio de 2023
+### 20 de maio de 2023
 * Desenvolvimento inicial de uma linked-list para guardar temporariamente os vizinhos expandidos
 * Desenvolvimento inicial do algoritmo A*
 * Adicionada task para correr tests (vscode)
@@ -24,3 +24,11 @@ Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.g
 * Mudanças de nomes de variveis e funções para standardização
 * Adicionada a flag -Wno-unused-parameter no makefile
 * Melhoria dos comentários de alguns ficheiros para conter descrição da suas funcionalidades
+
+### 21 de maio de 2023
+* Criada funções dedicadas para gerir estados e a sua alocação
+* Alterações do algoritmo A*, nomeadamente na criação de um nó, utilizado para a procura ao invés de usar o estado. 
+* Finalização do a_star_solve, ainda sem testes.
+* Melhoria dos nomes de algumas funções
+* Adicionado suporte à hashtable para se fornecer um comparador
+* Correção do ficheiro README.md (correção de data)
