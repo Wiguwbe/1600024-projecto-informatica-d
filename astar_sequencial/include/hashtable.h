@@ -1,5 +1,5 @@
 /*
-   hashtable_t em C com tamanho dinâmico para armazenar ponteiros para structs.
+   Hashtable em C com tamanho dinâmico para armazenar estruturas de dados genéricas
 
    Funcionalidades:
    - Inicializar uma nova hashtable com um tamanho de struct especificado.
@@ -17,7 +17,7 @@
    2. Crie uma nova hashtable usando a função hashtable_create(), especificando o tamanho da struct.
    3. Insira as structs na hashtable usando a função hashtable_insert().
    4. Verifique se uma struct está presente usando a função hashtable_contains().
-   5. Libere a memória utilizada pela hashtable usando a função hashtable_destroy().
+   5. Liberte a memória utilizada pela hashtable usando a função hashtable_destroy().
 
    Limitações e Considerações:
    - Esta implementação não lida com situações de concorrência.
@@ -30,7 +30,6 @@
      de uso ou requisitos de desempenho.
 
    Exemplo de Uso:
-
 
    // Inicializa a hashtable
    hashtable_t* hashtable = hashtable_create(sizeof(Person));

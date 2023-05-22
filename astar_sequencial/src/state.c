@@ -2,6 +2,8 @@
 #include <string.h>
 #include "state.h"
 
+// Esta é a funcão que é utilizada pela hashtable para comparar se 2
+// estados são iguais
 bool compare_state_t(const void* state_a, const void* state_b)
 {
   size_t struct_size_a = ((state_t*)state_a)->struct_size;
@@ -13,10 +15,11 @@ bool compare_state_t(const void* state_a, const void* state_b)
 
   // Compara os estados
   void* state_data_a = ((state_t*)state_a)->data;
-  void* state_data_b = ((state_t*)state_a)->data;
+  void* state_data_b = ((state_t*)state_b)->data;
   return memcmp(state_data_a,state_data_b,struct_size_a) == 0;
 }
 
+// Aloca um novo gestor de estados
 state_allocator_t* state_allocator_create(size_t struct_size)
 {
 
@@ -59,6 +62,7 @@ void state_allocator_destroy(state_allocator_t* allocator)
   free(allocator);
 }
 
+// Aloca ou retorna um estado novo
 state_t* state_allocator_new(state_allocator_t* allocator, void* state_data)
 {
   // Sem alocador não há dados

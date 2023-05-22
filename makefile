@@ -1,4 +1,4 @@
-FOLDERS := astar_sequencial
+FOLDERS := astar_sequencial 8puzzle_seq
 
 SRC_DIR := src
 OBJ_DIR := obj
@@ -17,6 +17,7 @@ tests:
 		$(MAKE) -C $$dir tests; \
 	done
 
+run_tests: tests
 	@echo "Running tests..."
 	for dir in $(FOLDERS); do \
 		for test in ./$$dir/$(BIN_DIR)/test*; do \

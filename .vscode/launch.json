@@ -1,20 +1,117 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "astar_sequential",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder}/build/astar_sequencial",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder}",
-        "environment": [],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "preLaunchTask": "build makefile",
-        "miDebuggerPath": "gdb"
-      }
-    ]
-  }
-  
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "astar_sequencial",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/astar_sequencial/bin/astar_sequencial",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build makefile",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "8puzzle_seq",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/8puzzle_seq/bin/8puzzle_seq",
+      "args": ["${workspaceFolder}/8puzzle_seq/data/problemas.txt"],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build makefile",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_allocator",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/astar_sequencial/bin/test_allocator",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_hashtable",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/astar_sequencial/bin/test_allocator",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_linked_list",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/astar_sequencial/bin/test_linked_list",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_min_heap",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/astar_sequencial/bin/test_min_heap",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_state",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/astar_sequencial/bin/test_state",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_8puzzle_logic",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/8puzzle_seq/bin/test_logic",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    }
+  ]
+}

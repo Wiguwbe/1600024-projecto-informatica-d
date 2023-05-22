@@ -32,3 +32,10 @@ Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.g
 * Melhoria dos nomes de algumas funções
 * Adicionado suporte à hashtable para se fornecer um comparador
 * Correção do ficheiro README.md (correção de data)
+
+### 22 de maio de 2003
+* Conversão do astar_sequencial para bibliotec
+* Adição dos tests no ficheiro launch.json para depurar tests
+* Pequenas correções ortográficas
+* Implementação inicial do problema 8 Puzzle com testes
+* Execução de alguns testes preliminares

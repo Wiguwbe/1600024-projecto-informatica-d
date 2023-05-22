@@ -1,27 +1,28 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -I./include -Wno-unused-parameter
+AR := ar
+CFLAGS := -Wall -Wextra -I./include -O3
 LDFLAGS := -lcheck -lm -lpthread
 
 SRC_DIR := src
 OBJ_DIR := obj
-BIN_DIR := bin
+LIB_DIR := lib
 TEST_DIR := tests
 
 SRCS := $(wildcard $(SRC_DIR)/*.c)
 OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
 DEPS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.d,$(SRCS))
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
-TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRCS))
+TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(OBJ_DIR)/%,$(TEST_SRCS))
 
-TARGET := $(BIN_DIR)/astar_sequencial
+TARGET := $(LIB_DIR)/libastar_seq.a
 
 .PHONY: all clean tests
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) $^ -o $@
+	@mkdir -p $(LIB_DIR)
+	$(AR) rcs $@ $^
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
@@ -31,13 +32,14 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 $(OBJ_DIR)/%.d: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -MM -MT '$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$<)' $< -MF $@
+	$(CC) $(CFLAGS) -MM -MT '$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$<)' $< > $@
 
 tests: $(TEST_BINS)
 
-$(BIN_DIR)/%: $(TEST_DIR)/%.c $(filter-out $(OBJ_DIR)/main.o, $(OBJS))
-	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+$(OBJ_DIR)/%: $(TEST_DIR)/%.c $(TARGET)
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) $< -o $@ $(OBJS) $(TARGET) $(LDFLAGS)
 
 clean:
-	rm -rf $(BIN_DIR) $(OBJ_DIR)
+	rm -rf $(LIB_DIR) $(OBJ_DIR)
+

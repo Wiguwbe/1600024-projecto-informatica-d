@@ -58,6 +58,6 @@ a_star_t* a_star_create(
 void a_star_destroy(a_star_t* a_star);
 
 // Resolve o problema através do uso do algoritmo A*;
-a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal, size_t struct_size);
+a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal);
 
 #endif // ASTAR_H

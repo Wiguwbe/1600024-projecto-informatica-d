@@ -1,24 +1,30 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "label": "build makefile",
-        "type": "shell",
-        "command": "make",
-        "group": {
-          "kind": "build",
-          "isDefault": true
-        }
-      },
-      {
-        "label": "run tests",
-        "type": "shell",
-        "command": "make tests",
-        "group": {
-          "kind": "test"
-        }
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build makefile",
+      "type": "shell",
+      "command": "make",
+      "group": {
+        "kind": "build",
+        "isDefault": true
       }
-
-    ]
-  }
-  
+    },
+    {
+      "label": "build tests",
+      "type": "shell",
+      "command": "make tests",
+      "group": {
+        "kind": "build"
+      }
+    },
+    {
+      "label": "run tests",
+      "type": "shell",
+      "command": "make run_tests",
+      "group": {
+        "kind": "test"
+      }
+    }
+  ]
+}

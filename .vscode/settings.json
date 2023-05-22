@@ -17,7 +17,8 @@
         "__hash_table": "c",
         "__split_buffer": "c",
         "list": "c",
-        "queue": "c"
+        "queue": "c",
+        "stdio.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
 }
