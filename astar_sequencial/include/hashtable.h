@@ -61,22 +61,26 @@
 #include <stddef.h>
 
 typedef struct entry_t entry_t;
+typedef struct hashtable_t hashtable_t;
 
 // Tipo para funções para comparar dados dentro da hastable
 typedef bool (*hashtable_compare_func)(const void*, const void*);
 
+// Tipo para funções para comparar dados dentro da hastable
+typedef size_t (*hashtable_hash_func)(hashtable_t*, const void*);
+
 // Definição da hashtable
-typedef struct hashtable_t
+struct hashtable_t
 {
   size_t struct_size;
   size_t capacity;
   entry_t** buckets;
   hashtable_compare_func cmp_func;
-} hashtable_t;
-
+  hashtable_hash_func hash_func;
+};
 
 // Inicializa uma nova hashtable
-hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_func);
+hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_func, hashtable_hash_func hash_func);
 
 // Insere uma struct na hashtable
 void hashtable_insert(hashtable_t* hashtable, void* data);

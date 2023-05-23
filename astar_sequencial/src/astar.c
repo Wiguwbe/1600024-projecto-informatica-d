@@ -19,6 +19,28 @@ bool compare_a_star_nodes(const void* node_a, const void* node_b)
   return memcmp(state_a, state_b, struct_size_a) == 0;
 }
 
+// Função para calcular o índice do bucket na hashtable
+// Tal como a comparação esta função tem de ser especifica para
+// esta estrutura já que é necessário usar os dados do estado
+// para gerar o indice do hash
+static size_t a_star_nodes_hash(hashtable_t* hashtable, const void* data)
+{
+  a_star_node_t* node = (a_star_node_t*)data;
+
+  // Cast dos dados para um array de bytes
+  const unsigned char* bytes = (const unsigned char*)(node->state->data);
+
+  // Calcula o valor hash inicial
+  size_t hash_value = 0;
+  for(size_t i = 0; i < node->state->struct_size; ++i)
+  {
+    hash_value = hash_value * 31 + bytes[i];
+  }
+
+  // Retorna o índice do bucket
+  return hash_value % hashtable->capacity;
+}
+
 // Função interna para criar um nó a colocar na fila prioritária
 a_star_node_t* a_star_new_node(a_star_t* a_star, state_t* state)
 {
@@ -68,7 +90,7 @@ a_star_t* a_star_create(
   a_star->open_set = min_heap_create();
 
   // Para mantermos controlo dos nós que já foram expandidos
-  a_star->nodes = hashtable_create(sizeof(a_star_node_t), compare_a_star_nodes);
+  a_star->nodes = hashtable_create(sizeof(a_star_node_t), compare_a_star_nodes, a_star_nodes_hash);
 
   return a_star;
 }
@@ -95,7 +117,7 @@ void a_star_destroy(a_star_t* a_star)
 // Resolve o problema através do uso do algoritmo A*;
 a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
 {
-  if (a_star == NULL)
+  if(a_star == NULL)
   {
     return NULL;
   }
@@ -106,14 +128,14 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
   // Existe problemas em que o objetivo pode ser nulo, normalmente
   // nesses casos o objetivo é estático (ie. 8puzzle)
   state_t* goal_state = NULL;
-  if (goal)
+  if(goal)
   {
     // Caso tenhamos passado o goal, temos de o "containerizar" num estado
     goal_state = state_allocator_new(a_star->state_allocator, goal);
   }
 
   // O open_set deve estar vazio, ou caso contrário o algoritmo não funciona bem
-  if (a_star->open_set->size > 0)
+  if(a_star->open_set->size > 0)
   {
     return NULL;
   }
@@ -122,12 +144,12 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
 
   // Atribui ao nó inicial um custo total de 0
   initial_node->g = 0;
-  initial_node->h = 0;
+  initial_node->h = a_star->h_func(initial_node->state, goal_state);
 
   // Inserimos o nó inicial na nossa fila prioritária
-  min_heap_insert(a_star->open_set, 0, initial_node);
+  min_heap_insert(a_star->open_set, initial_node->g + initial_node->h, initial_node);
 
-  while (a_star->open_set->size)
+  while(a_star->open_set->size)
   {
     // A seguinte operação pode ocorrer em O(log(N))
     // se nosAbertos é um min-heap ou uma queue prioritária
@@ -138,7 +160,7 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
     current_node->visited = true;
 
     // Se encontramos o objetivo saímos e retornamos o nó
-    if (a_star->goal_func(current_node->state, goal_state))
+    if(a_star->goal_func(current_node->state, goal_state))
     {
       return current_node;
     }
@@ -150,7 +172,7 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
     a_star->visit_func(current_node->state, a_star->state_allocator, neighbors);
 
     // Itera por todos os vizinhos expandidos e atualiza a nossa árvore de procura
-    for (size_t i = 0; i < linked_list_size(neighbors); i++)
+    for(size_t i = 0; i < linked_list_size(neighbors); i++)
     {
       state_t* neighbor = (state_t*)linked_list_get(neighbors, i);
 
@@ -158,10 +180,10 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
       a_star_node_t temp_node = { 0, 0, NULL, neighbor, false };
       a_star_node_t* neighbor_node = hashtable_contains(a_star->nodes, &temp_node);
 
-      if (neighbor_node != NULL)
+      if(neighbor_node != NULL)
       {
         // Não processamos nós visitados, estes já estão fora da fila prioritária
-        if (neighbor_node->visited)
+        if(neighbor_node->visited)
           continue;
 
         // Encontra o custo de chegar do nó a este vizinho
@@ -169,7 +191,7 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
 
         // Se o custo for maior do que o nó já tem, não faz sentido atualizar
         // existe outro caminho mais curto para este nó
-        if (g_attempt >= neighbor_node->g)
+        if(g_attempt >= neighbor_node->g)
           continue;
 
         // O nó atual é o caminho mais curto para este vizinho, atualizamos

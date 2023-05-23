@@ -14,7 +14,7 @@ typedef struct
 START_TEST(test_hashtable) 
 {
   // Inicializa a hashtable
-  hashtable_t* hashtable = hashtable_create(sizeof(Person), NULL);
+  hashtable_t* hashtable = hashtable_create(sizeof(Person), NULL, NULL);
 
   // Cria algumas pessoas
   Person person1 = { 1, "Alice" };

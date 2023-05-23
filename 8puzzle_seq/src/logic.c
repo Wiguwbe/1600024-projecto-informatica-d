@@ -1,48 +1,53 @@
-#include <string.h>
 #include "logic.h"
 #include "linked_list.h"
 #include "state.h"
 #include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <stdio.h>
 
 // Este é o objectivo do nosso problema
-static const puzzle_state goal_puzzle = {{{'1', '2', '3'}, {'4', '5', '6'}, {'7', '8', '-'}}};
+static const puzzle_state goal_puzzle = { { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '-' } } };
 
-// Implementa a heuristica do problema 8 puzzle
-#include <math.h>
-#include "state.h"
+// Estrutura para ajudar no cálculo da heuristica
+static const int heuristic_table[8][2] = { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 1, 0 }, { 1, 1 }, { 1, 2 }, { 2, 0 }, { 2, 1 } };
+
+// Converte os caracteres numeros 1,2,3,4,5,6,7 e 8 no seu valor númerico
+int to_int(char c)
+{
+  return c - 49;
+}
 
 // Função de heurística para o puzzle 8
 int heuristic(const state_t* current_state, const state_t*)
 {
-    // Converter os estados para puzzle_state
-    puzzle_state* current_puzzle = (puzzle_state*)(current_state->data);
+  // Converter os estados para puzzle_state
+  puzzle_state* current_puzzle = (puzzle_state*)(current_state->data);
 
-    int h = 0;
+  int h = 0;
 
-    // Calcular a distância de Manhattan para cada peça
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            char current_piece = current_puzzle->board[i][j];
-            if (current_piece != '-') {
-                // Encontrar a posição da peça no estado objetivo
-                int goal_row = 0;
-                int goal_col = 0;
-                for (int x = 0; x < 3; x++) {
-                    for (int y = 0; y < 3; y++) {
-                        if (goal_puzzle.board[x][y] == current_piece) {
-                            goal_row = x;
-                            goal_col = y;
-                            break;
-                        }
-                    }
-                }
-                // Calcular a distância de Manhattan para a peça atual
-                h += abs(i - goal_row) + abs(j - goal_col);
-            }
-        }
+  // Calcular a distância de Manhattan para cada peça
+  for(int x = 0; x < 3; x++)
+  {
+    for(int y = 0; y < 3; y++)
+    {
+      char current_piece = current_puzzle->board[x][y];
+
+      if(current_piece == '-')
+      {
+        continue;
+      }
+
+      int num = to_int(current_piece);
+      int goal_row = heuristic_table[num][0];
+      int goal_col = heuristic_table[num][1];
+
+      // Calcular a distância de Manhattan para a peça atual
+      h += abs(x - goal_row) + abs(y - goal_col);
     }
+  }
 
-    return h;
+  return h;
 }
 
 // Função para visitar um estado do puzzle 8, expandir vizinhos possíveis e armazená-los na lista ligada
@@ -128,7 +133,7 @@ void visit(state_t* current_state, state_allocator_t* allocator, linked_list_t* 
 // Verifica se um estado é um objectivo do problema 8 puzzle
 bool goal(const state_t* state_a, const state_t*)
 {
-  return memcmp(state_a->data,&goal_puzzle,sizeof(goal_puzzle)) == 0;
+  return memcmp(state_a->data, &goal_puzzle, sizeof(goal_puzzle)) == 0;
 }
 
 // Retorna a distância de um estado anterior para o proximo,

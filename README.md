@@ -34,8 +34,16 @@ Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.g
 * Correção do ficheiro README.md (correção de data)
 
 ### 22 de maio de 2003
-* Conversão do astar_sequencial para bibliotec
+* Conversão do astar_sequencial para biblioteca
 * Adição dos tests no ficheiro launch.json para depurar tests
 * Pequenas correções ortográficas
 * Implementação inicial do problema 8 Puzzle com testes
 * Execução de alguns testes preliminares
+
+### 23 de maio de 2003
+* Algoritmo A* squencial a funcionar, teste efectuado para o problema Puzzle
+* Implementação de uma ferramenta para gerar problemas para Puzzle 8 de dificuldade elevada
+* Pequenas correções ortográficas
+* Correção da da lista de nós já expandidos (necessitava hash própria, ver comentários)
+* Execução de alguns testes preliminares
+

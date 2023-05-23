@@ -39,7 +39,7 @@ state_allocator_t* state_allocator_create(size_t struct_size)
   allocator->state_data_allocator = allocator_create(struct_size);
 
   // Para indexarmos os estados que já existem
-  allocator->states = hashtable_create(struct_size, compare_state_t);
+  allocator->states = hashtable_create(struct_size, compare_state_t, NULL);
 
   return allocator;
 }

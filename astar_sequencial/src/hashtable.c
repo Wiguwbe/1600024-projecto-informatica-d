@@ -27,7 +27,7 @@ static size_t hash(hashtable_t* hashtable, const void* data)
 }
 
 // Inicializa uma nova hashtable
-hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_func)
+hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_func, hashtable_hash_func hash_func)
 {
   // Aloca memória para a estrutura da hashtable
   hashtable_t* hashtable = (hashtable_t*)malloc(sizeof(hashtable_t));
@@ -50,6 +50,10 @@ hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_fun
   }
 
   hashtable->cmp_func = cmp_func;
+  hashtable->hash_func = hash_func;
+  if (hashtable->hash_func == NULL) {
+    hashtable->hash_func = hash;
+  }
 
   return hashtable;
 }
@@ -58,7 +62,7 @@ hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_fun
 void hashtable_insert(hashtable_t* hashtable, void* data)
 {
   // Calcula o índice do bucket
-  size_t index = hash(hashtable, data);
+  size_t index = hashtable->hash_func(hashtable, data);
 
   // Cria uma nova entrada
   entry_t* entry = (entry_t*)malloc(sizeof(entry_t));
@@ -80,7 +84,7 @@ void hashtable_insert(hashtable_t* hashtable, void* data)
 void* hashtable_contains(hashtable_t* hashtable, const void* data)
 {
   // Calcula o índice do bucket
-  size_t index = hash(hashtable, data);
+  size_t index = hashtable->hash_func(hashtable, data);
 
   // Percorre as entradas no bucket
   entry_t* entry = hashtable->buckets[index];
