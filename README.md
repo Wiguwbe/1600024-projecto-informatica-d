@@ -1,10 +1,10 @@
 # Projecto de informática 
 
-Este repositório contêm o código desenvolvido no ambito da disciplina de Projecto de Informática do curso de Licenciatura de Informática. 
+Este repositório contêm o código desenvolvido no âmbito da disciplina de Projecto de Informática do curso de Licenciatura de Informática. 
 
 Este projecto foi desenvolvido no sistema operativo Linux (Fedora 37) e utilizando o compilador GCC (v12.3.1).
 
-Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.github.io/check/). 
+Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.github.io/check/). 
 
 ## Notas de desenvolvimento
 
@@ -21,7 +21,7 @@ Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.g
 * Desenvolvimento inicial do algoritmo A*
 * Adicionada task para correr tests (vscode)
 * Adicionada formatação por clang
-* Mudanças de nomes de variveis e funções para standardização
+* Mudanças de nomes de variáveis e funções para standardização
 * Adicionada a flag -Wno-unused-parameter no makefile
 * Melhoria dos comentários de alguns ficheiros para conter descrição da suas funcionalidades
 
@@ -33,17 +33,22 @@ Para os testes unitários foi utilizada a bibilioteca [Check](https://libcheck.g
 * Adicionado suporte à hashtable para se fornecer um comparador
 * Correção do ficheiro README.md (correção de data)
 
-### 22 de maio de 2003
+### 22 de maio de 2023
 * Conversão do astar_sequencial para biblioteca
 * Adição dos tests no ficheiro launch.json para depurar tests
 * Pequenas correções ortográficas
 * Implementação inicial do problema 8 Puzzle com testes
 * Execução de alguns testes preliminares
 
-### 23 de maio de 2003
-* Algoritmo A* squencial a funcionar, teste efectuado para o problema Puzzle
+### 23 de maio de 2023
+* Algoritmo A* sequencial a funcionar, teste efetuado para o problema Puzzle
 * Implementação de uma ferramenta para gerar problemas para Puzzle 8 de dificuldade elevada
 * Pequenas correções ortográficas
 * Correção da da lista de nós já expandidos (necessitava hash própria, ver comentários)
 * Execução de alguns testes preliminares
 
+### 31 de maio de 2023
+* Separação do código sequencial das estruturas de apoio
+* Estruturas de apoio serão agora desenvolvidas em astar_common
+* Correção da construção de testes para a bibliotecas
+* Adicionado suporte para verificação ortográfica para textos no VSCode

@@ -2,20 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "astar_sequencial",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/astar_sequencial/bin/astar_sequencial",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "gdb",
-      "preLaunchTask": "build makefile",
-      "miDebuggerPath": "gdb"
-    },
-    {
       "name": "8puzzle_seq",
       "type": "cppdbg",
       "request": "launch",

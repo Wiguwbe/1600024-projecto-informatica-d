@@ -1,6 +1,6 @@
 CC := gcc
 CFLAGS := -Wall -Wextra -I./include -I../astar_sequencial/include -Wno-unused-parameter -O3
-LDFLAGS := -L../astar_sequencial/lib -lastar_seq -lcheck -lm -lpthread 
+LDFLAGS := -L../astar_sequencial/lib -lastar_seq -L../astar_common/lib -lastar_common -lcheck -lm -lpthread 
 
 SRC_DIR := src
 OBJ_DIR := obj

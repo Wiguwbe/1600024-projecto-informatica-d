@@ -1,4 +1,4 @@
-FOLDERS := astar_sequencial 8puzzle_gen 8puzzle_seq
+FOLDERS := astar_common astar_sequencial 8puzzle_gen 8puzzle_seq
 
 SRC_DIR := src
 OBJ_DIR := obj
