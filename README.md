@@ -52,3 +52,5 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Estruturas de apoio serão agora desenvolvidas em astar_common
 * Correção da construção de testes para a bibliotecas
 * Adicionado suporte para verificação ortográfica para textos no VSCode
+* Adicionado suporte para construir modo DEBUG e modo RELEASE
+* Tasks.json atualizadas para construir em modo DEBUG

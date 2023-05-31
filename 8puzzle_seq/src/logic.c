@@ -6,13 +6,13 @@
 #include <math.h>
 #include <stdio.h>
 
-// Este é o objectivo do nosso problema
+// Este é o objetivo do nosso problema
 static const puzzle_state goal_puzzle = { { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '-' } } };
 
-// Estrutura para ajudar no cálculo da heuristica
+// Estrutura para ajudar no cálculo da heurística
 static const int heuristic_table[8][2] = { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 1, 0 }, { 1, 1 }, { 1, 2 }, { 2, 0 }, { 2, 1 } };
 
-// Converte os caracteres numeros 1,2,3,4,5,6,7 e 8 no seu valor númerico
+// Converte os caracteres números 1,2,3,4,5,6,7 e 8 no seu valor numérico
 int to_int(char c)
 {
   return c - 49;

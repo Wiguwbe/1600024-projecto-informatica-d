@@ -1,6 +1,13 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -I./include -Wno-unused-parameter -O3
+CFLAGS := -Wall -Wextra -I./include -Wno-unused-parameter
 LDFLAGS := -lcheck -lm -lpthread 
+
+ifdef DEBUG_BUILD
+CFLAGS_EXTRA := -DDEBUG
+else
+CFLAGS_EXTRA := -O3
+endif
+
 
 SRC_DIR := src
 OBJ_DIR := obj
@@ -19,21 +26,21 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) $^ -o $@ $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) -c $< -o $@
 
 -include $(DEPS)
 
 $(OBJ_DIR)/%.d: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -MM -MT '$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$<)' $< -MF $@
+	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) -MM -MT '$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$<)' $< -MF $@
 
 $(BIN_DIR)/%: $(TEST_DIR)/%.c  $(OBJS)
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) $^ -o $@ $(LDFLAGS)
 
 clean:
 	rm -rf $(BIN_DIR) $(OBJ_DIR)

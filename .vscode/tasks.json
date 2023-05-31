@@ -1,5 +1,10 @@
 {
   "version": "2.0.0",
+  "options": {
+    "env": {
+      "DEBUG_BUILD": "1"
+    }
+  },
   "tasks": [
     {
       "label": "build makefile",

@@ -3,20 +3,20 @@
 #include "astar.h"
 #include "state.h"
 
-// Estutura do que contem o estado do nosso puzzle 8
+// Estrutura do que contem o estado do nosso puzzle 8
 typedef struct 
 {
     char board[3][3];
 } puzzle_state;
 
 
-// Implementa a heuristica do problema 8 puzzle
+// Implementa a heurística do problema 8 puzzle
 int heuristic(const state_t*, const state_t*);
 
 // Encontra os vizinhos de um estado no problema 8 puzzle
 void visit(state_t*, state_allocator_t*, linked_list_t*);
 
-// Verifica se um estado é um objectivo do problema 8 puzzle
+// Verifica se um estado é um objetivo do problema 8 puzzle
 bool goal(const state_t*, const state_t*);
 
 // Retorna a distância de um estado anterior para o proximo,
