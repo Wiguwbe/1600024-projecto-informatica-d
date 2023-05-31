@@ -6,13 +6,14 @@ LDFLAGS := -lcheck -lm -lpthread
 SRC_DIR := src
 OBJ_DIR := obj
 LIB_DIR := lib
+BIN_DIR := bin
 TEST_DIR := tests
 
 SRCS := $(wildcard $(SRC_DIR)/*.c)
 OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
 DEPS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.d,$(SRCS))
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
-TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(OBJ_DIR)/%,$(TEST_SRCS))
+TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRCS))
 
 TARGET := $(LIB_DIR)/libastar_seq.a
 
@@ -34,12 +35,16 @@ $(OBJ_DIR)/%.d: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -MM -MT '$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$<)' $< > $@
 
-tests: $(TEST_BINS)
+tests: $(TARGET) $(TEST_BINS)
 
-$(OBJ_DIR)/%: $(TEST_DIR)/%.c $(TARGET)
+$(OBJ_DIR)/%: $(TARGET)
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) $< -o $@ $(OBJS) $(TARGET) $(LDFLAGS)
 
+$(BIN_DIR)/%: $(TEST_DIR)/%.c 
+	@mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) -L$(LIB_DIR) -lastar_seq 
+
 clean:
-	rm -rf $(LIB_DIR) $(OBJ_DIR)
+	rm -rf $(LIB_DIR) $(OBJ_DIR)  $(BIN_DIR)
 

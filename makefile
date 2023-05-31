@@ -20,9 +20,11 @@ tests:
 run_tests: tests
 	@echo "Running tests..."
 	for dir in $(FOLDERS); do \
-		for test in ./$$dir/$(BIN_DIR)/test*; do \
-			$$test; \
-		done \
+		if [ -d ./$$dir/tests ]; then \
+			for test in ./$$dir/$(BIN_DIR)/test*; do \
+				$$test; \
+			done \
+		fi \
 	done
 
 clean:
