@@ -45,7 +45,7 @@ START_TEST(test_visit_case_1)
   // Verificação do vizinho 2
   ck_assert(memcmp(neighbor2_puzzle, &expected_2, sizeof(puzzle_state)) == 0);
 
-  // Liberação de memória
+  // Liberta a memória utilizada
   linked_list_destroy(neighbors);
   state_allocator_destroy(allocator);
 }
@@ -107,7 +107,7 @@ START_TEST(test_visit_case_2)
   // Verificação do vizinho 4
   ck_assert(memcmp(neighbor4_puzzle, &expected_4, sizeof(puzzle_state)) == 0);
 
-  // Liberação de memória
+  // Liberta a memória utilizada
   linked_list_destroy(neighbors);
   state_allocator_destroy(allocator);
 }
@@ -153,7 +153,7 @@ START_TEST(test_visit_case_3)
   // Verificação do vizinho 2
   ck_assert(memcmp(neighbor2_puzzle, &expected_2, sizeof(puzzle_state)) == 0);
 
-  // Liberação de memória
+  // Liberta a memória utilizada
   linked_list_destroy(neighbors);
   state_allocator_destroy(allocator);
 }
@@ -199,7 +199,7 @@ START_TEST(test_visit_case_4)
   // Verificação do vizinho 2
   ck_assert(memcmp(neighbor2_puzzle, &expected_2, sizeof(puzzle_state)) == 0);
 
-  // Liberação de memória
+  // Liberta a memória utilizada
   linked_list_destroy(neighbors);
   state_allocator_destroy(allocator);
 }
@@ -245,7 +245,7 @@ START_TEST(test_visit_case_5)
   // Verificação do vizinho 2
   ck_assert(memcmp(neighbor2_puzzle, &expected_2, sizeof(puzzle_state)) == 0);
 
-  // Liberação de memória
+  // Liberta a memória utilizada
   linked_list_destroy(neighbors);
   state_allocator_destroy(allocator);
 }

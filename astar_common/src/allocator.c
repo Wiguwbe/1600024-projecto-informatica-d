@@ -16,6 +16,7 @@ allocator_t* allocator_create(size_t struct_size)
   allocator->num_pages = 0;
   allocator->current_page = 0;
   allocator->offset = 0;
+  pthread_mutex_init(&allocator->mutex, NULL);
 
   return allocator;
 }
@@ -32,12 +33,16 @@ void allocator_destroy(allocator_t* allocator)
   allocator->num_pages = 0;
   allocator->current_page = 0;
   allocator->offset = 0;
+  pthread_mutex_destroy(&allocator->mutex);
   free(allocator);
 }
 
 // Aloca uma estrutura de memória no alocador
 void* allocator_alloc(allocator_t* allocator)
 {
+  // Bloqueia o acesso ao alocador
+  pthread_mutex_lock(&allocator->mutex);
+
   // Se não houver páginas alocadas, alocar a primeira página
   if(allocator->num_pages == 0)
   {
@@ -64,6 +69,9 @@ void* allocator_alloc(allocator_t* allocator)
   // Calcular o endereço de retorno e atualizar o offset
   void* ptr = (char*)allocator->pages[allocator->current_page] + allocator->offset;
   allocator->offset += allocator->struct_size;
+
+  // Liberta o acesso ao alocador
+  pthread_mutex_unlock(&allocator->mutex);
 
   return ptr;
 }

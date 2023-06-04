@@ -51,8 +51,22 @@ hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_fun
 
   hashtable->cmp_func = cmp_func;
   hashtable->hash_func = hash_func;
-  if (hashtable->hash_func == NULL) {
+  if(hashtable->hash_func == NULL)
+  {
     hashtable->hash_func = hash;
+  }
+
+  // Inicializa os mutexes para cada bucket
+  hashtable->mutexes = (pthread_mutex_t*)malloc(hashtable->capacity * sizeof(pthread_mutex_t));
+  if(hashtable->mutexes == NULL)
+  {
+    free(hashtable->buckets);
+    free(hashtable);
+    return NULL;
+  }
+  for(size_t i = 0; i < hashtable->capacity; ++i)
+  {
+    pthread_mutex_init(&hashtable->mutexes[i], NULL);
   }
 
   return hashtable;
@@ -74,9 +88,15 @@ void hashtable_insert(hashtable_t* hashtable, void* data)
   // Copia os dados da struct para a entrada
   entry->data = data;
 
+  // bloqueia o respetivo bucket
+  pthread_mutex_lock(&hashtable->mutexes[index]);
+
   // Insere a entrada no início do bucket
   entry->next = hashtable->buckets[index];
   hashtable->buckets[index] = entry;
+
+  // Desbloqueia o bucket
+  pthread_mutex_unlock(&hashtable->mutexes[index]);
 }
 
 // Verifica se uma struct já está na hashtable, retorna o ponteira para os
@@ -85,6 +105,9 @@ void* hashtable_contains(hashtable_t* hashtable, const void* data)
 {
   // Calcula o índice do bucket
   size_t index = hashtable->hash_func(hashtable, data);
+
+  // bloqueia o respetivo bucket
+  pthread_mutex_lock(&hashtable->mutexes[index]);
 
   // Percorre as entradas no bucket
   entry_t* entry = hashtable->buckets[index];
@@ -97,6 +120,9 @@ void* hashtable_contains(hashtable_t* hashtable, const void* data)
       // Compara os dados da struct
       if(memcmp(entry->data, data, hashtable->struct_size) == 0)
       {
+        // Desbloqueia o bucket
+        pthread_mutex_unlock(&hashtable->mutexes[index]);
+
         return entry->data;
       }
       entry = entry->next;
@@ -109,11 +135,17 @@ void* hashtable_contains(hashtable_t* hashtable, const void* data)
       // utiliza o comparador fornecido para verificar se os elementos são iguais
       if(hashtable->cmp_func(entry->data, data))
       {
+        // Desbloqueia o bucket
+        pthread_mutex_unlock(&hashtable->mutexes[index]);
+
         return entry->data;
       }
       entry = entry->next;
     }
   }
+
+  // Desbloqueia o bucket
+  pthread_mutex_unlock(&hashtable->mutexes[index]);
 
   return NULL;
 }
@@ -124,6 +156,9 @@ void hashtable_destroy(hashtable_t* hashtable, bool free_data)
   // Percorre todos os buckets e Liberta as entradas
   for(size_t i = 0; i < hashtable->capacity; ++i)
   {
+    // bloqueia o respetivo bucket
+    pthread_mutex_lock(&hashtable->mutexes[i]);
+
     entry_t* entry = hashtable->buckets[i];
     while(entry != NULL)
     {
@@ -133,6 +168,12 @@ void hashtable_destroy(hashtable_t* hashtable, bool free_data)
       free(entry);
       entry = next;
     }
+
+    // Desbloqueia o bucket
+    pthread_mutex_unlock(&hashtable->mutexes[i]);
+
+    // Destroy the mutex
+    pthread_mutex_destroy(&hashtable->mutexes[i]);
   }
 
   // Liberta a memória dos buckets e da hashtable

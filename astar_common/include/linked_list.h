@@ -22,7 +22,7 @@
  * Funcionalidades:
  *   - linked_list_create: Cria e inicializa uma nova lista ligada vazia.
  *
- *   - linked_list_destroy: Libera a memória alocada para a lista ligada e seus
+ *   - linked_list_destroy: Liberta a memória alocada para a lista ligada e seus
  *     nós.
  *
  *   - linked_list_append: Adiciona um elemento no final da lista.
@@ -53,7 +53,7 @@
  *   - Não é possível armazenar valores nulos (NULL) na lista.
  *
  * Considerações:
- *   - Certifique-se de liberar a memória alocada para a lista ligada usando a
+ *   - Certifique-se de libertar a memória alocada para a lista ligada usando a
  *     função linked_list_destroy() quando não for mais necessária.
  *   - Antes de acessar um elemento da lista usando a função linked_list_get(),
  *     verifique se o índice fornecido está dentro dos limites válidos usando a
@@ -82,7 +82,7 @@ typedef struct {
 // Função para criar e inicializar a lista encadeada
 linked_list_t* linked_list_create();
 
-// Função para liberar a memória da lista encadeada
+// Função para libertar a memória da lista encadeada
 void linked_list_destroy(linked_list_t* list);
 
 // Função para adicionar um elemento no final da lista encadeada

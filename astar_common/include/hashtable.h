@@ -57,6 +57,7 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
+#include <pthread.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -77,6 +78,7 @@ struct hashtable_t
   entry_t** buckets;
   hashtable_compare_func cmp_func;
   hashtable_hash_func hash_func;
+  pthread_mutex_t* mutexes;
 };
 
 // Inicializa uma nova hashtable

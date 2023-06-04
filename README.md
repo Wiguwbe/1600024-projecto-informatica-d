@@ -17,6 +17,7 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Inclusão de testes unitários para o min-heap e para o alocador de memória
 
 ### 20 de maio de 2023
+
 * Desenvolvimento inicial de uma linked-list para guardar temporariamente os vizinhos expandidos
 * Desenvolvimento inicial do algoritmo A*
 * Adicionada task para correr tests (vscode)
@@ -26,6 +27,7 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Melhoria dos comentários de alguns ficheiros para conter descrição da suas funcionalidades
 
 ### 21 de maio de 2023
+
 * Criada funções dedicadas para gerir estados e a sua alocação
 * Alterações do algoritmo A*, nomeadamente na criação de um nó, utilizado para a procura ao invés de usar o estado. 
 * Finalização do a_star_solve, ainda sem testes.
@@ -34,6 +36,7 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Correção do ficheiro README.md (correção de data)
 
 ### 22 de maio de 2023
+
 * Conversão do astar_sequencial para biblioteca
 * Adição dos tests no ficheiro launch.json para depurar tests
 * Pequenas correções ortográficas
@@ -41,6 +44,7 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Execução de alguns testes preliminares
 
 ### 23 de maio de 2023
+
 * Algoritmo A* sequencial a funcionar, teste efetuado para o problema Puzzle
 * Implementação de uma ferramenta para gerar problemas para Puzzle 8 de dificuldade elevada
 * Pequenas correções ortográficas
@@ -48,9 +52,17 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Execução de alguns testes preliminares
 
 ### 31 de maio de 2023
+
 * Separação do código sequencial das estruturas de apoio
 * Estruturas de apoio serão agora desenvolvidas em astar_common
 * Correção da construção de testes para a bibliotecas
 * Adicionado suporte para verificação ortográfica para textos no VSCode
 * Adicionado suporte para construir modo DEBUG e modo RELEASE
 * Tasks.json atualizadas para construir em modo DEBUG
+
+### 3 e 4 de junho de 2023
+
+* Implementação inicial de um queue FIFO thread-safe com testes
+* Implementação inicial de um canal de múltiplas filas para comunicação testes
+* Adaptação da hashtable e do alocador de memória para suportar operações concorrentes
+* Correção de alguns erros em textos
