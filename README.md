@@ -66,3 +66,6 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Implementação inicial de um canal de múltiplas filas para comunicação testes
 * Adaptação da hashtable e do alocador de memória para suportar operações concorrentes
 * Correção de alguns erros em textos
+* state.c e state.h movido para a biblioteca astar_common
+* Implementação inicial do algoritmo em paralelo (não testado)
+* Melhoria de algum código já existente

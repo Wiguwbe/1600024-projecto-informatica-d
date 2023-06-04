@@ -22,7 +22,7 @@ bool compare_a_star_nodes(const void* node_a, const void* node_b)
 // Função para calcular o índice do bucket na hashtable
 // Tal como a comparação esta função tem de ser especifica para
 // esta estrutura já que é necessário usar os dados do estado
-// para gerar o indice do hash
+// para gerar o índice do hash
 static size_t a_star_nodes_hash(hashtable_t* hashtable, const void* data)
 {
   a_star_node_t* node = (a_star_node_t*)data;
@@ -75,22 +75,43 @@ a_star_t* a_star_create(
 
   // Inicializa os nossos alocadores de memória
   a_star->state_allocator = state_allocator_create(struct_size);
-  a_star->node_allocator = allocator_create(sizeof(a_star_node_t));
+  if(a_star->state_allocator == NULL)
+  {
+    a_star_destroy(a_star);
+    return NULL;
+  }
 
-  // Inicializa as funções necessárias para o algortimo funcionar
-  a_star->visit_func = visit_func;
-  a_star->goal_func = goal_func;
-  a_star->h_func = h_func;
-  a_star->d_func = d_func;
+  a_star->node_allocator = allocator_create(sizeof(a_star_node_t));
+  if(a_star->node_allocator == NULL)
+  {
+    a_star_destroy(a_star);
+    return NULL;
+  }
 
   // Conjunto com os nós por expandir e que também
   // possam necessitar de ser expandidos
   // novamente. Geralmente é implementada como min-heap
   // ou uma queue queue prioritária.
   a_star->open_set = min_heap_create();
+  if(a_star->open_set == NULL)
+  {
+    a_star_destroy(a_star);
+    return NULL;
+  }
 
   // Para mantermos controlo dos nós que já foram expandidos
   a_star->nodes = hashtable_create(sizeof(a_star_node_t), compare_a_star_nodes, a_star_nodes_hash);
+  if(a_star->nodes == NULL)
+  {
+    a_star_destroy(a_star);
+    return NULL;
+  }
+
+  // Inicializa as funções necessárias para o algoritmo funcionar
+  a_star->visit_func = visit_func;
+  a_star->goal_func = goal_func;
+  a_star->h_func = h_func;
+  a_star->d_func = d_func;
 
   return a_star;
 }
@@ -105,12 +126,27 @@ void a_star_destroy(a_star_t* a_star)
   }
 
   // Limpamos a nossa memória
-  min_heap_destroy(a_star->open_set);
-  hashtable_destroy(a_star->nodes, false);
-  state_allocator_destroy(a_star->state_allocator);
-  allocator_destroy(a_star->node_allocator);
+  if(a_star->open_set != NULL)
+  {
+    min_heap_destroy(a_star->open_set);
+  }
 
-  // Destruimos o nosso algoritmo
+  if(a_star->nodes != NULL)
+  {
+    hashtable_destroy(a_star->nodes, false);
+  }
+
+  if(a_star->state_allocator != NULL)
+  {
+    state_allocator_destroy(a_star->state_allocator);
+  }
+
+  if(a_star->node_allocator != NULL)
+  {
+    allocator_destroy(a_star->node_allocator);
+  }
+
+  // Destruímos o nosso algoritmo
   free(a_star);
 }
 
