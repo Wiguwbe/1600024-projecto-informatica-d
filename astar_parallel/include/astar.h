@@ -14,6 +14,7 @@
 #include "state.h"
 #include <stdbool.h>
 #include <stddef.h>
+#include <pthread.h>
 
 typedef struct a_star_node_t a_star_node_t;
 typedef struct a_star_worker_t a_star_worker_t;
@@ -26,6 +27,7 @@ struct a_star_node_t
   a_star_node_t* parent;
   state_t* state;
   bool visited;
+  pthread_mutex_t lock; // Mutex para garantir a thread-safety
 };
 
 // Tipo para funções que calculam a heurística
@@ -54,6 +56,9 @@ typedef struct
   int num_workers;
   a_star_worker_t* workers;
   channel_t* channel;
+  a_star_node_t* solution;
+  pthread_mutex_t lock; // Mutex para garantir a thread-safety
+  state_t* goal_state;
 
 } a_star_t;
 
@@ -63,8 +68,6 @@ struct a_star_worker_t
   pthread_t thread;
   int thread_id;
   min_heap_t* open_set;
-  int current_g;
-  void* goal;
 };
 
 // Cria uma nova instância para resolver um problema

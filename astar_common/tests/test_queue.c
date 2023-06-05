@@ -42,7 +42,7 @@ START_TEST(test_queue)
   ck_assert_int_eq(queue_size(queue), 0);
   ck_assert(queue_is_empty(queue));
 
-  queue_destroy(queue);
+  queue_destroy(queue, false);
 }
 END_TEST
 

@@ -37,7 +37,7 @@ START_TEST(test_channel_send_receive)
   ck_assert_int_eq(*received1, data1);
   ck_assert_int_eq(*received2, data2);
 
-  channel_destroy(channel);
+  channel_destroy(channel, false);
 }
 END_TEST
 

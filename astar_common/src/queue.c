@@ -96,7 +96,7 @@ size_t queue_size(queue_t* queue)
 }
 
 // Liberta a memória alocada para a fila
-void queue_destroy(queue_t* queue)
+void queue_destroy(queue_t* queue, bool free_data)
 {
   pthread_mutex_lock(&(queue->lock));
 
@@ -106,6 +106,10 @@ void queue_destroy(queue_t* queue)
   while(current != NULL)
   {
     next = current->next;
+    if(free_data)
+    {
+      free(current->data);
+    }
     free(current);
     current = next;
   }

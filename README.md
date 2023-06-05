@@ -69,3 +69,7 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * state.c e state.h movido para a biblioteca astar_common
 * Implementação inicial do algoritmo em paralelo (não testado)
 * Melhoria de algum código já existente
+
+### 5 de junho de 2023
+
+* Continuação da implementação do algoritmo em paralelo (não testado)

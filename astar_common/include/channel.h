@@ -35,6 +35,6 @@ void channel_send(channel_t* channel, size_t queue_index, void* data);
 void* channel_receive(channel_t* channel, size_t queue_index);
 
 // Liberta a memória alocada para o canal
-void channel_destroy(channel_t* channel);
+void channel_destroy(channel_t* channel, bool free_data);
 
 #endif // CHANNEL_H

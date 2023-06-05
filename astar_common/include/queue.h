@@ -37,6 +37,6 @@ bool queue_is_empty(queue_t* queue);
 size_t queue_size(queue_t* queue);
 
 // Liberta a memória alocada para a fila
-void queue_destroy(queue_t* queue);
+void queue_destroy(queue_t* queue, bool free_data);
 
 #endif // QUEUE_H

@@ -27,7 +27,7 @@ channel_t* channel_create(size_t num_queues)
       // Em caso de falha, destrói as filas já criadas e liberta a memória alocada
       for(size_t j = 0; j < i; j++)
       {
-        queue_destroy(channel->queues[j]);
+        queue_destroy(channel->queues[j],false);
       }
       free(channel->queues);
       free(channel);
@@ -64,7 +64,7 @@ void* channel_receive(channel_t* channel, size_t queue_index)
 }
 
 // Liberta a memória alocada para o canal
-void channel_destroy(channel_t* channel)
+void channel_destroy(channel_t* channel, bool free_data)
 {
   if(channel == NULL)
   {
@@ -74,9 +74,8 @@ void channel_destroy(channel_t* channel)
   // Liberta cada fila e o array de filas
   for(size_t i = 0; i < channel->num_queues; i++)
   {
-    queue_destroy(channel->queues[i]);
+    queue_destroy(channel->queues[i], free_data);
   }
   free(channel->queues);
-
   free(channel);
 }
