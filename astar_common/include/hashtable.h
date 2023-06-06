@@ -57,6 +57,7 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
+#include <pthread.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -77,6 +78,7 @@ struct hashtable_t
   entry_t** buckets;
   hashtable_compare_func cmp_func;
   hashtable_hash_func hash_func;
+  pthread_mutex_t* mutexes;
 };
 
 // Inicializa uma nova hashtable
@@ -91,5 +93,8 @@ void* hashtable_contains(hashtable_t* hashtable, const void* data);
 
 // Liberta a memória utilizada pela hashtable, atenção, não liberta os dados apenas a hashtable
 void hashtable_destroy(hashtable_t* hashtable, bool free_data);
+
+// Função de hashing utilizada
+size_t hash_function(const void* data, size_t size, size_t mod);
 
 #endif // HASHTABLE_H

@@ -22,7 +22,6 @@ struct a_star_node_t
   int h;
   a_star_node_t* parent;
   state_t* state;
-  bool visited; 
 };
 
 // Tipo para funções que calculam a heuristica
@@ -48,6 +47,8 @@ typedef struct
   visit_function visit_func;
   heuristic_function h_func;
   distance_function d_func;
+  int expanded;
+  int visited;
 } a_star_t;
 
 // Cria uma nova instância para resolver um problema

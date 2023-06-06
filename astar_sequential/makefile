@@ -1,7 +1,7 @@
 CC := gcc
 AR := ar
-CFLAGS := -Wall -Wextra -I./include
-LDFLAGS := -lcheck -lm -lpthread
+CFLAGS := -Wall -Wextra -I./include -I../astar_common/include 
+LDFLAGS := -lcheck -lm -lpthread -L../astar_common/lib -lastar_common
 
 ifdef DEBUG_BUILD
 CFLAGS_EXTRA := -DDEBUG -g
@@ -21,7 +21,7 @@ DEPS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.d,$(SRCS))
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
 TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRCS))
 
-TARGET := $(LIB_DIR)/libastar_common.a
+TARGET := $(LIB_DIR)/libastar_seq.a
 
 .PHONY: all clean tests
 
@@ -49,7 +49,7 @@ $(OBJ_DIR)/%: $(TARGET)
 
 $(BIN_DIR)/%: $(TEST_DIR)/%.c 
 	@mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) $^ -o $@ $(LDFLAGS) -L$(LIB_DIR) -lastar_common
+	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) $^ -o $@ $(LDFLAGS) -L$(LIB_DIR) -lastar_seq -L../astar_common/lib -lastar_common
 
 clean:
 	rm -rf $(LIB_DIR) $(OBJ_DIR)  $(BIN_DIR)

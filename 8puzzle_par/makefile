@@ -1,13 +1,12 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -I./include -Wno-unused-parameter
-LDFLAGS := -lcheck -lm -lpthread 
+CFLAGS := -Wall -Wextra -I./include -I../astar_parallel/include -I../astar_common/include -Wno-unused-parameter 
+LDFLAGS := -L../astar_parallel/lib -lastar_parallel -L../astar_common/lib -lastar_common -lcheck -lm -lpthread 
 
 ifdef DEBUG_BUILD
 CFLAGS_EXTRA := -DDEBUG -g
 else
 CFLAGS_EXTRA :=
 endif
-
 
 SRC_DIR := src
 OBJ_DIR := obj
@@ -17,8 +16,10 @@ TEST_DIR := tests
 SRCS := $(wildcard $(SRC_DIR)/*.c)
 OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
 DEPS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.d,$(SRCS))
+TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
+TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRCS))
 
-TARGET := $(BIN_DIR)/8puzzle_gen
+TARGET := $(BIN_DIR)/8puzzle_par
 
 .PHONY: all clean tests
 
@@ -38,7 +39,9 @@ $(OBJ_DIR)/%.d: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) -MM -MT '$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$<)' $< -MF $@
 
-$(BIN_DIR)/%: $(TEST_DIR)/%.c  $(OBJS)
+tests: $(TEST_BINS)
+
+$(BIN_DIR)/%: $(TEST_DIR)/%.c $(filter-out $(OBJ_DIR)/main.o, $(OBJS))
 	@mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) $^ -o $@ $(LDFLAGS)
 

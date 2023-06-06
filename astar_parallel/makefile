@@ -4,7 +4,7 @@ CFLAGS := -Wall -Wextra -I./include -I../astar_common/include
 LDFLAGS := -lcheck -lm -lpthread -L../astar_common/lib -lastar_common
 
 ifdef DEBUG_BUILD
-CFLAGS_EXTRA := -DDEBUG
+CFLAGS_EXTRA := -DDEBUG -g
 else
 CFLAGS_EXTRA := -O3
 endif
@@ -21,7 +21,7 @@ DEPS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.d,$(SRCS))
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
 TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRCS))
 
-TARGET := $(LIB_DIR)/libastar_seq.a
+TARGET := $(LIB_DIR)/libastar_parallel.a
 
 .PHONY: all clean tests
 

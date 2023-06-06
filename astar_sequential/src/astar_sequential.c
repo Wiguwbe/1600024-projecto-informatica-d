@@ -1,4 +1,4 @@
-#include "astar.h"
+#include "astar_sequential.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -22,23 +22,11 @@ bool compare_a_star_nodes(const void* node_a, const void* node_b)
 // Função para calcular o índice do bucket na hashtable
 // Tal como a comparação esta função tem de ser especifica para
 // esta estrutura já que é necessário usar os dados do estado
-// para gerar o indice do hash
+// para gerar o índice do hash
 static size_t a_star_nodes_hash(hashtable_t* hashtable, const void* data)
 {
   a_star_node_t* node = (a_star_node_t*)data;
-
-  // Cast dos dados para um array de bytes
-  const unsigned char* bytes = (const unsigned char*)(node->state->data);
-
-  // Calcula o valor hash inicial
-  size_t hash_value = 0;
-  for(size_t i = 0; i < node->state->struct_size; ++i)
-  {
-    hash_value = hash_value * 31 + bytes[i];
-  }
-
-  // Retorna o índice do bucket
-  return hash_value % hashtable->capacity;
+  return hash_function(node->state->data, node->state->struct_size, hashtable->capacity);
 }
 
 // Função interna para criar um nó a colocar na fila prioritária
@@ -55,7 +43,6 @@ a_star_node_t* a_star_new_node(a_star_t* a_star, state_t* state)
   node->g = 0;
   node->h = 0;
   node->state = state;
-  node->visited = false;
 
   // Indexamos este nó
   hashtable_insert(a_star->nodes, node);
@@ -75,22 +62,45 @@ a_star_t* a_star_create(
 
   // Inicializa os nossos alocadores de memória
   a_star->state_allocator = state_allocator_create(struct_size);
-  a_star->node_allocator = allocator_create(sizeof(a_star_node_t));
+  if(a_star->state_allocator == NULL)
+  {
+    a_star_destroy(a_star);
+    return NULL;
+  }
 
-  // Inicializa as funções necessárias para o algortimo funcionar
-  a_star->visit_func = visit_func;
-  a_star->goal_func = goal_func;
-  a_star->h_func = h_func;
-  a_star->d_func = d_func;
+  a_star->node_allocator = allocator_create(sizeof(a_star_node_t));
+  if(a_star->node_allocator == NULL)
+  {
+    a_star_destroy(a_star);
+    return NULL;
+  }
 
   // Conjunto com os nós por expandir e que também
   // possam necessitar de ser expandidos
   // novamente. Geralmente é implementada como min-heap
   // ou uma queue queue prioritária.
   a_star->open_set = min_heap_create();
+  if(a_star->open_set == NULL)
+  {
+    a_star_destroy(a_star);
+    return NULL;
+  }
 
   // Para mantermos controlo dos nós que já foram expandidos
   a_star->nodes = hashtable_create(sizeof(a_star_node_t), compare_a_star_nodes, a_star_nodes_hash);
+  if(a_star->nodes == NULL)
+  {
+    a_star_destroy(a_star);
+    return NULL;
+  }
+
+  // Inicializa as funções necessárias para o algoritmo funcionar
+  a_star->visit_func = visit_func;
+  a_star->goal_func = goal_func;
+  a_star->h_func = h_func;
+  a_star->d_func = d_func;
+  a_star->expanded = 0;
+  a_star->visited = 0;
 
   return a_star;
 }
@@ -105,12 +115,27 @@ void a_star_destroy(a_star_t* a_star)
   }
 
   // Limpamos a nossa memória
-  min_heap_destroy(a_star->open_set);
-  hashtable_destroy(a_star->nodes, false);
-  state_allocator_destroy(a_star->state_allocator);
-  allocator_destroy(a_star->node_allocator);
+  if(a_star->open_set != NULL)
+  {
+    min_heap_destroy(a_star->open_set);
+  }
 
-  // Destruimos o nosso algoritmo
+  if(a_star->nodes != NULL)
+  {
+    hashtable_destroy(a_star->nodes, false);
+  }
+
+  if(a_star->state_allocator != NULL)
+  {
+    state_allocator_destroy(a_star->state_allocator);
+  }
+
+  if(a_star->node_allocator != NULL)
+  {
+    allocator_destroy(a_star->node_allocator);
+  }
+
+  // Destruímos o nosso algoritmo
   free(a_star);
 }
 
@@ -157,7 +182,7 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
 
     // Nó atual na nossa árvore
     a_star_node_t* current_node = (a_star_node_t*)top_element.data;
-    current_node->visited = true;
+    a_star->visited++;
 
     // Se encontramos o objetivo saímos e retornamos o nó
     if(a_star->goal_func(current_node->state, goal_state))
@@ -177,15 +202,11 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
       state_t* neighbor = (state_t*)linked_list_get(neighbors, i);
 
       // Verifica se o nó para este estado já se encontra na nossa lista de nós
-      a_star_node_t temp_node = { 0, 0, NULL, neighbor, false };
+      a_star_node_t temp_node = { 0, 0, NULL, neighbor };
       a_star_node_t* neighbor_node = hashtable_contains(a_star->nodes, &temp_node);
 
       if(neighbor_node != NULL)
       {
-        // Não processamos nós visitados, estes já estão fora da fila prioritária
-        if(neighbor_node->visited)
-          continue;
-
         // Encontra o custo de chegar do nó a este vizinho
         int g_attempt = current_node->g + a_star->d_func(current_node->state, neighbor_node->state);
 
@@ -225,6 +246,7 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
 
         // Inserimos o nó na nossa fila
         min_heap_insert(a_star->open_set, cost, neighbor_node);
+        a_star->expanded ++;
       }
     }
 

@@ -16,6 +16,20 @@
       "miDebuggerPath": "gdb"
     },
     {
+      "name": "8puzzle_par",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/8puzzle_par/bin/8puzzle_par",
+      "args": ["${workspaceFolder}/data/8puzzle.txt","6"],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build makefile",
+      "miDebuggerPath": "gdb"
+    },    
+    {
       "name": "8puzzle_gen",
       "type": "cppdbg",
       "request": "launch",

@@ -152,7 +152,7 @@ int main() {
     // Obtém o número de falhas
     int num_failed = srunner_ntests_failed(runner);
 
-    // Libera memória
+    // Liberta memória
     srunner_free(runner);
 
     return num_failed == 0 ? EXIT_SUCCESS : EXIT_FAILURE;

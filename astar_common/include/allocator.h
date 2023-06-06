@@ -53,6 +53,7 @@
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H
 
+#include <pthread.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -64,6 +65,7 @@ typedef struct
   size_t num_pages; // Número total de páginas alocadas
   size_t current_page; // Índice da página atual
   size_t offset; // Deslocamento atual dentro da página
+  pthread_mutex_t mutex; // Mutex para garantir exclusão mútua
 } allocator_t;
 
 // Inicializa o alocador de memória

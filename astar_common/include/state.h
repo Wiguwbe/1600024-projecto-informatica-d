@@ -9,7 +9,7 @@
    Utilização:
    1. Inclua o arquivo de cabeçalho "state.h" em seu código.
    2. Crie um nove gestor pela função state_allocator_create(), especificando o tamanho da struct com os dados
-   3. Aloque novos estados ou obtenha acesso estados existentos com a função state_allocator_new().
+   3. Aloque novos estados ou obtenha acesso estados existentes com a função state_allocator_new().
    5. Liberte a memória utilizada pelo alocador com a função state_allocator_destroy().
 
    Limitações e Considerações:
@@ -37,7 +37,7 @@ struct state_t
 };
 
 /*
- * Estrutura que representa um gerenciador de estados.
+ * Estrutura que representa um gestor de estados.
  * O gestor mantém um conjunto de estados e 2 alocadores de memória
  */
 typedef struct
