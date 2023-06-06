@@ -1,10 +1,10 @@
 CC := gcc
 AR := ar
-CFLAGS := -Wall -Wextra -I./include -O3
+CFLAGS := -Wall -Wextra -I./include
 LDFLAGS := -lcheck -lm -lpthread
 
 ifdef DEBUG_BUILD
-CFLAGS_EXTRA := -DDEBUG
+CFLAGS_EXTRA := -DDEBUG -g
 else
 CFLAGS_EXTRA := -O3
 endif

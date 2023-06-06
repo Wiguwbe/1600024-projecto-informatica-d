@@ -9,21 +9,28 @@ struct entry_t
   struct entry_t* next;
 };
 
-// Função para calcular o índice do bucket na hashtable
-static size_t hash(hashtable_t* hashtable, const void* data)
+// Função de hashing utilizada
+size_t hash_function(const void* data, size_t size, size_t mod)
 {
-  // Cast dos dados para um array de bytes
   const unsigned char* bytes = (const unsigned char*)data;
 
   // Calcula o valor hash inicial
   size_t hash_value = 0;
-  for(size_t i = 0; i < hashtable->struct_size; ++i)
+  size_t mul = 1;
+  for(size_t i = 0; i < size; ++i)
   {
-    hash_value = hash_value * 31 + bytes[i];
+    mul = (i % 4 == 0) ? 1 : mul * 256;
+    hash_value += bytes[i] * mul;
   }
 
   // Retorna o índice do bucket
-  return hash_value % hashtable->capacity;
+  return hash_value % mod;
+}
+
+// Função para calcular o índice do bucket na hashtable
+static size_t hash(hashtable_t* hashtable, const void* data)
+{
+  return hash_function(data, hashtable->struct_size, hashtable->capacity);
 }
 
 // Inicializa uma nova hashtable

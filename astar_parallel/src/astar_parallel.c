@@ -1,4 +1,4 @@
-#include "astar.h"
+#include "astar_parallel.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,9 +6,8 @@
 // Estrutura que contem a mensagem a ser passada nas queues
 typedef struct
 {
-  a_star_node_t* node;
-  int old_cost;
-  int cost;
+  a_star_node_t* parent;
+  state_t* state;
 } a_star_message_t;
 
 // Função utilizada na hashtable nodes para comparar se 2 nós são iguais
@@ -35,33 +34,14 @@ bool compare_a_star_nodes(const void* node_a, const void* node_b)
 static size_t a_star_nodes_hash(hashtable_t* hashtable, const void* data)
 {
   a_star_node_t* node = (a_star_node_t*)data;
-
-  // Cast dos dados para um array de bytes
-  const unsigned char* bytes = (const unsigned char*)(node->state->data);
-
-  // Calcula o valor hash inicial
-  size_t hash_value = 0;
-  for(size_t i = 0; i < node->state->struct_size; ++i)
-  {
-    hash_value = hash_value * 31 + bytes[i];
-  }
-
-  // Retorna o índice do bucket
-  return hash_value % hashtable->capacity;
+  return hash_function(node->state->data, node->state->struct_size, hashtable->capacity);
 }
 
 // Função para encontrar qual a tarefa para qual devemos enviar o state_t
 static size_t assign_to_worker(const a_star_t* a_star, const state_t* state)
 {
-  // Cast dos dados para um array de bytes
-  const unsigned char* bytes = (const unsigned char*)(state->data);
-
   // Calcula o valor hash inicial
-  size_t hash_value = 0;
-  for(size_t i = 0; i < state->struct_size; ++i)
-  {
-    hash_value = hash_value * 31 + bytes[i];
-  }
+  size_t hash_value = hash_function(state->data, state->struct_size, 2048);
 
   // Retorna o qual o worker que deve ficar com este estado
   return hash_value % a_star->num_workers;
@@ -80,7 +60,6 @@ a_star_node_t* a_star_new_node(a_star_t* a_star, state_t* state)
   node->g = 0;
   node->h = 0;
   node->state = state;
-  node->visited = false;
 
   // Indexamos este nó
   hashtable_insert(a_star->nodes, node);
@@ -88,17 +67,18 @@ a_star_node_t* a_star_new_node(a_star_t* a_star, state_t* state)
   return node;
 }
 
-// Função de cada trabalhador
+// Função que implementa a lógica de um trabalhador, aqui se processa o algoritmo A*
 void* a_star_worker_function(void* arg)
 {
   a_star_worker_t* worker = (a_star_worker_t*)arg;
   a_star_t* a_star = worker->a_star;
 
-  printf("Trabalhador %d está em execução\n", worker->thread_id);
-
-  for(;;)
+  while(a_star->running)
   {
-    // Ja temos nos na nossa lista aberta, processamos 1 nó
+    // Este trabalhador considera-se ocioso caso não existam nós a explorar ou mensagens destinadas a si
+    worker->idle = worker->open_set->size == 0 && !channel_has_messages(a_star->channel, worker->thread_id);
+
+    // Temos pelo menos um nó na nossa lista aberta que podemos processar
     if(worker->open_set->size)
     {
       // A seguinte operação pode ocorrer em O(log(N))
@@ -107,15 +87,16 @@ void* a_star_worker_function(void* arg)
 
       // Nó atual na nossa árvore
       a_star_node_t* current_node = (a_star_node_t*)top_element.data;
-      current_node->visited = true;
+      worker->visited++;
 
-      // Atualizamos a que distancia estamos
+      // Verificamos se já existe uma solução, caso já exista temos de verificar se
+      // este trabalhador está a procurar por soluções que se encontram a uma distância maior
+      // do que a solução já encontrada, será que vale a pena continuar? Consideramos que não e saímos.
       if(a_star->solution != NULL)
       {
         if(current_node->g > a_star->solution->g)
         {
-          // Este worker está a procurar por soluções que já se encontram a uma distância maior
-          // do que a solução já encontrada, será que vale a pena continuar? Saimos.
+          worker->idle = true;
           break;
         }
       }
@@ -143,7 +124,8 @@ void* a_star_worker_function(void* arg)
           }
         }
         pthread_mutex_unlock(&(a_star->lock));
-        // Esta thread ja fez o seu trabalho podemos parar
+        // Este trabalhador já fez o seu trabalho pode parar
+        worker->idle = true;
         break;
       }
 
@@ -156,72 +138,19 @@ void* a_star_worker_function(void* arg)
       // Itera por todos os vizinhos expandidos e envia para a devida tarefa
       for(size_t i = 0; i < linked_list_size(neighbors); i++)
       {
-        state_t* neighbor = (state_t*)linked_list_get(neighbors, i);
-        size_t worker_id = assign_to_worker(a_star, neighbor);
-
-        // Verifica se o nó para este estado já se encontra na nossa lista de nós
-        a_star_node_t temp_node = { 0, 0, NULL, neighbor, false,PTHREAD_MUTEX_INITIALIZER};
-        a_star_node_t* neighbor_node = hashtable_contains(a_star->nodes, &temp_node);
-
         // Preparamos a mensagem a ser enviada
         a_star_message_t* message = (a_star_message_t*)malloc(sizeof(a_star_message_t));
         if(message == NULL)
         {
-          break;
+          // Falha na alocação, continuamos e assim eventualmente a thread irá parar
+          continue;
         }
 
-        message->old_cost = 0;
-
-        if(neighbor_node != NULL)
-        {
-          // Este nó já existe, temos de garantir que não existe concorrência
-          pthread_mutex_lock(&(neighbor_node->lock));
-          // Não processamos nós visitados, estes já estão fora da fila prioritária
-          if(neighbor_node->visited)
-          {
-            free(message);
-            pthread_mutex_unlock(&(neighbor_node->lock));
-            continue;
-          }
-
-          // Encontra o custo de chegar do nó a este vizinho
-          int g_attempt = current_node->g + a_star->d_func(current_node->state, neighbor_node->state);
-
-          // Se o custo for maior do que o nó já tem, não faz sentido atualizar
-          // existe outro caminho mais curto para este nó
-          if(g_attempt >= neighbor_node->g)
-          {
-            free(message);
-            pthread_mutex_unlock(&(neighbor_node->lock));
-            continue;
-          }
-
-          // Este nó já ex
-          // O nó atual é o caminho mais curto para este vizinho, atualizamos
-          neighbor_node->parent = current_node;
-
-          // Guardamos o custo atual
-          message->old_cost = neighbor_node->g + neighbor_node->h;
-
-          // Atualizamos os parâmetros do nó
-          neighbor_node->g = g_attempt;
-          neighbor_node->h = a_star->h_func(neighbor_node->state, a_star->goal_state);
-          pthread_mutex_unlock(&(neighbor_node->lock));
-        }
-        else
-        {
-          // Este nó ainda não existe, criamos um novo nó
-          neighbor_node = a_star_new_node(a_star, neighbor);
-          neighbor_node->parent = current_node;
-
-          // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
-          neighbor_node->g = current_node->g + a_star->d_func(current_node->state, neighbor_node->state);
-          neighbor_node->h = a_star->h_func(neighbor_node->state, a_star->goal_state);
-        }
-
-        // Anexamos o nó e o novo custo à mensagem
-        message->node = neighbor_node;
-        message->cost = neighbor_node->g + neighbor_node->h;
+        // Compomos a mensagem com os dados necessários e identificamos qual
+        // o trabalhador que vai tratar deste estado
+        message->parent = current_node;
+        message->state = (state_t*)linked_list_get(neighbors, i);
+        size_t worker_id = assign_to_worker(a_star, message->state);
 
         // Enviamos a mensagem para o respetivo trabalhador
         channel_send(a_star->channel, worker_id, message);
@@ -232,35 +161,81 @@ void* a_star_worker_function(void* arg)
     }
 
     // Processamos todos os estados que estão no canal para esta tarefa
-    // é aqui que ocorre a atualização do custo do algoritmo
-    for(;;)
+    // Aqui que ocorre a atualização do custo do estado
+    while(channel_has_messages(a_star->channel, worker->thread_id))
     {
       a_star_message_t* message = channel_receive(a_star->channel, worker->thread_id);
-      if(message == NULL)
+
+      // Retiramos os dados da mensagem e libertamos a memória;
+      a_star_node_t* parent_node = message->parent;
+      state_t* state = message->state;
+      free(message);
+
+      // Se o nó pai não foi enviado é porque estamos a lidar com o estado inicial
+      if(parent_node == NULL)
       {
-        // Não existem mensagens para este trabalhado
+        a_star_node_t* initial_node = a_star_new_node(a_star, state);
+        // Atribui ao nó inicial um custo total de 0
+        initial_node->g = 0;
+        initial_node->h = a_star->h_func(initial_node->state, a_star->goal_state);
+
+        // Inserimos o nó na nossa fila e saímos já que não existem mais mensagens
+        min_heap_insert(worker->open_set, initial_node->h, initial_node);
         break;
       }
 
-      // Retiramos os dados da mensagem e libertamos a memória;
-      a_star_node_t* node = message->node;
-      int old_cost = message->old_cost;
-      int cost = message->cost;
-      free(message);
+      // Recebemos um estado para ser processado, verificamos se já existe um nó para este estado
+      a_star_node_t temp_node = { 0, 0, NULL, state };
+      a_star_node_t* child_node = hashtable_contains(a_star->nodes, &temp_node);
 
-      // Atualizamos ou inserimos este nó na nossa lista aberta
-      if(old_cost > 0)
+      if(child_node != NULL)
       {
-        min_heap_update(worker->open_set, old_cost, cost, node);
+        // Encontra o custo de chegar do estado pai para este estado
+        int g_attempt = parent_node->g + a_star->d_func(parent_node->state, child_node->state);
+
+        // Se o custo for maior do que o nó já tem, não faz sentido atualizar
+        // existe outro caminho mais curto para este estado
+        if(g_attempt >= child_node->g)
+        {
+          continue;
+        }
+
+        // O estado pai é o caminho mais curto para este estado, atualizamos o pai deste estado
+        child_node->parent = parent_node;
+
+        // Guardamos o custo atual
+        int old_cost = child_node->g + child_node->h;
+
+        // Atualizamos os parâmetros do nó
+        child_node->g = g_attempt;
+        child_node->h = a_star->h_func(child_node->state, a_star->goal_state);
+
+        // Calculamos o novo custo
+        int new_cost = child_node->g + child_node->h;
+
+        // Atualizamos a nossa fila prioritária
+        min_heap_update(worker->open_set, old_cost, new_cost, child_node);
       }
       else
       {
-        min_heap_insert(worker->open_set, cost, node);
+        // Este nó ainda não existe, criamos um novo nó para este estado
+        child_node = a_star_new_node(a_star, state);
+        child_node->parent = parent_node;
+
+        // Encontra o custo de chegar do estado pai a este estado e calculamos a heurística (distância para chegar ao objetivo)
+        child_node->g = parent_node->g + a_star->d_func(parent_node->state, child_node->state);
+        child_node->h = a_star->h_func(child_node->state, a_star->goal_state);
+
+        // Calculamos o custo
+        int cost = child_node->g + child_node->h;
+
+        // Inserimos o nó na nossa fila
+        min_heap_insert(worker->open_set, cost, child_node);
+        worker->expanded++;
       }
     }
   }
 
-  printf("Trabalhador %d finalizou\n", worker->thread_id);
   pthread_exit(NULL);
 }
 
@@ -317,11 +292,16 @@ a_star_t* a_star_create(size_t struct_size,
     return NULL;
   }
 
-  for(int i = 0; i < a_star->num_workers; i++)
+  // Inicializamos as estruturas que vão conter o estado de cada
+  // um dos trabalhadores
+  for(size_t i = 0; i < a_star->num_workers; i++)
   {
     a_star->workers[i].a_star = a_star;
     a_star->workers[i].thread_id = i;
     a_star->workers[i].open_set = min_heap_create();
+    a_star->workers[i].idle = true;
+    a_star->workers[i].visited = 0;
+    a_star->workers[i].expanded = 0;
   }
 
   // Inicializa as funções necessárias para o algoritmo funcionar
@@ -331,6 +311,8 @@ a_star_t* a_star_create(size_t struct_size,
   a_star->d_func = d_func;
   a_star->solution = NULL;
   a_star->goal_state = NULL;
+  a_star->visited = 0;
+  a_star->expanded = 0;
 
   return a_star;
 }
@@ -345,7 +327,7 @@ void a_star_destroy(a_star_t* a_star)
 
   if(a_star->workers != NULL)
   {
-    for(int i = 0; i < a_star->num_workers; i++)
+    for(size_t i = 0; i < a_star->num_workers; i++)
     {
       min_heap_destroy(a_star->workers[i].open_set);
     }
@@ -376,7 +358,7 @@ void a_star_destroy(a_star_t* a_star)
 }
 
 // Resolve o problema através do uso do algoritmo A*;
-a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
+a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal, bool first_solution)
 {
   if(a_star == NULL)
   {
@@ -386,49 +368,72 @@ a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal)
   // Guarda os nossos estados inicial e objetivo
   state_t* initial_state = state_allocator_new(a_star->state_allocator, initial);
 
-  a_star_node_t* initial_node = a_star_new_node(a_star, initial_state);
-
-  // Preparamos o nosso objetivo
-  if(goal)
+  if(initial_state == NULL)
   {
-    // Caso tenhamos passado o goal, temos de o "containerizar" num estado
-    a_star->goal_state = state_allocator_new(a_star->state_allocator, goal);
+    return NULL;
   }
 
-  // Atribui ao nó inicial um custo total de 0
-  initial_node->g = 0;
-  initial_node->h = a_star->h_func(initial_node->state, a_star->goal_state);
+  // Preparamos o nosso objetivo caso tenha sido passado (existem problemas em que não se passam soluções)
+  if(goal)
+  {
+    // Temos de "containerizar" o objetivo num estado
+    a_star->goal_state = state_allocator_new(a_star->state_allocator, goal);
 
-  // Preparamos a mensagem a ser enviada
+    if(a_star->goal_state == NULL)
+    {
+      return NULL;
+    }
+  }
+
+  // Preparamos a mensagem a ser enviada para o estado inicial
   a_star_message_t* message = (a_star_message_t*)malloc(sizeof(a_star_message_t));
   if(message == NULL)
   {
     return NULL;
   }
 
-  message->old_cost = 0;
-  message->cost = initial_node->g + initial_node->h;
-  message->node = initial_node;
+  message->parent = NULL;
+  message->state = initial_state;
 
   // Enviamos o estado inicial para o respetivo trabalhador
   size_t worker_id = assign_to_worker(a_star, initial_state);
-  channel_send(a_star->channel, worker_id, initial_node);
+  channel_send(a_star->channel, worker_id, message);
 
-  for(int i = 0; i < a_star->num_workers; i++)
+  // Com recurso a esta variável podemos enviar uma mensagem para os nossos trabalhadores
+  // pararem
+  a_star->running = true;
+
+  for(size_t i = 0; i < a_star->num_workers; i++)
   {
-    // Iniciamos o worker
+    // Iniciamos o trabalhador
+    a_star->workers[i].idle = false;
     int result = pthread_create(&(a_star->workers[i].thread), NULL, a_star_worker_function, &(a_star->workers[i]));
     if(result != 0)
     {
-      printf("Erro a iniciar o trabalhador %d\n", i);
+      printf("Erro a iniciar o trabalhador %ld\n", i);
       return NULL;
     }
   }
 
+  size_t idle_workers = 0;
+  while(a_star->running)
+  {
+    // Verificamos quantos workers estão ociosos, caso todos estejam ociosos assumimos que não existem mais nós a explorar
+    // ou a solução já foi encontrada
+    for(idle_workers = 0; idle_workers < a_star->num_workers && a_star->workers[idle_workers].idle; idle_workers++)
+      ;
+
+    // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos, caso
+    // tenhamos passado a opção first_solution saímos imediatamente após obtermos uma solução
+    a_star->running = idle_workers < a_star->num_workers && (a_star->solution == NULL || !first_solution);
+  }
+
   // Esperamos que todas os trabalhadores terminem
-  for(int i = 0; i < a_star->num_workers; i++)
+  for(size_t i = 0; i < a_star->num_workers; i++)
   {
     pthread_join(a_star->workers[i].thread, NULL);
+    a_star->visited += a_star->workers[i].visited;
+    a_star->expanded += a_star->workers[i].expanded;
   }
 
   return a_star->solution;

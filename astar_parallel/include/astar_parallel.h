@@ -26,8 +26,6 @@ struct a_star_node_t
   int h;
   a_star_node_t* parent;
   state_t* state;
-  bool visited;
-  pthread_mutex_t lock; // Mutex para garantir a thread-safety
 };
 
 // Tipo para funções que calculam a heurística
@@ -53,13 +51,15 @@ typedef struct
   heuristic_function h_func;
   distance_function d_func;
 
-  int num_workers;
+  size_t num_workers;
   a_star_worker_t* workers;
   channel_t* channel;
   a_star_node_t* solution;
   pthread_mutex_t lock; // Mutex para garantir a thread-safety
   state_t* goal_state;
-
+  bool running;
+  int expanded;
+  int visited;
 } a_star_t;
 
 struct a_star_worker_t
@@ -68,6 +68,9 @@ struct a_star_worker_t
   pthread_t thread;
   int thread_id;
   min_heap_t* open_set;
+  bool idle;
+  int expanded;
+  int visited;
 };
 
 // Cria uma nova instância para resolver um problema
@@ -82,6 +85,6 @@ a_star_t* a_star_create(size_t struct_size,
 void a_star_destroy(a_star_t* a_star);
 
 // Resolve o problema através do uso do algoritmo A*;
-a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal);
+a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal, bool first);
 
 #endif // ASTAR_H

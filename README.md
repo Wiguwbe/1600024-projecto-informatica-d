@@ -73,3 +73,17 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 ### 5 de junho de 2023
 
 * Continuação da implementação do algoritmo em paralelo (não testado)
+
+### 6 de junho de 2023
+
+* Implementação da algoritmo A* a correr em paralelo (com testes efetuados)
+* Implementação do problema 8puzzle a correr o algoritmo em paralelo
+* Alteração do nome astar_sequencial para astar_sequential
+* Alteração dos nomes astar.c e astar.h para nomes alusivos à sua forma (ie: astar_sequential e astar_parallel)
+* Remoção da flag de otimização -O3 da construção do 8puzzle_par (provoca quebra de performance do algoritmo A*)
+* Implementação de estatísticas iniciais para medição da execução do algoritmo em ambas as formas (sequencial e paralelo)
+* Correção da compilação em modo debug para conter símbolos
+* Extração da função de hashing para uma função própria para que possa ser utilizada em outras funções
+* Implementação do método channel_has_messages para verificar se uma determinada fila tem mensagens
+* Alteração do formato da mensagem a ser enviada para os trabalhadores
+* Alteração da função a_star_worker_function, o estado é agora processado no trabalhador a que lhe compete

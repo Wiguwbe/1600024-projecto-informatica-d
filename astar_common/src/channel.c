@@ -79,3 +79,19 @@ void channel_destroy(channel_t* channel, bool free_data)
   free(channel->queues);
   free(channel);
 }
+
+bool channel_has_messages(channel_t* channel, size_t queue_index) {
+
+  if(channel == NULL)
+  {
+    return false;
+  }
+
+  // Verifica se o índice da fila é válido
+  if(queue_index >= channel->num_queues)
+  {
+    return false; // Índice inválido
+  }
+
+  return queue_size(channel->queues[queue_index]) > 0;
+}

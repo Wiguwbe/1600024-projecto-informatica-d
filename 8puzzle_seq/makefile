@@ -1,9 +1,9 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -I./include -I../astar_sequencial/include -I../astar_common/include -Wno-unused-parameter 
-LDFLAGS := -L../astar_sequencial/lib -lastar_seq -L../astar_common/lib -lastar_common -lcheck -lm -lpthread 
+CFLAGS := -Wall -Wextra -I./include -I../astar_sequential/include -I../astar_common/include -Wno-unused-parameter 
+LDFLAGS := -L../astar_sequential/lib -lastar_seq -L../astar_common/lib -lastar_common -lcheck -lm -lpthread 
 
 ifdef DEBUG_BUILD
-CFLAGS_EXTRA := -DDEBUG
+CFLAGS_EXTRA := -DDEBUG -g
 else
 CFLAGS_EXTRA := -O3
 endif

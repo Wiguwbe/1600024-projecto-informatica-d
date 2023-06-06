@@ -1,6 +1,6 @@
 #ifndef LOGIC_H
 #define LOGIC_H
-#include "astar_sequential.h"
+#include "astar_parallel.h"
 #include "state.h"
 
 // Estrutura do que contem o estado do nosso puzzle 8

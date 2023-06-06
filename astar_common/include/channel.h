@@ -37,4 +37,7 @@ void* channel_receive(channel_t* channel, size_t queue_index);
 // Liberta a memória alocada para o canal
 void channel_destroy(channel_t* channel, bool free_data);
 
+// Informa se existem mensagens para uma fila
+bool channel_has_messages(channel_t* channel, size_t queue_index);
+
 #endif // CHANNEL_H
