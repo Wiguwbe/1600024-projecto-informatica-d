@@ -6,7 +6,9 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/8puzzle_seq/bin/8puzzle_seq",
-      "args": ["${workspaceFolder}/data/8puzzle.txt"],
+      "args": [
+        "${workspaceFolder}/data/8puzzle.txt"
+      ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -20,7 +22,10 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/8puzzle_par/bin/8puzzle_par",
-      "args": ["${workspaceFolder}/data/8puzzle.txt","6"],
+      "args": [
+        "${workspaceFolder}/data/8puzzle.txt",
+        "6"
+      ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -28,13 +33,32 @@
       "MIMode": "gdb",
       "preLaunchTask": "build makefile",
       "miDebuggerPath": "gdb"
-    },    
+    },
     {
       "name": "8puzzle_gen",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/8puzzle_gen/bin/8puzzle_gen",
-      "args": ["${workspaceFolder}/data/8puzzle.txt","10"],
+      "args": [
+        "${workspaceFolder}/data/8puzzle.txt",
+        "10"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build makefile",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "numberlink_seq",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/numberlink_seq/bin/numberlink_seq",
+      "args": [
+        "${workspaceFolder}/data/numberlink_4.txt"
+      ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -51,7 +75,12 @@
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [],
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
       "preLaunchTask": "build tests",
@@ -65,7 +94,12 @@
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [],
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
       "preLaunchTask": "build tests",
@@ -79,7 +113,12 @@
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [],
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
       "preLaunchTask": "build tests",
@@ -93,7 +132,12 @@
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [],
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
       "preLaunchTask": "build tests",
@@ -107,21 +151,88 @@
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [],
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
       "preLaunchTask": "build tests",
       "miDebuggerPath": "gdb"
     },
     {
-      "name": "test_8puzzle_logic",
+      "name": "test_8puzzle_logic_seq",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/8puzzle_seq/bin/test_logic",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [],
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_8puzzle_logic_par",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/8puzzle_par/bin/test_logic",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_numberlink_logic_seq",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/numberlink_seq/bin/test_logic",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_numberlink_seq",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/numberlink_seq/bin/test_numberlink",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
       "externalConsole": false,
       "MIMode": "gdb",
       "preLaunchTask": "build tests",

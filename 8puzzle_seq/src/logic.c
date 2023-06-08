@@ -1,10 +1,10 @@
 #include "logic.h"
 #include "linked_list.h"
 #include "state.h"
-#include <stdlib.h>
-#include <string.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Este é o objetivo do nosso problema
 static const puzzle_state goal_puzzle = { { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '-' } } };
@@ -31,7 +31,7 @@ int heuristic(const state_t* current_state, const state_t*)
   {
     for(int y = 0; y < 3; y++)
     {
-      char current_piece = current_puzzle->board[x][y];
+      char current_piece = current_puzzle->board[y][x];
 
       if(current_piece == '-')
       {
@@ -43,7 +43,7 @@ int heuristic(const state_t* current_state, const state_t*)
       int goal_col = heuristic_table[num][1];
 
       // Calcular a distância de Manhattan para a peça atual
-      h += abs(x - goal_row) + abs(y - goal_col);
+      h += abs(x - goal_col) + abs(y - goal_row);
     }
   }
 

@@ -31,7 +31,7 @@ int heuristic(const state_t* current_state, const state_t*)
   {
     for(int y = 0; y < 3; y++)
     {
-      char current_piece = current_puzzle->board[x][y];
+      char current_piece = current_puzzle->board[y][x];
 
       if(current_piece == '-')
       {
@@ -43,7 +43,7 @@ int heuristic(const state_t* current_state, const state_t*)
       int goal_col = heuristic_table[num][1];
 
       // Calcular a distância de Manhattan para a peça atual
-      h += abs(x - goal_row) + abs(y - goal_col);
+      h += abs(x - goal_col) + abs(y - goal_row);
     }
   }
 
@@ -90,7 +90,7 @@ void visit(state_t* current_state, state_allocator_t* allocator, linked_list_t* 
     linked_list_append(neighbors, new_state);
   }
 
-  // Movimento para baixo fo espaço vazio
+  // Movimento para baixo do espaço vazio
   if(empty_row < 2)
   {
     puzzle_state new_puzzle;

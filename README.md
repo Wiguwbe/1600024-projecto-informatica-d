@@ -87,3 +87,7 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Implementação do método channel_has_messages para verificar se uma determinada fila tem mensagens
 * Alteração do formato da mensagem a ser enviada para os trabalhadores
 * Alteração da função a_star_worker_function, o estado é agora processado no trabalhador a que lhe compete
+
+### 8 e 9 de junho de 2023
+
+* Implementação de um novo problema number link para executar novas medições

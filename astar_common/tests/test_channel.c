@@ -11,7 +11,7 @@ START_TEST(test_channel_create)
   ck_assert_ptr_nonnull(channel);
   ck_assert_uint_eq(channel->num_queues, num_queues);
 
-  channel_destroy(channel);
+  channel_destroy(channel,false);
 }
 END_TEST
 
