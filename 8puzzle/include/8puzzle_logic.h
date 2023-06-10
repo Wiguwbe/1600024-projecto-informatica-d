@@ -1,7 +1,7 @@
 #ifndef LOGIC_H
 #define LOGIC_H
-#include "astar_sequential.h"
 #include "state.h"
+#include "linked_list.h"
 
 // Estrutura do que contem o estado do nosso puzzle 8
 typedef struct 

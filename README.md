@@ -91,3 +91,11 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 ### 8 e 9 de junho de 2023
 
 * Implementação de um novo problema number link para executar novas medições
+
+### 10 de junho de 2023
+
+* Separação da lógica de cada um dos problemas
+* Lógica dos problemas é partilhada por ambas as versões do algoritmo (paralela e sequencial)
+* Substituição do modelo de atribuição do nó a uma tarefa para o modelo round-robin 
+* 
+* Pequenas correções de código

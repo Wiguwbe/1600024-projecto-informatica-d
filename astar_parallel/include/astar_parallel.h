@@ -1,90 +1,75 @@
 /*
-   Algoritmo A* Sequencial
-
-
-   ```
+   Algoritmo A* Paralelo
 */
-#ifndef ASTAR_H
-#define ASTAR_H
-#include "allocator.h"
+#ifndef ASTAR_PARALLEL_H
+#define ASTAR_PARALLEL_H
+#include "astar.h"
 #include "channel.h"
-#include "hashtable.h"
-#include "linked_list.h"
 #include "min_heap.h"
 #include "state.h"
+#include <pthread.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <pthread.h>
 
-typedef struct a_star_node_t a_star_node_t;
 typedef struct a_star_worker_t a_star_worker_t;
+typedef struct a_star_scheduler_t a_star_scheduler_t;
+typedef struct a_star_parallel_t a_star_parallel_t;
 
-// Estrutura que define um estado para o algoritmo A* (data contêm user-defined data)
-struct a_star_node_t
+struct a_star_scheduler_t
 {
-  int g;
-  int h;
-  a_star_node_t* parent;
-  state_t* state;
-};
-
-// Tipo para funções que calculam a heurística
-typedef int (*heuristic_function)(const state_t*, const state_t*);
-
-// Tipo para funções que expandem um estado nos estados filho, utilizando o alocador predefinido, atualiza a min_heap e a hash_table
-typedef void (*visit_function)(state_t*, state_allocator_t*, linked_list_t*);
-
-// Tipo para funções que verificam se um estado é o objetivo a atingir
-typedef bool (*goal_function)(const state_t*, const state_t*);
-
-// Tipo para funções que devolvem a distancia de um estado para o seu vizinho
-typedef int (*distance_function)(const state_t*, const state_t*);
-
-// Estrutura que contem o estado do algoritmo A*
-typedef struct
-{
-  state_allocator_t* state_allocator;
-  allocator_t* node_allocator;
-  hashtable_t* nodes;
-  goal_function goal_func;
-  visit_function visit_func;
-  heuristic_function h_func;
-  distance_function d_func;
-
   size_t num_workers;
   a_star_worker_t* workers;
+  int next_worker;
+  pthread_mutex_t lock;
+};
+
+// Estrutura que contem o estado do algoritmo A*
+struct a_star_parallel_t
+{
+  // Configuração comum do algoritmo
+  a_star_t* common;
+
+  // Gestor de tarefas e canal de comunicação, e lock para sincronixação
+  a_star_scheduler_t scheduler;
   channel_t* channel;
+  pthread_mutex_t lock;
+
+  // Variáveis necessárias para controlar a execução do algoritmo em paralelo
   a_star_node_t* solution;
-  pthread_mutex_t lock; // Mutex para garantir a thread-safety
   state_t* goal_state;
   bool running;
-  int expanded;
-  int visited;
-} a_star_t;
+};
 
+// Estrutura que guarda o estado de um trabalhador
 struct a_star_worker_t
 {
-  a_star_t* a_star;
+  a_star_parallel_t* a_star;
+
+  // Variáveis especificas para threading e controlo de execução
   pthread_t thread;
   int thread_id;
-  min_heap_t* open_set;
   bool idle;
+
+  // Nós abertos locais
+  min_heap_t* open_set;
+
+  // Variáveis para estatísticas
   int expanded;
   int visited;
 };
 
-// Cria uma nova instância para resolver um problema
-a_star_t* a_star_create(size_t struct_size,
-                        goal_function goal_func,
-                        visit_function visit_func,
-                        heuristic_function h_func,
-                        distance_function d_func,
-                        int num_workers);
+// Cria uma nova instância do algoritmo A* para resolver um problema
+a_star_parallel_t* a_star_parallel_create(size_t struct_size,
+                                          goal_function goal_func,
+                                          visit_function visit_func,
+                                          heuristic_function h_func,
+                                          distance_function d_func,
+                                          int num_workers);
 
-// Liberta uma instância do algoritmo A*
-void a_star_destroy(a_star_t* a_star);
+// Liberta uma instância do algoritmo A* paralelo
+void a_star_parallel_destroy(a_star_parallel_t* a_star);
 
-// Resolve o problema através do uso do algoritmo A*;
-a_star_node_t* a_star_solve(a_star_t* a_star, void* initial, void* goal, bool first);
+// Resolve o problema através do uso do algoritmo A* paralelo
+a_star_node_t* a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal, bool first);
 
 #endif // ASTAR_H

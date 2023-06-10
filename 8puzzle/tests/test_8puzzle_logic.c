@@ -1,5 +1,5 @@
 #include "linked_list.h"
-#include "logic.h"
+#include "8puzzle_logic.h"
 #include "state.h"
 #include <check.h>
 #include <stdlib.h>

@@ -1,11 +1,11 @@
 CC := gcc
-CFLAGS := -Wall -Wextra -I./include -I../astar_parallel/include -I../astar_common/include -Wno-unused-parameter 
-LDFLAGS := -L../astar_parallel/lib -lastar_parallel -L../astar_common/lib -lastar_common -lcheck -lm -lpthread 
+CFLAGS := -Wall -Wextra -I./include -I../astar_parallel/include -I../astar_sequential/include -I../astar_common/include -Wno-unused-parameter 
+LDFLAGS := -L../astar_parallel/lib -lastar_parallel -L../astar_sequential/lib -lastar_seq  -L../astar_common/lib -lastar_common -lcheck -lm -lpthread 
 
 ifdef DEBUG_BUILD
 CFLAGS_EXTRA := -DDEBUG -g
 else
-CFLAGS_EXTRA :=
+CFLAGS_EXTRA := -O3
 endif
 
 SRC_DIR := src
@@ -19,7 +19,7 @@ DEPS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.d,$(SRCS))
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
 TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRCS))
 
-TARGET := $(BIN_DIR)/8puzzle_par
+TARGET := $(BIN_DIR)/8puzzle
 
 .PHONY: all clean tests
 
