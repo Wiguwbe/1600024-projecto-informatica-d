@@ -2,10 +2,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "8puzzle_seq",
+      "name": "8puzzle sequencial",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/8puzzle_seq/bin/8puzzle_seq",
+      "program": "${workspaceFolder}/8puzzle/bin/8puzzle",
       "args": [
         "${workspaceFolder}/data/8puzzle.txt"
       ],
@@ -18,13 +18,15 @@
       "miDebuggerPath": "gdb"
     },
     {
-      "name": "8puzzle_par",
+      "name": "8puzzle paralelo",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/8puzzle_par/bin/8puzzle_par",
+      "program": "${workspaceFolder}/8puzzle/bin/8puzzle",
       "args": [
-        "${workspaceFolder}/data/8puzzle.txt",
-        "6"
+        "${workspaceFolder}/data/8puzzle_hard_2.txt",
+        "-n",
+        "12",
+        "-p"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -52,12 +54,31 @@
       "miDebuggerPath": "gdb"
     },
     {
-      "name": "numberlink_seq",
+      "name": "numberlink sequencial",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/numberlink_seq/bin/numberlink_seq",
+      "program": "${workspaceFolder}/numberlink/bin/numberlink",
       "args": [
         "${workspaceFolder}/data/numberlink_4.txt"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build makefile",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "numberlink paralelo",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/numberlink/bin/numberlink",
+      "args": [
+        "${workspaceFolder}/data/numberlink_4.txt",
+        "-n",
+        "6",
+        "-p"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -71,7 +92,7 @@
       "name": "test_allocator",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/astar_sequencial/bin/test_allocator",
+      "program": "${workspaceFolder}/astar_common/bin/test_allocator",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -90,7 +111,7 @@
       "name": "test_hashtable",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/astar_sequencial/bin/test_allocator",
+      "program": "${workspaceFolder}/astar_common/bin/test_allocator",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -109,7 +130,7 @@
       "name": "test_linked_list",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/astar_sequencial/bin/test_linked_list",
+      "program": "${workspaceFolder}/astar_common/bin/test_linked_list",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -128,7 +149,7 @@
       "name": "test_min_heap",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/astar_sequencial/bin/test_min_heap",
+      "program": "${workspaceFolder}/astar_common/bin/test_min_heap",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -147,7 +168,7 @@
       "name": "test_state",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/astar_sequencial/bin/test_state",
+      "program": "${workspaceFolder}/astar_common/bin/test_state",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -163,10 +184,10 @@
       "miDebuggerPath": "gdb"
     },
     {
-      "name": "test_8puzzle_logic_seq",
+      "name": "test_8puzzle_logic",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/8puzzle_seq/bin/test_logic",
+      "program": "${workspaceFolder}/8puzzle/bin/test_8puzzle_logic",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -182,10 +203,10 @@
       "miDebuggerPath": "gdb"
     },
     {
-      "name": "test_8puzzle_logic_par",
+      "name": "test_numberlink_logic",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/8puzzle_par/bin/test_logic",
+      "program": "${workspaceFolder}/numberlink/bin/test_numberlink_logic",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -201,29 +222,10 @@
       "miDebuggerPath": "gdb"
     },
     {
-      "name": "test_numberlink_logic_seq",
+      "name": "test_numberlink_common",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/numberlink_seq/bin/test_logic",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [
-        {
-          "name": "CK_FORK",
-          "value": "no"
-        }
-      ],
-      "externalConsole": false,
-      "MIMode": "gdb",
-      "preLaunchTask": "build tests",
-      "miDebuggerPath": "gdb"
-    },
-    {
-      "name": "test_numberlink_seq",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/numberlink_seq/bin/test_numberlink",
+      "program": "${workspaceFolder}/numberlink/bin/test_numberlink_common",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

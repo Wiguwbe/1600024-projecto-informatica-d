@@ -1,4 +1,5 @@
 #include "astar_sequential.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -12,10 +13,15 @@ a_star_sequential_t* a_star_sequential_create(
     return NULL; // Erro de alocação
   }
 
+  // Garante que a memoria esteja limpa
+  a_star->open_set = NULL;
+  a_star->common = NULL;
+
   // Inicializamos a parte comum do nosso algoritmo
   a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func);
 
-  if (a_star->common == NULL) {
+  if(a_star->common == NULL)
+  {
     a_star_sequential_destroy(a_star);
     return NULL;
   }
@@ -30,6 +36,10 @@ a_star_sequential_t* a_star_sequential_create(
     a_star_sequential_destroy(a_star);
     return NULL;
   }
+
+  // Limpa solução e estado a atingir
+  a_star->solution = NULL;
+  a_star->goal_state = NULL;
 
   return a_star;
 }
@@ -48,7 +58,7 @@ void a_star_sequential_destroy(a_star_sequential_t* a_star)
     min_heap_destroy(a_star->open_set);
   }
 
-  // Invocamos o destroy da parte comum 
+  // Invocamos o destroy da parte comum
   if(a_star->common != NULL)
   {
     a_star_destroy(a_star->common);
@@ -59,11 +69,11 @@ void a_star_sequential_destroy(a_star_sequential_t* a_star)
 }
 
 // Resolve o problema através do uso do algoritmo A*;
-a_star_node_t* a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* goal)
+void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* goal)
 {
   if(a_star == NULL)
   {
-    return NULL;
+    return;
   }
 
   // Guarda os nossos estados iniciais e objetivo
@@ -71,28 +81,33 @@ a_star_node_t* a_star_sequential_solve(a_star_sequential_t* a_star, void* initia
 
   // Existe problemas em que o objetivo pode ser nulo, normalmente
   // nesses casos o objetivo é estático (ie. 8puzzle)
-  state_t* goal_state = NULL;
   if(goal)
   {
     // Caso tenhamos passado o goal, temos de o "containerizar" num estado
-    goal_state = state_allocator_new(a_star->common->state_allocator, goal);
+    a_star->goal_state = state_allocator_new(a_star->common->state_allocator, goal);
+
+    if(a_star->goal_state == NULL)
+    {
+      return;
+    }
   }
 
   // O open_set deve estar vazio, ou caso contrário o algoritmo não funciona bem
   if(a_star->open_set->size > 0)
   {
-    return NULL;
+    return;
   }
 
   a_star_node_t* initial_node = a_star_new_node(a_star->common, initial_state);
 
   // Atribui ao nó inicial um custo total de 0
   initial_node->g = 0;
-  initial_node->h = a_star->common->h_func(initial_node->state, goal_state);
+  initial_node->h = a_star->common->h_func(initial_node->state, a_star->goal_state);
 
   // Inserimos o nó inicial na nossa fila prioritária
   min_heap_insert(a_star->open_set, initial_node->g + initial_node->h, initial_node);
 
+  clock_gettime(CLOCK_MONOTONIC, &(a_star->common->start_time));
   while(a_star->open_set->size)
   {
     // A seguinte operação pode ocorrer em O(log(N))
@@ -104,9 +119,11 @@ a_star_node_t* a_star_sequential_solve(a_star_sequential_t* a_star, void* initia
     a_star->common->visited++;
 
     // Se encontramos o objetivo saímos e retornamos o nó
-    if(a_star->common->goal_func(current_node->state, goal_state))
+    if(a_star->common->goal_func(current_node->state, a_star->goal_state))
     {
-      return current_node;
+      // Guardamos a solução e saímos do ciclo
+      a_star->solution = current_node;
+      break;
     }
 
     // Esta lista irá receber os vizinhos deste nó
@@ -142,7 +159,7 @@ a_star_node_t* a_star_sequential_solve(a_star_sequential_t* a_star, void* initia
 
         // Atualizamos os parâmetros do nó
         neighbor_node->g = g_attempt;
-        neighbor_node->h = a_star->common->h_func(neighbor_node->state, goal_state);
+        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->goal_state);
 
         // Calculamos o novo custo
         int new_cost = neighbor_node->g + neighbor_node->h;
@@ -158,20 +175,66 @@ a_star_node_t* a_star_sequential_solve(a_star_sequential_t* a_star, void* initia
 
         // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
         neighbor_node->g = current_node->g + a_star->common->d_func(current_node->state, neighbor_node->state);
-        neighbor_node->h = a_star->common->h_func(neighbor_node->state, goal_state);
+        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->goal_state);
 
         // Calculamos o custo
         int cost = neighbor_node->g + neighbor_node->h;
 
         // Inserimos o nó na nossa fila
         min_heap_insert(a_star->open_set, cost, neighbor_node);
-        a_star->common->expanded ++;
+        a_star->common->expanded++;
       }
     }
 
     // Liberta a lista de vizinhos
     linked_list_destroy(neighbors);
   }
+  clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
 
-  return NULL;
+  // Calculamos o tempo de execução
+  a_star->common->execution_time = (a_star->common->end_time.tv_sec - a_star->common->start_time.tv_sec);
+  a_star->common->execution_time += (a_star->common->end_time.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
+}
+
+// Imprime estatísticas do algoritmo sequencial no formato desejado
+void print_sequential_statistics(a_star_sequential_t* a_star, bool csv, print_solution_function print_solution)
+{
+  if(a_star == NULL)
+  {
+    return;
+  }
+
+  if(!csv)
+  {
+    if(a_star->solution)
+    {
+      printf("Resultado do algoritmo: Solução encontrada, custo: %d\n", a_star->solution->g);
+      print_solution(a_star->solution);
+    }
+    else
+    {
+      printf("Resultado do algoritmo: Solução não encontrada.\n");
+    }
+
+    printf("Estatísticas Globais:\n");
+    printf("- Estados expandidos: %d\n", a_star->common->expanded);
+    printf("- Estados visitados: %d\n", a_star->common->visited);
+    printf("- Tempo de execução: %.6f segundos.\n", a_star->common->execution_time);
+  }
+  else
+  {
+    printf("\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
+    if(a_star->solution)
+    {
+      printf("\"Sim\";%d;%d;%d;%.6f\n",
+             a_star->solution->g,
+             a_star->common->expanded,
+             a_star->common->visited,
+             a_star->common->execution_time);
+    }
+    else
+    {
+      printf("\"Não\";0;%d;%d;%.6f\n", a_star->common->expanded, a_star->common->visited, a_star->common->execution_time);
+    }
+  }
 }

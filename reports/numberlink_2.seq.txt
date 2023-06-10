@@ -1,0 +1,11 @@
+Resultado do algoritmo: Solução encontrada, custo: 10
+Solução:
+A.....
+aBbb..
+a..b..
+aA.bbB
+Estatísticas Globais:
+- Estados expandidos: 161
+- Estados visitados: 56
+- Tempo de execução: 0.000138 segundos.
+Tempo total de execução: 0.000138 segundos.

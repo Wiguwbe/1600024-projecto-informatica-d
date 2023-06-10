@@ -101,3 +101,5 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Melhoria do mecanismo de verificação do scoring (comparação do f e g da solução com o nó atual)
 * O trabalhador agora continua a verificar por nós mesmo quando tenha encontrado uma solução
 * Pequenas correções e otimizações de código
+* Melhorias nas estatísticas coletadas
+* Criação de regras de make para gerar relatórios e medições

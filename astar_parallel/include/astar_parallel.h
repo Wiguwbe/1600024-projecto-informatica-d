@@ -34,9 +34,12 @@ struct a_star_parallel_t
   channel_t* channel;
   pthread_mutex_t lock;
 
-  // Variáveis necessárias para controlar a execução do algoritmo em paralelo
+  // Solução e estado a atingir
   a_star_node_t* solution;
   state_t* goal_state;
+
+  // Variáveis necessárias para controlar a execução do algoritmo em paralelo
+  bool stop_on_first_solution;
   bool running;
 };
 
@@ -64,12 +67,15 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
                                           visit_function visit_func,
                                           heuristic_function h_func,
                                           distance_function d_func,
-                                          int num_workers);
+                                          int num_workers, bool first);
 
 // Liberta uma instância do algoritmo A* paralelo
 void a_star_parallel_destroy(a_star_parallel_t* a_star);
 
 // Resolve o problema através do uso do algoritmo A* paralelo
-a_star_node_t* a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal, bool first);
+void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal);
+
+// Imprime estatísticas sobre o algoritmo paralelo
+void print_parallel_statistics(a_star_parallel_t* a_star_instance, bool csv, print_solution_function print_solution);
 
 #endif // ASTAR_H

@@ -6,45 +6,42 @@
 #include <string.h>
 #include <time.h>
 
-// Função para ler as instâncias do arquivo e armazenar na struct
-int read_instance_from_file(const char* filename, puzzle_state instances[])
+bool load_8puzzle(const char* filename, puzzle_state *puzzle)
 {
   FILE* file = fopen(filename, "r");
   if(file == NULL)
   {
     printf("Erro ao abrir o arquivo.\n");
-    return 0;
+    return false;
   }
 
   char line[256]; // Considerando que cada linha tem no máximo 11 caracteres + o caracter nulo
 
-  for(int i = 0; i < 10; i++)
+  if(fgets(line, sizeof(line), file) == NULL)
   {
-    if(fgets(line, sizeof(line), file) == NULL)
-    {
-      printf("Erro ao ler linha do arquivo.\n");
-      fclose(file);
-      return i;
-    }
+    printf("Erro ao ler linha do arquivo.\n");
+    fclose(file);
+    return false;
+  }
 
-    int k = 0;
-    for(int j = 0; j < 3; j++)
+  int k = 0;
+  for(int y = 0; y < 3; y++)
+  {
+    for(int x = 0; x < 3; x++)
     {
-      for(int l = 0; l < 3; l++)
-      {
-        if(line[k] == ' ')
-          k++; // Ignorar espaços em branco
+      if(line[k] == ' ')
+        k++; // Ignorar espaços em branco
 
-        instances[i].board[j][l] = line[k++];
-      }
-      k++; // Pular o espaço ou quebra de linha
+      puzzle->board[y][x] = line[k++];
     }
+    k++; // Pular o espaço ou quebra de linha
   }
 
   fclose(file);
 
-  return 10;
+  return true;
 }
+
 
 void print_solution(a_star_node_t* solution)
 {
@@ -61,90 +58,43 @@ void print_solution(a_star_node_t* solution)
 }
 
 // Resolve a instância utilizando a versão paralela do algoritmo A*
-double solve_parallel(puzzle_state instance, int num_threads, bool first)
+double solve_parallel(puzzle_state instance, int num_threads, bool first, bool csv)
 {
-  struct timespec start_time, end_time;
-
   // Criamos a instância do algoritmo A*
-  a_star_parallel_t* a_star_instance =
-      a_star_parallel_create(sizeof(puzzle_state), goal, visit, heuristic, distance, num_threads);
-
-  clock_gettime(CLOCK_MONOTONIC, &start_time);
+  a_star_parallel_t* a_star = a_star_parallel_create(sizeof(puzzle_state), goal, visit, heuristic, distance, num_threads, first);
 
   // Tentamos resolver o problema
-  a_star_node_t* solution = a_star_parallel_solve(a_star_instance, &instance, NULL, first);
+  a_star_parallel_solve(a_star, &instance, NULL);
 
-  if(solution)
-  {
-    printf("Resultado do algoritmo: Solução encontrada, custo: %d, primeira solução %s\n", solution->g, first ? "sim" : "não");
-    print_solution(solution);
-  }
-  else
-  {
-    printf("Resultado do algoritmo: Solução não encontrada.\n");
-  }
+  // Imprime as estatísticas da execução
+  print_parallel_statistics(a_star, csv, print_solution);
 
-  clock_gettime(CLOCK_MONOTONIC, &end_time);
-
-  double instance_time = (end_time.tv_sec - start_time.tv_sec);
-  instance_time += (end_time.tv_nsec - start_time.tv_nsec) / 1000000000.0;
-
-  printf("Estatísticas:\n");
-  for(size_t i = 0; i < a_star_instance->scheduler.num_workers; i++)
-  {
-    printf("- Trabalhador #%ld: Estados expandidos = %d, Estados visitados = %d\n",
-           i + 1,
-           a_star_instance->scheduler.workers[i].expanded,
-           a_star_instance->scheduler.workers[i].visited);
-  }
-  printf("- Estados expandidos: %d\n", a_star_instance->common->expanded);
-  printf("- Estados visitados: %d\n", a_star_instance->common->visited);
-  printf("- Tempo de execução: %.6f segundos.\n", instance_time);
-  printf("- Primeira solução apenas: %s\n", first ? "sim" : "não");
+  double execution_time = a_star->common->execution_time;
 
   // Limpamos a memória
-  a_star_parallel_destroy(a_star_instance);
+  a_star_parallel_destroy(a_star);
 
-  return instance_time;
+  return execution_time;
 }
 
 // Resolve a instância utilizando a versão sequencial do algoritmo A*
-double solve_sequential(puzzle_state instance)
+double solve_sequential(puzzle_state instance, bool csv)
 {
-  struct timespec start_time, end_time;
-
   // Criamos a instância do algoritmo A*
-  a_star_sequential_t* a_star_instance = a_star_sequential_create(sizeof(puzzle_state), goal, visit, heuristic, distance);
-
-  clock_gettime(CLOCK_MONOTONIC, &start_time);
+  a_star_sequential_t* a_star = a_star_sequential_create(sizeof(puzzle_state), goal, visit, heuristic, distance);
 
   // Tentamos resolver o problema
-  a_star_node_t* solution = a_star_sequential_solve(a_star_instance, &instance, NULL);
+  a_star_sequential_solve(a_star, &instance, NULL);
 
-  if(solution)
-  {
-    printf("Resultado do algoritmo: solução encontrada, custo: %d\n", solution->g);
-    print_solution(solution);
-  }
-  else
-  {
-    printf("Resultado do algoritmo: Solução não encontrada.\n");
-  }
+  // Imprime as estatísticas da execução
+  print_sequential_statistics(a_star, csv, print_solution);
 
-  clock_gettime(CLOCK_MONOTONIC, &end_time);
-
-  double instance_time = (end_time.tv_sec - start_time.tv_sec);
-  instance_time += (end_time.tv_nsec - start_time.tv_nsec) / 1000000000.0;
-
-  printf("Estatísticas:\n");
-  printf("- Estados expandidos: %d\n", a_star_instance->common->expanded);
-  printf("- Estados visitados: %d\n", a_star_instance->common->visited);
-  printf("- Tempo de execução: %.6f segundos.\n", instance_time);
+  double execution_time = a_star->common->execution_time;
 
   // Limpamos a memória
-  a_star_sequential_destroy(a_star_instance);
+  a_star_sequential_destroy(a_star);
 
-  return instance_time;
+  return execution_time;
 }
 
 int main(int argc, char* argv[])
@@ -152,76 +102,83 @@ int main(int argc, char* argv[])
   // Verificar se o nome do arquivo foi fornecido como argumento
   if(argc < 2)
   {
-    printf("Uso: %s <ficheiro_instâncias> [-n <num. trabalhadores>] [-p]\n", argv[0]);
+    printf("Uso: %s [-n <num. trabalhadores>] [-p] [-r] <ficheiro_instâncias>\n", argv[0]);
     printf("Opções:\n");
     printf("-n : Número de trabalhadores (threads), defeito: 0 (algoritmo sequencial)\n");
     printf("-p : Termina à primeira solução encontrada, defeito: falso (utilizado no algoritmo paralelo apenas)\n");
+    printf("-r : Relatório em formato compatível com CSV \n");
     return 0;
   }
 
   // Valores por defeito
   int num_threads = 0;
   bool first = false;
+  bool csv = false;
 
-  // Verificamos se o número de threads foi passado nos argumentos
-  if(argc >= 3)
+  // Verificamos se mais opções foram passadas
+  int filename_arg = 1;
+  for(int i = 1; i < argc; i++)
   {
-    char* switch1 = argv[2];
-    if(strcmp(switch1, "-n") == 0)
+    char* opt = argv[i];
+
+    if(strcmp(opt, "-n") == 0)
     {
-      if(argc >= 4)
+      if(++i < argc)
       {
-        num_threads = atoi(argv[3]);
+        num_threads = atoi(argv[i]);
       }
       else
       {
         printf("Erro: o número de trabalhadores não é um valor válido.\n");
         return 1;
       }
+      filename_arg +=2;
+      continue;
     }
-  }
 
-  // Verificamos se a opção 'p' foi passada
-  if(argc >= 5)
-  {
-    char* switch2 = argv[4];
-    if(strcmp(switch2, "-p") == 0)
+    if(strcmp(opt, "-p") == 0)
     {
       first = true;
+      filename_arg ++;
+      continue;
+    }
+
+    if(strcmp(opt, "-r") == 0)
+    {
+      csv = true;
+      filename_arg ++;
+      continue;
     }
   }
 
+  if (filename_arg >= argc ) {
+        printf("Erro: o falta nome do ficheiro com dados .\n");
+        return 1;
+  }
+  
   // Ler as instâncias do arquivo
-  puzzle_state instances[10];
-  int num_instances = read_instance_from_file(argv[1], instances);
+  puzzle_state puzzle;
 
-  // Verificar se o número de instâncias lidas está correto
-  if(num_instances != 10)
+  // Verificar se o puzzle foi lido corretamente
+  if(!load_8puzzle(argv[filename_arg], &puzzle))
   {
-    printf("Erro ao ler as instâncias do arquivo.\n");
+    printf("Erro ao ler o puzzle do arquivo.\n");
     return 0;
   }
   // Medir o tempo total de execução de todas as instância
   double total_time = 0.0;
-  double instance_time = 0.0;
 
-  for(int i = 0; i < 10; i++)
+  if(num_threads > 0)
   {
-    printf("Instância #%d\n", i + 1);
-
-    if(num_threads > 0)
-    {
-      instance_time = solve_parallel(instances[i], num_threads, first);
-    }
-    else
-    {
-      instance_time = solve_sequential(instances[i]);
-    }
-
-    total_time += instance_time;
-    printf("\n");
+    total_time = solve_parallel(puzzle, num_threads, first, csv);
+  }
+  else
+  {
+    total_time = solve_sequential(puzzle, csv);
   }
 
-  printf("Tempo total de execução: %.6f segundos.\n", total_time);
-  return 0;
+  if(!csv)
+  {
+    printf("Tempo total de execução: %.6f segundos.\n", total_time);
+  }
 }

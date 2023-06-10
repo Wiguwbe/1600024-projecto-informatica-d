@@ -206,13 +206,19 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
                                           visit_function visit_func,
                                           heuristic_function h_func,
                                           distance_function d_func,
-                                          int num_workers)
+                                          int num_workers,
+                                          bool stop_on_first_solution)
 {
   a_star_parallel_t* a_star = (a_star_parallel_t*)malloc(sizeof(a_star_parallel_t));
   if(a_star == NULL)
   {
     return NULL; // Erro de alocação
   }
+
+  // Garante que a memória esteja limpa
+  a_star->scheduler.workers = NULL;
+  a_star->channel = NULL;
+  a_star->common = NULL;
 
   // Inicializamos a parte comum do nosso algoritmo
   a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func);
@@ -259,9 +265,13 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
   // Reiniciamos a variável utilizada para round-robin
   a_star->scheduler.next_worker = 0;
 
-  // Inicializa as funções necessárias para o algoritmo funcionar
+  // Limpa solução e estado a atingir
   a_star->solution = NULL;
   a_star->goal_state = NULL;
+
+  // Inicializa as funções necessárias para o algoritmo funcionar
+  a_star->stop_on_first_solution = stop_on_first_solution;
+  a_star->running = false;
 
   return a_star;
 }
@@ -298,11 +308,11 @@ void a_star_parallel_destroy(a_star_parallel_t* a_star)
 }
 
 // Resolve o problema através do uso do algoritmo A*;
-a_star_node_t* a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal, bool first_solution)
+void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
 {
   if(a_star == NULL)
   {
-    return NULL;
+    return;
   }
 
   // Guarda os nossos estados inicial e objetivo
@@ -310,7 +320,7 @@ a_star_node_t* a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, v
 
   if(initial_state == NULL)
   {
-    return NULL;
+    return;
   }
 
   // Preparamos o nosso objetivo caso tenha sido passado (existem problemas em que não se passam soluções)
@@ -321,7 +331,7 @@ a_star_node_t* a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, v
 
     if(a_star->goal_state == NULL)
     {
-      return NULL;
+      return;
     }
   }
 
@@ -329,15 +339,14 @@ a_star_node_t* a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, v
   a_star_message_t* message = (a_star_message_t*)malloc(sizeof(a_star_message_t));
   if(message == NULL)
   {
-    return NULL;
+    return;
   }
 
   message->parent = NULL;
   message->state = initial_state;
 
   // Enviamos o estado inicial para o respetivo trabalhador
-  size_t worker_id = round_robin_worker(a_star);
-  channel_send(a_star->channel, worker_id, message);
+  channel_send(a_star->channel, 0, message);
 
   // Com recurso a esta variável podemos enviar uma mensagem para os nossos trabalhadores
   // pararem
@@ -351,14 +360,14 @@ a_star_node_t* a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, v
         pthread_create(&(a_star->scheduler.workers[i].thread), NULL, a_star_worker_function, &(a_star->scheduler.workers[i]));
     if(result != 0)
     {
-      printf("Erro a iniciar o trabalhador %ld\n", i);
-      return NULL;
+      return;
     }
   }
 
   // Ciclo de execução que espera pela solução ou que todos os trabalhadores fiquem
   // sem nós para processar
   size_t idle_workers = 0;
+  clock_gettime(CLOCK_MONOTONIC, &(a_star->common->start_time));
   while(a_star->running)
   {
     // Verificamos quantos workers estão ociosos, caso todos estejam ociosos assumimos que não existem mais nós a explorar
@@ -368,8 +377,9 @@ a_star_node_t* a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, v
       ;
 
     // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos, caso
-    // tenhamos passado a opção first_solution saímos imediatamente após obtermos uma solução
-    a_star->running = idle_workers < a_star->scheduler.num_workers && (a_star->solution == NULL || !first_solution);
+    // tenhamos ativado a saída imediatamente após obtermos uma solução
+    a_star->running =
+        idle_workers < a_star->scheduler.num_workers && (a_star->solution == NULL || !a_star->stop_on_first_solution);
   }
 
   // Esperamos que todas os trabalhadores terminem
@@ -379,6 +389,74 @@ a_star_node_t* a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, v
     a_star->common->visited += a_star->scheduler.workers[i].visited;
     a_star->common->expanded += a_star->scheduler.workers[i].expanded;
   }
+  clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
 
-  return a_star->solution;
+  // Calculamos o tempo de execução
+  a_star->common->execution_time = (a_star->common->end_time.tv_sec - a_star->common->start_time.tv_sec);
+  a_star->common->execution_time += (a_star->common->end_time.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
+}
+
+// Imprime estatísticas do algoritmo sequencial no formato desejado
+void print_parallel_statistics(a_star_parallel_t* a_star, bool csv, print_solution_function print_solution)
+{
+  if(a_star == NULL)
+  {
+    return;
+  }
+
+  if(!csv)
+  {
+    if(a_star->solution)
+    {
+      printf("Resultado do algoritmo: Solução encontrada, custo: %d, primeira solução %s\n",
+             a_star->solution->g,
+             a_star->stop_on_first_solution ? "sim" : "não");
+      print_solution(a_star->solution);
+    }
+    else
+    {
+      printf("Resultado do algoritmo: Solução não encontrada.\n");
+    }
+
+    printf("Estatísticas Globais:\n");
+    printf("- Estados expandidos: %d\n", a_star->common->expanded);
+    printf("- Estados visitados: %d\n", a_star->common->visited);
+    printf("- Tempo de execução: %.6f segundos.\n", a_star->common->execution_time);
+
+    printf("Estatísticas Trabalhadores:\n");
+    for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
+    {
+      printf("- Trabalhador #%ld: Estados expandidos = %d, Estados visitados = %d\n",
+             i + 1,
+             a_star->scheduler.workers[i].expanded,
+             a_star->scheduler.workers[i].visited);
+    }
+  }
+  else
+  {
+    printf("\"Solução\";\"Custo da Solução\";\"Método\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
+    if(a_star->solution)
+    {
+      printf("\"Sim\";%d;\"%s\";%d;%d;%.6f\n",
+             a_star->solution->g,
+             a_star->stop_on_first_solution ? "Primeira Solução" : "Melhor Solução",
+             a_star->common->expanded,
+             a_star->common->visited,
+             a_star->common->execution_time);
+    }
+    else
+    {
+      printf("\"Não\";0;\"%s\";%d;%d;%.6f\n",
+             a_star->stop_on_first_solution ? "Primeira Solução" : "Melhor Solução",
+             a_star->common->expanded,
+             a_star->common->visited,
+             a_star->common->execution_time);
+    }
+
+    printf("\"Trabalhador\";\"Estados Expandidos\";\"Estados Visitados\"\n");
+    for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
+    {
+      printf("\"#%ld\";%d;%d\n", i + 1, a_star->scheduler.workers[i].expanded, a_star->scheduler.workers[i].visited);
+    }
+  }
 }

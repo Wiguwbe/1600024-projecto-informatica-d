@@ -1,0 +1,13 @@
+Resultado do algoritmo: Solução não encontrada.
+Estatísticas Globais:
+- Estados expandidos: 181441
+- Estados visitados: 181442
+- Tempo de execução: 4.985104 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 30301, Estados visitados = 30302
+- Trabalhador #2: Estados expandidos = 30170, Estados visitados = 30170
+- Trabalhador #3: Estados expandidos = 30299, Estados visitados = 30299
+- Trabalhador #4: Estados expandidos = 30171, Estados visitados = 30171
+- Trabalhador #5: Estados expandidos = 30292, Estados visitados = 30292
+- Trabalhador #6: Estados expandidos = 30208, Estados visitados = 30208
+Tempo total de execução: 4.985104 segundos.

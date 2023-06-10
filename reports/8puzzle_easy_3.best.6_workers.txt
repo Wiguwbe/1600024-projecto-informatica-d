@@ -1,0 +1,17 @@
+Resultado do algoritmo: Solução encontrada, custo: 20, primeira solução não
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 1427
+- Estados visitados: 902
+- Tempo de execução: 0.000822 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 230, Estados visitados = 163
+- Trabalhador #2: Estados expandidos = 232, Estados visitados = 170
+- Trabalhador #3: Estados expandidos = 229, Estados visitados = 176
+- Trabalhador #4: Estados expandidos = 241, Estados visitados = 172
+- Trabalhador #5: Estados expandidos = 255, Estados visitados = 116
+- Trabalhador #6: Estados expandidos = 240, Estados visitados = 105
+Tempo total de execução: 0.000822 segundos.

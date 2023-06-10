@@ -39,6 +39,11 @@ a_star_t* a_star_create(
     return NULL; // Erro de alocação
   }
 
+  // Garante que a memória fique limpa
+  a_star->nodes = NULL;
+  a_star->state_allocator = NULL;
+  a_star->node_allocator = NULL;
+
   // Inicializa os nossos alocadores de memória
   a_star->state_allocator = state_allocator_create(struct_size);
   if(a_star->state_allocator == NULL)

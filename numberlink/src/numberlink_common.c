@@ -32,7 +32,7 @@ number_link_t* number_link_init(int rows, int cols, const char* board)
   int max_pairs = letter_to_int('Z');
   coord pair_starts[max_pairs];
   coord pair_goals[max_pairs];
-  coord zero = {-1,-1};
+  coord zero = { -1, -1 };
 
   for(int i = 0; i < max_pairs; i++)
   {
@@ -45,6 +45,14 @@ number_link_t* number_link_init(int rows, int cols, const char* board)
 
   number_link->rows = rows;
   number_link->cols = cols;
+  
+  // Garante a memoria limpa
+  number_link->hashtable = NULL;
+  number_link->allocator = NULL;
+  number_link->initial_board = NULL;
+  number_link->goals = NULL;
+  number_link->initial_coords = NULL;
+  number_link->starts = NULL;
 
   if(number_link == NULL)
   {
@@ -83,7 +91,7 @@ number_link_t* number_link_init(int rows, int cols, const char* board)
         // Primeiro elemento do par encontrado
         pair_starts[pair] = current_coord;
         number_link->num_pairs++;
-        num_starts ++;
+        num_starts++;
         continue;
       }
 
@@ -93,9 +101,10 @@ number_link_t* number_link_init(int rows, int cols, const char* board)
   }
 
   // Os pares tem de ter inicio e fim
-  if (num_ends != num_starts) {
-    free(number_link);
-    return NULL; 
+  if(num_ends != num_starts)
+  {
+    number_link_destroy(number_link);
+    return NULL;
   }
 
   // Alocamos a memória para guardar a informação sobre onde os pares iniciam e terminam
@@ -111,8 +120,7 @@ number_link_t* number_link_init(int rows, int cols, const char* board)
   number_link->initial_coords = (coord*)malloc(number_link->num_pairs * sizeof(coord));
   if(number_link->initial_coords == NULL)
   {
-    free(number_link->starts);
-    free(number_link);
+    number_link_destroy(number_link);
     return NULL; // Erro de alocação
   }
   memcpy(number_link->initial_coords, &pair_starts, number_link->num_pairs * sizeof(coord));
@@ -120,9 +128,7 @@ number_link_t* number_link_init(int rows, int cols, const char* board)
   number_link->goals = (coord*)malloc(number_link->num_pairs * sizeof(coord));
   if(number_link->goals == NULL)
   {
-    free(number_link->initial_coords);
-    free(number_link->starts);
-    free(number_link);
+    number_link_destroy(number_link);
     return NULL; // Erro de alocação
   }
   memcpy(number_link->goals, &pair_goals, number_link->num_pairs * sizeof(coord));
@@ -134,10 +140,7 @@ number_link_t* number_link_init(int rows, int cols, const char* board)
 
   if(number_link->initial_board == NULL)
   {
-    free(number_link->goals);
-    free(number_link->initial_coords);
-    free(number_link->starts);
-    free(number_link);
+    number_link_destroy(number_link);
     return NULL; // Erro de alocação
   }
 
@@ -146,23 +149,14 @@ number_link_t* number_link_init(int rows, int cols, const char* board)
 
   if(number_link->allocator == NULL)
   {
-    free(number_link->initial_board);
-    free(number_link->goals);
-    free(number_link->initial_coords);
-    free(number_link->starts);
-    free(number_link);
+    number_link_destroy(number_link);
     return NULL; // Erro de alocação
   }
 
   number_link->hashtable = hashtable_create(number_link->struct_size, NULL, NULL);
   if(number_link->hashtable == NULL)
   {
-    allocator_destroy(number_link->allocator);
-    free(number_link->initial_board);
-    free(number_link->goals);
-    free(number_link->initial_coords);
-    free(number_link->starts);
-    free(number_link);
+    number_link_destroy(number_link);
     return NULL; // Erro de alocação
   }
 
@@ -176,12 +170,36 @@ void number_link_destroy(number_link_t* number_link)
     return;
   }
 
-  hashtable_destroy(number_link->hashtable, false);
-  allocator_destroy(number_link->allocator);
-  free(number_link->initial_board);
-  free(number_link->goals);
-  free(number_link->initial_coords);
-  free(number_link->starts);
+  if(number_link->hashtable != NULL)
+  {
+    hashtable_destroy(number_link->hashtable, false);
+  }
+
+  if(number_link->allocator != NULL)
+  {
+    allocator_destroy(number_link->allocator);
+  }
+
+  if(number_link->initial_board != NULL)
+  {
+    free(number_link->initial_board);
+  }
+
+  if(number_link->goals != NULL)
+  {
+    free(number_link->goals);
+  }
+
+  if(number_link->initial_coords != NULL)
+  {
+    free(number_link->initial_coords);
+  }
+
+  if(number_link->starts != NULL)
+  {
+    free(number_link->starts);
+  }
+
   free(number_link);
   number_link = NULL;
 }

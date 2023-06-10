@@ -29,8 +29,6 @@ typedef struct
   size_t board_len;
 } number_link_t;
 
-extern number_link_t* number_link;
-
 // Mapeia os caracteres números A,B,C...Z para 0,1,2...
 int letter_to_int(char c);
 

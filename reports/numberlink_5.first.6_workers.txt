@@ -1,0 +1,19 @@
+Resultado do algoritmo: Solução encontrada, custo: 20, primeira solução sim
+Solução:
+.aaaaaaaa
+.AbbbbbBa
+.bb....aa
+.B.....A.
+.........
+Estatísticas Globais:
+- Estados expandidos: 124847
+- Estados visitados: 45782
+- Tempo de execução: 0.626225 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 20744, Estados visitados = 7916
+- Trabalhador #2: Estados expandidos = 20730, Estados visitados = 7907
+- Trabalhador #3: Estados expandidos = 20816, Estados visitados = 8040
+- Trabalhador #4: Estados expandidos = 20859, Estados visitados = 6974
+- Trabalhador #5: Estados expandidos = 20786, Estados visitados = 7984
+- Trabalhador #6: Estados expandidos = 20912, Estados visitados = 6961
+Tempo total de execução: 0.626225 segundos.

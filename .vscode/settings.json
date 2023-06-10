@@ -28,7 +28,10 @@
         "numberlink_logic.h": "c",
         "channel.h": "c",
         "astar_parallel.h": "c",
-        "astar_sequential.h": "c"
+        "astar_sequential.h": "c",
+        "stddef.h": "c",
+        "time.h": "c",
+        "min_heap.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "cSpell.language": "en,pt_PT",

@@ -2,6 +2,7 @@
 #define ASTAR_H
 #include "linked_list.h"
 #include "state.h"
+#include <time.h>
 
 // Informação comum partilhada por ambas as versões do algoritmo A*
 typedef struct a_star_t a_star_t;
@@ -20,6 +21,9 @@ typedef bool (*goal_function)(const state_t*, const state_t*);
 
 // Tipo para funções que devolvem a distancia de um estado para o seu vizinho
 typedef int (*distance_function)(const state_t*, const state_t*);
+
+// Tipo para funções que expandem um estado nos estados filho, utilizando o alocador predefinido, atualiza a min_heap e a hash_table
+typedef void (*print_solution_function)(a_star_node_t*);
 
 // Estrutura que define um estado para o algoritmo A* (data contêm user-defined data)
 struct a_star_node_t
@@ -47,6 +51,8 @@ struct a_star_t
   // Informação estatística
   int expanded;
   int visited;
+  struct timespec start_time, end_time;
+  double execution_time;
 };
 
 // Funções comuns do algoritmo
@@ -56,7 +62,7 @@ a_star_t* a_star_create(
 // Liberta uma instância do algoritmo A* sequencial
 void a_star_destroy(a_star_t* a_star);
 
-// Função interna para criar um novo nó para ser utilizado pelo nosso algoritmo 
+// Função interna para criar um novo nó para ser utilizado pelo nosso algoritmo
 a_star_node_t* a_star_new_node(a_star_t* a_star, state_t* state);
 
-#endif 
+#endif

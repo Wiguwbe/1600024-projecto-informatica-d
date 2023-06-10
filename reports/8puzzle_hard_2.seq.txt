@@ -1,0 +1,10 @@
+Resultado do algoritmo: Solução encontrada, custo: 31
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 23637
+- Estados visitados: 16059
+- Tempo de execução: 0.104542 segundos.
+Tempo total de execução: 0.104542 segundos.
