@@ -37,7 +37,7 @@ clean:
 measurements_numberlink: all
 	@echo "A criar medições para o problema numberlink"
 	@mkdir -p measurements
-	for TEST in ./instances/numberlink_*; do \
+	@for TEST in ./instances/numberlink_*; do \
 		echo "Problema: numberlink, Instância: $$TEST"; \
 		echo "Algoritmo sequencial"; \
 		./numberlink/$(BIN_DIR)/numberlink -r $$TEST > measurements/$$(basename $$TEST).seq.csv ;\
@@ -50,7 +50,7 @@ measurements_numberlink: all
 measurements_8puzzle: all
 	@echo "A criar medições para o problema 8 puzzle"
 	@mkdir -p measurements
-	for TEST in ./instances/8puzzle_*; do \
+	@for TEST in ./instances/8puzzle_*; do \
 		echo "Problema: 8puzzle, Instância: $$TEST"; \
 		echo "Algoritmo sequencial"; \
 		./8puzzle/$(BIN_DIR)/8puzzle -r $$TEST > measurements/$$(basename $$TEST).seq.csv ;\
@@ -64,7 +64,7 @@ measurements_8puzzle: all
 reports_numberlink: 
 	@echo "A criar relatórios problema numberlink"
 	@mkdir -p reports
-	for TEST in ./instances/numberlink_*; do \
+	@for TEST in ./instances/numberlink_*; do \
 		echo "Problema: numberlink, Instância: $$TEST"; \
 		echo "Algoritmo sequencial"; \
 		./numberlink/$(BIN_DIR)/numberlink $$TEST > reports/$$(basename $$TEST).seq.txt ;\
@@ -77,7 +77,7 @@ reports_numberlink:
 reports_8puzzle: 
 	@echo "A criar relatórios problema 8 puzzle"
 	@mkdir -p reports
-	for TEST in ./instances/8puzzle_*; do \
+	@for TEST in ./instances/8puzzle_*; do \
 		echo "Problema: 8puzzle, Instância: $$TEST"; \
 		echo "Algoritmo sequencial"; \
 		./8puzzle/$(BIN_DIR)/8puzzle $$TEST > reports/$$(basename $$TEST).seq.txt ;\

@@ -224,17 +224,11 @@ void print_sequential_statistics(a_star_sequential_t* a_star, bool csv, print_so
   else
   {
     printf("\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
-    if(a_star->solution)
-    {
-      printf("\"Sim\";%d;%d;%d;%.6f\n",
-             a_star->solution->g,
-             a_star->common->expanded,
-             a_star->common->visited,
-             a_star->common->execution_time);
-    }
-    else
-    {
-      printf("\"Não\";0;%d;%d;%.6f\n", a_star->common->expanded, a_star->common->visited, a_star->common->execution_time);
-    }
+    printf("\"%s\";%d;%d;%d;%.6f\n",
+           a_star->solution ? "sim" : "não",
+           a_star->solution ? a_star->solution->g : 0,
+           a_star->common->expanded,
+           a_star->common->visited,
+           a_star->common->execution_time);
   }
 }

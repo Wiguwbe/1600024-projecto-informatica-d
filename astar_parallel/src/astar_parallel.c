@@ -434,24 +434,14 @@ void print_parallel_statistics(a_star_parallel_t* a_star, bool csv, print_soluti
   }
   else
   {
-    printf("\"Solução\";\"Custo da Solução\";\"Método\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
-    if(a_star->solution)
-    {
-      printf("\"Sim\";%d;\"%s\";%d;%d;%.6f\n",
-             a_star->solution->g,
-             a_star->stop_on_first_solution ? "Primeira Solução" : "Melhor Solução",
-             a_star->common->expanded,
-             a_star->common->visited,
-             a_star->common->execution_time);
-    }
-    else
-    {
-      printf("\"Não\";0;\"%s\";%d;%d;%.6f\n",
-             a_star->stop_on_first_solution ? "Primeira Solução" : "Melhor Solução",
-             a_star->common->expanded,
-             a_star->common->visited,
-             a_star->common->execution_time);
-    }
+    printf("\"Método:\";\"%s\";\n", a_star->stop_on_first_solution ? "Primeira Solução" : "Melhor Solução");
+    printf("\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
+    printf("\"%s\";%d;%d;%d;%.6f\n",
+            a_star->solution ? "sim" : "não" ,
+            a_star->solution ? a_star->solution->g : 0 ,
+            a_star->common->expanded,
+            a_star->common->visited,
+            a_star->common->execution_time);
 
     printf("\"Trabalhador\";\"Estados Expandidos\";\"Estados Visitados\"\n");
     for(size_t i = 0; i < a_star->scheduler.num_workers; i++)

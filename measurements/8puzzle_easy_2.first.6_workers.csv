@@ -1,9 +1,10 @@
-"Solução";"Custo da Solução";"Método";"Estados Expandidos";"Estados Visitados";"Tempo de Execução"
-"Sim";20;"Primeira Solução";724;443;0.000418
+"Método:";"Primeira Solução";
+"Solução";"Custo da Solução";"Estados Expandidos";"Estados Visitados";"Tempo de Execução"
+"sim";20;899;554;0.000341
 "Trabalhador";"Estados Expandidos";"Estados Visitados"
-"#1";111;94
-"#2";120;75
-"#3";131;90
-"#4";112;63
-"#5";112;74
-"#6";138;47
+"#1";152;99
+"#2";135;110
+"#3";158;115
+"#4";143;74
+"#5";162;97
+"#6";149;59
