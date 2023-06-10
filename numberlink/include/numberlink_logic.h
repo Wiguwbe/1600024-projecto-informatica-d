@@ -1,7 +1,7 @@
 #ifndef LOGIC_H
 #define LOGIC_H
-#include "astar_sequential.h"
-#include "numberlink.h"
+#include "numberlink_common.h"
+#include "linked_list.h"
 #include "state.h"
 
 // Estrutura do que contem o estado do nosso number link

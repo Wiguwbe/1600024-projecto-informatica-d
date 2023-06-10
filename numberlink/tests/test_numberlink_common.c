@@ -1,4 +1,4 @@
-#include "numberlink.h"
+#include "numberlink_common.h"
 #include <check.h>
 #include <stdlib.h>
 #include <string.h>
@@ -107,7 +107,7 @@ END_TEST
 // Função auxiliar para criação da suíte de testes
 Suite* create_suite()
 {
-  Suite* suite = suite_create("numberlink");
+  Suite* suite = suite_create("numberlink_common");
   TCase* tcase = tcase_create("Core");
   tcase_add_test(tcase, test_tools);
   tcase_add_test(tcase, test_number_link_init_ok);

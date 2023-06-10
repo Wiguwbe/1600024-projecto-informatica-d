@@ -91,3 +91,13 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 ### 8 e 9 de junho de 2023
 
 * Implementação de um novo problema number link para executar novas medições
+
+### 10 de junho de 2023
+
+* Mudanças que permitem utilizar as duas formas do algoritmo no mesmo executável
+* União dos problemas, apenas um executável por problema, pode-se escolher utilizar o algoritmo sequencial ou paralelo
+* Código comum de ambos os algoritmos (sequencial e paralelo) movido para astar_common
+* Substituição do modelo de atribuição do nó a uma tarefa para o modelo round-robin 
+* Melhoria do mecanismo de verificação do scoring (comparação do f e g da solução com o nó atual)
+* O trabalhador agora continua a verificar por nós mesmo quando tenha encontrado uma solução
+* Pequenas correções e otimizações de código

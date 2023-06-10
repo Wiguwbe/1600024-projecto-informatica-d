@@ -18,7 +18,17 @@
         "__split_buffer": "c",
         "list": "c",
         "queue": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "allocator.h": "c",
+        "linked_list.h": "c",
+        "state.h": "c",
+        "numberlink.h": "c",
+        "string.h": "c",
+        "8puzzle_logic.h": "c",
+        "numberlink_logic.h": "c",
+        "channel.h": "c",
+        "astar_parallel.h": "c",
+        "astar_sequential.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "cSpell.language": "en,pt_PT",

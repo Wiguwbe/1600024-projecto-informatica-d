@@ -1,22 +1,16 @@
-#include "logic.h"
+#include "8puzzle_logic.h"
 #include "linked_list.h"
 #include "state.h"
-#include <stdlib.h>
-#include <string.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Este é o objetivo do nosso problema
 static const puzzle_state goal_puzzle = { { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '-' } } };
 
 // Estrutura para ajudar no cálculo da heurística
 static const int heuristic_table[8][2] = { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 1, 0 }, { 1, 1 }, { 1, 2 }, { 2, 0 }, { 2, 1 } };
-
-// Converte os caracteres números 1,2,3,4,5,6,7 e 8 no seu valor numérico
-int to_int(char c)
-{
-  return c - 49;
-}
 
 // Função de heurística para o puzzle 8
 int heuristic(const state_t* current_state, const state_t*)
@@ -38,7 +32,8 @@ int heuristic(const state_t* current_state, const state_t*)
         continue;
       }
 
-      int num = to_int(current_piece);
+      // Converte os caracteres números 1,2,3,4,5,6,7 e 8 no seu valor numérico
+      int num = (current_piece - 49);
       int goal_row = heuristic_table[num][0];
       int goal_col = heuristic_table[num][1];
 
@@ -55,21 +50,28 @@ void visit(state_t* current_state, state_allocator_t* allocator, linked_list_t* 
 {
   // Obtenha o ponteiro para a estrutura puzzle_state
   puzzle_state* puzzle = (puzzle_state*)(current_state->data);
+  puzzle_state new_puzzle_up, new_puzzle_down, new_puzzle_left, new_puzzle_right;
+
+  // Copia o tabuleiro para os novos possíveis estados
+  memcpy(&new_puzzle_up, puzzle, sizeof(puzzle_state));
+  memcpy(&new_puzzle_down, puzzle, sizeof(puzzle_state));
+  memcpy(&new_puzzle_left, puzzle, sizeof(puzzle_state));
+  memcpy(&new_puzzle_right, puzzle, sizeof(puzzle_state));
 
   // Lógica para expandir o estado e adicionar os vizinhos à lista ligada
 
   // Localizar a posição do espaço vazio no tabuleiro
-  int empty_row = -1;
-  int empty_col = -1;
+  int empty_row = 0;
+  int empty_col = 0;
 
-  for(int i = 0; i < 3; i++)
+  for(int y = 0; y < 3; y++)
   {
-    for(int j = 0; j < 3; j++)
+    for(int x = 0; x < 3; x++)
     {
-      if(puzzle->board[i][j] == '-')
+      if(puzzle->board[y][x] == '-')
       {
-        empty_row = i;
-        empty_col = j;
+        empty_row = y;
+        empty_col = x;
         break;
       }
     }
@@ -80,60 +82,40 @@ void visit(state_t* current_state, state_allocator_t* allocator, linked_list_t* 
   // Movimento para cima do espaço vazio
   if(empty_row > 0)
   {
-    puzzle_state new_puzzle;
-    memcpy(&new_puzzle, puzzle, sizeof(puzzle_state));
-
-    new_puzzle.board[empty_row][empty_col] = new_puzzle.board[empty_row - 1][empty_col];
-    new_puzzle.board[empty_row - 1][empty_col] = '-';
-
-    state_t* new_state = state_allocator_new(allocator, &new_puzzle);
-    linked_list_append(neighbors, new_state);
+    new_puzzle_up.board[empty_row][empty_col] = new_puzzle_up.board[empty_row - 1][empty_col];
+    new_puzzle_up.board[empty_row - 1][empty_col] = '-';
+    linked_list_append(neighbors, state_allocator_new(allocator, &new_puzzle_up));
   }
 
   // Movimento para baixo do espaço vazio
   if(empty_row < 2)
   {
-    puzzle_state new_puzzle;
-    memcpy(&new_puzzle, puzzle, sizeof(puzzle_state));
-
-    new_puzzle.board[empty_row][empty_col] = new_puzzle.board[empty_row + 1][empty_col];
-    new_puzzle.board[empty_row + 1][empty_col] = '-';
-
-    state_t* new_state = state_allocator_new(allocator, &new_puzzle);
-    linked_list_append(neighbors, new_state);
+    new_puzzle_down.board[empty_row][empty_col] = new_puzzle_down.board[empty_row + 1][empty_col];
+    new_puzzle_down.board[empty_row + 1][empty_col] = '-';
+    linked_list_append(neighbors, state_allocator_new(allocator, &new_puzzle_down));
   }
 
   // Movimento para a esquerda
   if(empty_col > 0)
   {
-    puzzle_state new_puzzle;
-    memcpy(&new_puzzle, puzzle, sizeof(puzzle_state));
-
-    new_puzzle.board[empty_row][empty_col] = new_puzzle.board[empty_row][empty_col - 1];
-    new_puzzle.board[empty_row][empty_col - 1] = '-';
-
-    state_t* new_state = state_allocator_new(allocator, &new_puzzle);
-    linked_list_append(neighbors, new_state);
+    new_puzzle_left.board[empty_row][empty_col] = new_puzzle_left.board[empty_row][empty_col - 1];
+    new_puzzle_left.board[empty_row][empty_col - 1] = '-';
+    linked_list_append(neighbors, state_allocator_new(allocator, &new_puzzle_left));
   }
 
   // Movimento para a direita
   if(empty_col < 2)
   {
-    puzzle_state new_puzzle;
-    memcpy(&new_puzzle, puzzle, sizeof(puzzle_state));
-
-    new_puzzle.board[empty_row][empty_col] = new_puzzle.board[empty_row][empty_col + 1];
-    new_puzzle.board[empty_row][empty_col + 1] = '-';
-
-    state_t* new_state = state_allocator_new(allocator, &new_puzzle);
-    linked_list_append(neighbors, new_state);
+    new_puzzle_right.board[empty_row][empty_col] = new_puzzle_right.board[empty_row][empty_col + 1];
+    new_puzzle_right.board[empty_row][empty_col + 1] = '-';
+    linked_list_append(neighbors, state_allocator_new(allocator, &new_puzzle_right));
   }
 }
 
 // Verifica se um estado é um objectivo do problema 8 puzzle
 bool goal(const state_t* state_a, const state_t*)
 {
-  return memcmp(state_a->data, &goal_puzzle, sizeof(goal_puzzle)) == 0;
+  return memcmp(state_a->data, &goal_puzzle, sizeof(puzzle_state)) == 0;
 }
 
 // Retorna a distância de um estado anterior para o proximo,

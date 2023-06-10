@@ -1,6 +1,4 @@
-#include "linked_list.h"
-#include "logic.h"
-#include "numberlink.h"
+#include "numberlink_logic.h"
 #include "state.h"
 #include <check.h>
 #include <stdlib.h>
@@ -135,15 +133,6 @@ START_TEST(test_visit_case_2)
 
 END_TEST
 
-START_TEST(test_visit_case_3) { }
-END_TEST
-
-START_TEST(test_visit_case_4) { }
-END_TEST
-
-START_TEST(test_visit_case_5) { }
-END_TEST
-
 START_TEST(test_goal) { }
 END_TEST
 
@@ -161,9 +150,6 @@ Suite* create_suite()
   TCase* tcase = tcase_create("Core");
   tcase_add_test(tcase, test_visit_case_1);
   tcase_add_test(tcase, test_visit_case_2);
-  tcase_add_test(tcase, test_visit_case_3);
-  tcase_add_test(tcase, test_visit_case_4);
-  tcase_add_test(tcase, test_visit_case_5);
   tcase_add_test(tcase, test_goal);
   tcase_add_test(tcase, test_distance);
   tcase_add_test(tcase, test_heuristic);
