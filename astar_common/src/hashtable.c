@@ -183,7 +183,8 @@ void hashtable_destroy(hashtable_t* hashtable, bool free_data)
     pthread_mutex_destroy(&hashtable->mutexes[i]);
   }
 
-  // Liberta a memória dos buckets e da hashtable
+  // Liberta a memória dos mutexes, buckets e da hashtable
+  free(hashtable->mutexes);
   free(hashtable->buckets);
   free(hashtable);
 }

@@ -37,10 +37,6 @@ a_star_sequential_t* a_star_sequential_create(
     return NULL;
   }
 
-  // Limpa solução e estado a atingir
-  a_star->solution = NULL;
-  a_star->goal_state = NULL;
-
   return a_star;
 }
 
@@ -84,9 +80,9 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
   if(goal)
   {
     // Caso tenhamos passado o goal, temos de o "containerizar" num estado
-    a_star->goal_state = state_allocator_new(a_star->common->state_allocator, goal);
+    a_star->common->goal_state = state_allocator_new(a_star->common->state_allocator, goal);
 
-    if(a_star->goal_state == NULL)
+    if(a_star->common->goal_state == NULL)
     {
       return;
     }
@@ -102,7 +98,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 
   // Atribui ao nó inicial um custo total de 0
   initial_node->g = 0;
-  initial_node->h = a_star->common->h_func(initial_node->state, a_star->goal_state);
+  initial_node->h = a_star->common->h_func(initial_node->state, a_star->common->goal_state);
 
   // Inserimos o nó inicial na nossa fila prioritária
   min_heap_insert(a_star->open_set, initial_node->g + initial_node->h, initial_node);
@@ -119,10 +115,10 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
     a_star->common->visited++;
 
     // Se encontramos o objetivo saímos e retornamos o nó
-    if(a_star->common->goal_func(current_node->state, a_star->goal_state))
+    if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
     {
       // Guardamos a solução e saímos do ciclo
-      a_star->solution = current_node;
+      a_star->common->solution = current_node;
       break;
     }
 
@@ -159,7 +155,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 
         // Atualizamos os parâmetros do nó
         neighbor_node->g = g_attempt;
-        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->goal_state);
+        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->common->goal_state);
 
         // Calculamos o novo custo
         int new_cost = neighbor_node->g + neighbor_node->h;
@@ -175,7 +171,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 
         // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
         neighbor_node->g = current_node->g + a_star->common->d_func(current_node->state, neighbor_node->state);
-        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->goal_state);
+        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->common->goal_state);
 
         // Calculamos o custo
         int cost = neighbor_node->g + neighbor_node->h;
@@ -206,10 +202,10 @@ void print_sequential_statistics(a_star_sequential_t* a_star, bool csv, print_so
 
   if(!csv)
   {
-    if(a_star->solution)
+    if(a_star->common->solution)
     {
-      printf("Resultado do algoritmo: Solução encontrada, custo: %d\n", a_star->solution->g);
-      print_solution(a_star->solution);
+      printf("Resultado do algoritmo: Solução encontrada, custo: %d\n", a_star->common->solution->g);
+      print_solution(a_star->common->solution);
     }
     else
     {
@@ -225,8 +221,8 @@ void print_sequential_statistics(a_star_sequential_t* a_star, bool csv, print_so
   {
     printf("\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
     printf("\"%s\";%d;%d;%d;%.6f\n",
-           a_star->solution ? "sim" : "não",
-           a_star->solution ? a_star->solution->g : 0,
+           a_star->common->solution ? "sim" : "não",
+           a_star->common->solution ? a_star->common->solution->g : 0,
            a_star->common->expanded,
            a_star->common->visited,
            a_star->common->execution_time);

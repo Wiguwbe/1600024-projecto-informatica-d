@@ -51,12 +51,12 @@ void* a_star_worker_function(void* arg)
       // Verificamos se já existe uma solução, caso já exista temos de verificar se
       // este trabalhador está a procurar por soluções que se encontram a uma distância maior
       // do que a solução já encontrada, será que vale a pena continuar? Consideramos que não e saímos.
-      if(a_star->solution != NULL)
+      if(a_star->common->solution != NULL)
       {
-        int f_solution = a_star->solution->g + a_star->solution->h;
+        int f_solution = a_star->common->solution->g + a_star->common->solution->h;
         int f_current = current_node->g + current_node->h;
 
-        if(f_current > f_solution || current_node->g > a_star->solution->g)
+        if(f_current > f_solution || current_node->g > a_star->common->solution->g)
         {
           worker->idle = true;
           break;
@@ -64,25 +64,25 @@ void* a_star_worker_function(void* arg)
       }
 
       // Se encontramos o objetivo saímos e retornamos o nó
-      if(a_star->common->goal_func(current_node->state, a_star->goal_state))
+      if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
       {
         // Temos de informar que encontramos o nosso objetivo
         pthread_mutex_lock(&(a_star->lock));
-        if(a_star->solution == NULL)
+        if(a_star->common->solution == NULL)
         {
           // Esta é a primeira solução encontrada nada de especial
           // a fazer
-          a_star->solution = current_node;
+          a_star->common->solution = current_node;
         }
         else
         {
           // Já existe uma solução, temos de verificar se esta nova
           // solução tem um custo menor
-          int existing_cost = a_star->solution->g + a_star->solution->h;
+          int existing_cost = a_star->common->solution->g + a_star->common->solution->h;
           int attempt_cost = current_node->g + current_node->h;
           if(existing_cost > attempt_cost)
           {
-            a_star->solution = current_node;
+            a_star->common->solution = current_node;
           }
         }
         pthread_mutex_unlock(&(a_star->lock));
@@ -138,7 +138,7 @@ void* a_star_worker_function(void* arg)
         a_star_node_t* initial_node = a_star_new_node(a_star->common, state);
         // Atribui ao nó inicial um custo total de 0
         initial_node->g = 0;
-        initial_node->h = a_star->common->h_func(initial_node->state, a_star->goal_state);
+        initial_node->h = a_star->common->h_func(initial_node->state, a_star->common->goal_state);
 
         // Inserimos o nó na nossa fila e saímos já que não existem mais mensagens
         min_heap_insert(worker->open_set, initial_node->h, initial_node);
@@ -169,7 +169,7 @@ void* a_star_worker_function(void* arg)
 
         // Atualizamos os parâmetros do nó
         child_node->g = g_attempt;
-        child_node->h = a_star->common->h_func(child_node->state, a_star->goal_state);
+        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
 
         // Calculamos o novo custo
         int new_cost = child_node->g + child_node->h;
@@ -185,7 +185,7 @@ void* a_star_worker_function(void* arg)
 
         // Encontra o custo de chegar do estado pai a este estado e calculamos a heurística (distância para chegar ao objetivo)
         child_node->g = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
-        child_node->h = a_star->common->h_func(child_node->state, a_star->goal_state);
+        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
 
         // Calculamos o custo
         int cost = child_node->g + child_node->h;
@@ -219,6 +219,8 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
   a_star->scheduler.workers = NULL;
   a_star->channel = NULL;
   a_star->common = NULL;
+
+  pthread_mutex_init(&a_star->lock,NULL);
 
   // Inicializamos a parte comum do nosso algoritmo
   a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func);
@@ -264,14 +266,13 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
 
   // Reiniciamos a variável utilizada para round-robin
   a_star->scheduler.next_worker = 0;
-
-  // Limpa solução e estado a atingir
-  a_star->solution = NULL;
-  a_star->goal_state = NULL;
+  pthread_mutex_init(&a_star->scheduler.lock,NULL);
 
   // Inicializa as funções necessárias para o algoritmo funcionar
   a_star->stop_on_first_solution = stop_on_first_solution;
   a_star->running = false;
+
+
 
   return a_star;
 }
@@ -327,9 +328,9 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
   if(goal)
   {
     // Temos de "containerizar" o objetivo num estado
-    a_star->goal_state = state_allocator_new(a_star->common->state_allocator, goal);
+    a_star->common->goal_state = state_allocator_new(a_star->common->state_allocator, goal);
 
-    if(a_star->goal_state == NULL)
+    if(a_star->common->goal_state == NULL)
     {
       return;
     }
@@ -345,8 +346,10 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
   message->parent = NULL;
   message->state = initial_state;
 
+  int worker_id = round_robin_worker(a_star);
+
   // Enviamos o estado inicial para o respetivo trabalhador
-  channel_send(a_star->channel, 0, message);
+  channel_send(a_star->channel, worker_id, message);
 
   // Com recurso a esta variável podemos enviar uma mensagem para os nossos trabalhadores
   // pararem
@@ -379,7 +382,7 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
     // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos, caso
     // tenhamos ativado a saída imediatamente após obtermos uma solução
     a_star->running =
-        idle_workers < a_star->scheduler.num_workers && (a_star->solution == NULL || !a_star->stop_on_first_solution);
+        idle_workers < a_star->scheduler.num_workers && (a_star->common->solution == NULL || !a_star->stop_on_first_solution);
   }
 
   // Esperamos que todas os trabalhadores terminem
@@ -406,12 +409,12 @@ void print_parallel_statistics(a_star_parallel_t* a_star, bool csv, print_soluti
 
   if(!csv)
   {
-    if(a_star->solution)
+    if(a_star->common->solution)
     {
       printf("Resultado do algoritmo: Solução encontrada, custo: %d, primeira solução %s\n",
-             a_star->solution->g,
+             a_star->common->solution->g,
              a_star->stop_on_first_solution ? "sim" : "não");
-      print_solution(a_star->solution);
+      print_solution(a_star->common->solution);
     }
     else
     {
@@ -437,8 +440,8 @@ void print_parallel_statistics(a_star_parallel_t* a_star, bool csv, print_soluti
     printf("\"Método:\";\"%s\";\n", a_star->stop_on_first_solution ? "Primeira Solução" : "Melhor Solução");
     printf("\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
     printf("\"%s\";%d;%d;%d;%.6f\n",
-            a_star->solution ? "sim" : "não" ,
-            a_star->solution ? a_star->solution->g : 0 ,
+            a_star->common->solution ? "sim" : "não" ,
+            a_star->common->solution ? a_star->common->solution->g : 0 ,
             a_star->common->expanded,
             a_star->common->visited,
             a_star->common->execution_time);

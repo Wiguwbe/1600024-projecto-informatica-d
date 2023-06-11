@@ -48,6 +48,10 @@ struct a_star_t
   heuristic_function h_func;
   distance_function d_func;
 
+  // Solução e estado a atingir
+  a_star_node_t* solution;
+  state_t* goal_state;
+
   // Informação estatística
   int expanded;
   int visited;

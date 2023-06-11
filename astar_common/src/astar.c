@@ -73,6 +73,10 @@ a_star_t* a_star_create(
   a_star->h_func = h_func;
   a_star->d_func = d_func;
 
+  // Limpa solução e estado a atingir
+  a_star->solution = NULL;
+  a_star->goal_state = NULL;
+
   // Reinicia as estatísticas
   a_star->expanded = 0;
   a_star->visited = 0;

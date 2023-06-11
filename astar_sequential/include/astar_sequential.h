@@ -17,10 +17,6 @@ struct a_star_sequential_t
   // Informação comum do nosso algoritmo
   a_star_t* common;
 
-  // Solução e estado a atingir
-  a_star_node_t* solution;
-  state_t* goal_state;
-
   // Especifico para o algoritmo sequencial
   min_heap_t* open_set;
 };

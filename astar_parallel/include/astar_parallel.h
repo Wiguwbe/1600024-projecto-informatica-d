@@ -34,10 +34,6 @@ struct a_star_parallel_t
   channel_t* channel;
   pthread_mutex_t lock;
 
-  // Solução e estado a atingir
-  a_star_node_t* solution;
-  state_t* goal_state;
-
   // Variáveis necessárias para controlar a execução do algoritmo em paralelo
   bool stop_on_first_solution;
   bool running;
