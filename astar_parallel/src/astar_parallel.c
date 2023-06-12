@@ -26,11 +26,28 @@ static size_t round_robin_worker(a_star_parallel_t* a_star)
   return next_worker;
 }
 
+// Função para encontrar o next worker baseada na posição de memória do estado
+// Isto garante uma distribuição balanceada entre os trabalhadores e ao mesmo
+// tempo garante que os nós processam sempre os mesmos estados
+static size_t assign_to_worker(a_star_parallel_t* a_star, const state_t* state)
+{
+  if(state == NULL)
+  {
+    return round_robin_worker(a_star);
+  }
+
+  return ((size_t)state->data / state->struct_size) % a_star->scheduler.num_workers;
+}
+
 // Função que implementa a lógica de um trabalhador, aqui se processa o algoritmo A*
 void* a_star_worker_function(void* arg)
 {
   a_star_worker_t* worker = (a_star_worker_t*)arg;
   a_star_parallel_t* a_star = worker->a_star;
+
+  // Reinicia as estatísticas para este trabalhador
+  worker->expanded = 0;
+  worker->visited = 0;
 
   while(a_star->running)
   {
@@ -110,7 +127,7 @@ void* a_star_worker_function(void* arg)
           // o trabalhador que vai tratar deste estado
           message->parent = current_node;
           message->state = (state_t*)linked_list_get(neighbors, i);
-          size_t worker_id = round_robin_worker(a_star);
+          size_t worker_id = assign_to_worker(a_star, message->state);
 
           // Enviamos a mensagem para o respetivo trabalhador
           channel_send(a_star->channel, worker_id, message);
@@ -127,7 +144,7 @@ void* a_star_worker_function(void* arg)
     {
       a_star_message_t* message = channel_receive(a_star->channel, worker->thread_id);
 
-      // Retiramos os dados da mensagem e libertamos a memória;
+      // Retiramos os dados da mensagem e libertamos a memória
       a_star_node_t* parent_node = message->parent;
       state_t* state = message->state;
       free(message);
@@ -182,6 +199,7 @@ void* a_star_worker_function(void* arg)
         // Este nó ainda não existe, criamos um novo nó para este estado
         child_node = a_star_new_node(a_star->common, state);
         child_node->parent = parent_node;
+        worker->expanded++;
 
         // Encontra o custo de chegar do estado pai a este estado e calculamos a heurística (distância para chegar ao objetivo)
         child_node->g = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
@@ -192,7 +210,6 @@ void* a_star_worker_function(void* arg)
 
         // Inserimos o nó na nossa fila
         min_heap_insert(worker->open_set, cost, child_node);
-        worker->expanded++;
       }
     }
   }
@@ -220,7 +237,7 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
   a_star->channel = NULL;
   a_star->common = NULL;
 
-  pthread_mutex_init(&a_star->lock,NULL);
+  pthread_mutex_init(&a_star->lock, NULL);
 
   // Inicializamos a parte comum do nosso algoritmo
   a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func);
@@ -266,13 +283,11 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
 
   // Reiniciamos a variável utilizada para round-robin
   a_star->scheduler.next_worker = 0;
-  pthread_mutex_init(&a_star->scheduler.lock,NULL);
+  pthread_mutex_init(&a_star->scheduler.lock, NULL);
 
   // Inicializa as funções necessárias para o algoritmo funcionar
   a_star->stop_on_first_solution = stop_on_first_solution;
   a_star->running = false;
-
-
 
   return a_star;
 }
@@ -346,7 +361,7 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
   message->parent = NULL;
   message->state = initial_state;
 
-  int worker_id = round_robin_worker(a_star);
+  int worker_id = assign_to_worker(a_star, message->state);
 
   // Enviamos o estado inicial para o respetivo trabalhador
   channel_send(a_star->channel, worker_id, message);
@@ -381,20 +396,25 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
 
     // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos, caso
     // tenhamos ativado a saída imediatamente após obtermos uma solução
+    pthread_mutex_lock(&(a_star->lock));
     a_star->running =
         idle_workers < a_star->scheduler.num_workers && (a_star->common->solution == NULL || !a_star->stop_on_first_solution);
+    pthread_mutex_unlock(&(a_star->lock));
   }
 
   // Esperamos que todas os trabalhadores terminem
   for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
   {
     pthread_join(a_star->scheduler.workers[i].thread, NULL);
-    a_star->common->visited += a_star->scheduler.workers[i].visited;
-    a_star->common->expanded += a_star->scheduler.workers[i].expanded;
   }
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
 
-  // Calculamos o tempo de execução
+  // Calculamos o tempo de execução e outras estatísticas
+  for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
+  {
+    a_star->common->visited += a_star->scheduler.workers[i].visited;
+    a_star->common->expanded += a_star->scheduler.workers[i].expanded;
+  }
   a_star->common->execution_time = (a_star->common->end_time.tv_sec - a_star->common->start_time.tv_sec);
   a_star->common->execution_time += (a_star->common->end_time.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
 }
@@ -440,11 +460,11 @@ void print_parallel_statistics(a_star_parallel_t* a_star, bool csv, print_soluti
     printf("\"Método:\";\"%s\";\n", a_star->stop_on_first_solution ? "Primeira Solução" : "Melhor Solução");
     printf("\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
     printf("\"%s\";%d;%d;%d;%.6f\n",
-            a_star->common->solution ? "sim" : "não" ,
-            a_star->common->solution ? a_star->common->solution->g : 0 ,
-            a_star->common->expanded,
-            a_star->common->visited,
-            a_star->common->execution_time);
+           a_star->common->solution ? "sim" : "não",
+           a_star->common->solution ? a_star->common->solution->g : 0,
+           a_star->common->expanded,
+           a_star->common->visited,
+           a_star->common->execution_time);
 
     printf("\"Trabalhador\";\"Estados Expandidos\";\"Estados Visitados\"\n");
     for(size_t i = 0; i < a_star->scheduler.num_workers; i++)

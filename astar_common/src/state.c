@@ -58,7 +58,7 @@ void state_allocator_destroy(state_allocator_t* allocator)
   allocator_destroy(allocator->state_data_allocator);
   allocator_destroy(allocator->state_allocator);
 
-  // Libertamos o allocador
+  // Libertamos o alocador
   free(allocator);
 }
 

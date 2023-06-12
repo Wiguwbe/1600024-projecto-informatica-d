@@ -7,7 +7,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/8puzzle/bin/8puzzle",
       "args": [
-        "${workspaceFolder}/data/8puzzle.txt"
+        "${workspaceFolder}/instances/8puzzle_hard_1"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -23,27 +23,9 @@
       "request": "launch",
       "program": "${workspaceFolder}/8puzzle/bin/8puzzle",
       "args": [
-        "${workspaceFolder}/data/8puzzle_hard_2.txt",
         "-n",
         "12",
-        "-p"
-      ],
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "gdb",
-      "preLaunchTask": "build makefile",
-      "miDebuggerPath": "gdb"
-    },
-    {
-      "name": "8puzzle_gen",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/8puzzle_gen/bin/8puzzle_gen",
-      "args": [
-        "${workspaceFolder}/data/8puzzle.txt",
-        "10"
+        "${workspaceFolder}/instances/8puzzle_easy_1",
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -59,7 +41,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/numberlink/bin/numberlink",
       "args": [
-        "${workspaceFolder}/data/numberlink_4.txt"
+        "${workspaceFolder}/instances/numberlink_4"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -75,10 +57,9 @@
       "request": "launch",
       "program": "${workspaceFolder}/numberlink/bin/numberlink",
       "args": [
-        "${workspaceFolder}/data/numberlink_4.txt",
         "-n",
         "6",
-        "-p"
+        "${workspaceFolder}/instances/numberlink_4"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

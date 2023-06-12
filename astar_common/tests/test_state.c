@@ -17,15 +17,15 @@ START_TEST(test_state_allocator)
   my_struct_t state_data_3 = {4,4};
   my_struct_t state_data_4 = {5,5};
 
-  my_struct_t state_data_5 = {2,2};
-  my_struct_t state_data_6 = {3,3};
-  my_struct_t state_data_7 = {4,4};
-  my_struct_t state_data_8 = {5,5};
-
   state_t* state_1 = state_allocator_new(allocator, &state_data_1);
   state_t* state_2 = state_allocator_new(allocator, &state_data_2);
   state_t* state_3 = state_allocator_new(allocator, &state_data_3);
   state_t* state_4 = state_allocator_new(allocator, &state_data_4);
+
+  my_struct_t state_data_5 = {state_data_2.x-1, state_data_2.x-1};
+  my_struct_t state_data_6 = {state_data_1.x+1, state_data_1.x+1};
+  my_struct_t state_data_7 = {state_data_4.x-1, state_data_4.x-1};
+  my_struct_t state_data_8 = {state_data_3.x+1, state_data_3.x+1};
 
   state_t* state_5 = state_allocator_new(allocator, &state_data_5);
   state_t* state_6 = state_allocator_new(allocator, &state_data_6);

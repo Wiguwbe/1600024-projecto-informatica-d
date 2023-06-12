@@ -103,3 +103,8 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Pequenas correções e otimizações de código
 * Melhorias nas estatísticas coletadas
 * Criação de regras de make para gerar relatórios e medições
+
+### 11 e 12 de junho de 2023
+
+* Pequenas correções/otimizações do código
+* Re-implementação da função assign_to_worker, desta vez com recurso à posição de memória % numero de trabalhadores
