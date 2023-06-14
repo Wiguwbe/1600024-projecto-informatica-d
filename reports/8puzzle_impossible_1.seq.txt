@@ -1,6 +1,0 @@
-Resultado do algoritmo: Solução não encontrada.
-Estatísticas Globais:
-- Estados expandidos: 181439
-- Estados visitados: 181440
-- Tempo de execução: 17.474015 segundos.
-Tempo total de execução: 17.474015 segundos.

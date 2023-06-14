@@ -58,7 +58,7 @@ void print_solution(a_star_node_t* solution)
 }
 
 // Resolve a instância utilizando a versão paralela do algoritmo A*
-double solve_parallel(puzzle_state instance, int num_threads, bool first, bool csv)
+void solve_parallel(puzzle_state instance, int num_threads, bool first, bool csv)
 {
   // Criamos a instância do algoritmo A*
   a_star_parallel_t* a_star = a_star_parallel_create(sizeof(puzzle_state), goal, visit, heuristic, distance, num_threads, first);
@@ -67,18 +67,14 @@ double solve_parallel(puzzle_state instance, int num_threads, bool first, bool c
   a_star_parallel_solve(a_star, &instance, NULL);
 
   // Imprime as estatísticas da execução
-  print_parallel_statistics(a_star, csv, print_solution);
-
-  double execution_time = a_star->common->execution_time;
+  a_star_parallel_print_statistics(a_star, csv, print_solution);
 
   // Limpamos a memória
   a_star_parallel_destroy(a_star);
-
-  return execution_time;
 }
 
 // Resolve a instância utilizando a versão sequencial do algoritmo A*
-double solve_sequential(puzzle_state instance, bool csv)
+void solve_sequential(puzzle_state instance, bool csv)
 {
   // Criamos a instância do algoritmo A*
   a_star_sequential_t* a_star = a_star_sequential_create(sizeof(puzzle_state), goal, visit, heuristic, distance);
@@ -87,14 +83,10 @@ double solve_sequential(puzzle_state instance, bool csv)
   a_star_sequential_solve(a_star, &instance, NULL);
 
   // Imprime as estatísticas da execução
-  print_sequential_statistics(a_star, csv, print_solution);
-
-  double execution_time = a_star->common->execution_time;
+  a_star_sequential_print_statistics(a_star, csv, print_solution);
 
   // Limpamos a memória
   a_star_sequential_destroy(a_star);
-
-  return execution_time;
 }
 
 int main(int argc, char* argv[])
@@ -165,20 +157,13 @@ int main(int argc, char* argv[])
     printf("Erro ao ler o puzzle do arquivo.\n");
     return 0;
   }
-  // Medir o tempo total de execução de todas as instância
-  double total_time = 0.0;
 
   if(num_threads > 0)
   {
-    total_time = solve_parallel(puzzle, num_threads, first, csv);
+    solve_parallel(puzzle, num_threads, first, csv);
   }
   else
   {
-    total_time = solve_sequential(puzzle, csv);
-  }
-
-  if(!csv)
-  {
-    printf("Tempo total de execução: %.6f segundos.\n", total_time);
+    solve_sequential(puzzle, csv);
   }
 }

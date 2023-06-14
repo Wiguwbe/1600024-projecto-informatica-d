@@ -75,7 +75,7 @@ void print_solution(a_star_node_t* solution)
 }
 
 // Resolve o problema utilizando a versão paralela do algoritmo
-double solve_parallel(number_link_t* number_link, int num_threads, bool first, bool csv)
+void solve_parallel(number_link_t* number_link, int num_threads, bool first, bool csv)
 {
   // Criamos a instância do algoritmo A*
   a_star_parallel_t* a_star =
@@ -90,18 +90,14 @@ double solve_parallel(number_link_t* number_link, int num_threads, bool first, b
   a_star_parallel_solve(a_star, &initial, NULL);
 
   // Imprime as estatísticas da execução
-  print_parallel_statistics(a_star, csv, print_solution);
-
-  double execution_time = a_star->common->execution_time;
+  a_star_parallel_print_statistics(a_star, csv, print_solution);
 
   // Limpamos a memória
   a_star_parallel_destroy(a_star);
-
-  return execution_time;
 }
 
 // Resolve o problema utilizando a versão sequencial do algoritmo
-double solve_sequential(number_link_t* number_link, bool csv)
+void solve_sequential(number_link_t* number_link, bool csv)
 {
   // Criamos a instância do algoritmo A*
   a_star_sequential_t* a_star = a_star_sequential_create(sizeof(number_link_state_t), goal, visit, heuristic, distance);
@@ -115,14 +111,10 @@ double solve_sequential(number_link_t* number_link, bool csv)
   a_star_sequential_solve(a_star, &initial, NULL);
 
   // Imprime as estatísticas da execução
-  print_sequential_statistics(a_star, csv, print_solution);
-
-  double execution_time = a_star->common->execution_time;
+  a_star_sequential_print_statistics(a_star, csv, print_solution);
 
   // Limpamos a memória
   a_star_sequential_destroy(a_star);
-
-  return execution_time;
 }
 
 int main(int argc, char* argv[])
@@ -194,21 +186,15 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  double total_time = 0.0f;
-
   if(num_threads > 0)
   {
-    total_time = solve_parallel(number_link, num_threads, first, csv);
+    solve_parallel(number_link, num_threads, first, csv);
   }
   else
   {
-    total_time = solve_sequential(number_link, csv);
+    solve_sequential(number_link, csv);
   }
 
-  if(!csv)
-  {
-    printf("Tempo total de execução: %.6f segundos.\n", total_time);
-  }
   number_link_destroy(number_link);
   return 0;
 }

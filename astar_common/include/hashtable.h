@@ -60,6 +60,8 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <stddef.h>
+#define HASH_MAX_MUTEXES 8192
+#define HASH_CAPACITY 32768
 
 typedef struct entry_t entry_t;
 typedef struct hashtable_t hashtable_t;
@@ -81,6 +83,13 @@ struct hashtable_t
   pthread_mutex_t* mutexes;
 };
 
+// Definição de uma entrada na hashtable
+struct entry_t
+{
+  void* data;
+  struct entry_t* next;
+};
+
 // Inicializa uma nova hashtable
 hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_func, hashtable_hash_func hash_func);
 
@@ -96,5 +105,8 @@ void hashtable_destroy(hashtable_t* hashtable, bool free_data);
 
 // Função de hashing utilizada
 size_t hash_function(const void* data, size_t size, size_t mod);
+
+// Insere uma struct na hashtable
+entry_t* hashtable_reserve(hashtable_t* hashtable, void* data);
 
 #endif // HASHTABLE_H

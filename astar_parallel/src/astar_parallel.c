@@ -36,7 +36,10 @@ static size_t assign_to_worker(a_star_parallel_t* a_star, const state_t* state)
     return round_robin_worker(a_star);
   }
 
-  return ((size_t)state->data / state->struct_size) % a_star->scheduler.num_workers;
+  size_t hash = hash_function(state->data, state->struct_size, HASH_CAPACITY);
+
+  return hash % a_star->scheduler.num_workers;
+  // return ((size_t)state->data / state->struct_size) % a_star->scheduler.num_workers;
 }
 
 // Função que implementa a lógica de um trabalhador, aqui se processa o algoritmo A*
@@ -48,11 +51,85 @@ void* a_star_worker_function(void* arg)
   // Reinicia as estatísticas para este trabalhador
   worker->expanded = 0;
   worker->visited = 0;
+  worker->idle = false;
 
   while(a_star->running)
   {
-    // Este trabalhador considera-se ocioso caso não existam nós a explorar ou mensagens destinadas a si
-    worker->idle = worker->open_set->size == 0 && !channel_has_messages(a_star->channel, worker->thread_id);
+    // Processamos todos os estados que estão no canal para esta tarefa
+    // Aqui que ocorre a atualização do custo do estado
+    while(channel_has_messages(a_star->channel, worker->thread_id))
+    {
+      a_star_message_t* message = channel_receive(a_star->channel, worker->thread_id);
+
+      // Retiramos os dados da mensagem e libertamos a memória
+      a_star_node_t* parent_node = message->parent;
+      state_t* state = message->state;
+      free(message);
+
+      // Se o nó pai não foi enviado é porque estamos a lidar com o estado inicial
+      if(parent_node == NULL)
+      {
+        a_star_node_t* initial_node = a_star_new_node(a_star->common, state);
+        // Atribui ao nó inicial um custo total de 0
+        initial_node->g = 0;
+        initial_node->h = a_star->common->h_func(initial_node->state, a_star->common->goal_state);
+
+        // Inserimos o nó na nossa fila e saímos já que não existem mais mensagens
+        min_heap_insert(worker->open_set, initial_node->h, initial_node);
+        break;
+      }
+
+      // Recebemos um estado para ser processado, verificamos se já existe um nó para este estado
+      a_star_node_t temp_node = { 0, 0, NULL, state };
+      a_star_node_t* child_node = hashtable_contains(a_star->common->nodes, &temp_node);
+
+      // Este é um novo no
+      if(!child_node)
+      {
+        // Este nó ainda não existe, criamos um novo nó para este estado
+        child_node = a_star_new_node(a_star->common, state);
+        child_node->parent = parent_node;
+        worker->expanded++;
+
+        // Encontra o custo de chegar do estado pai a este estado e calculamos a heurística (distância para chegar ao objetivo)
+        child_node->g = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
+        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
+
+        // Calculamos o custo
+        int cost = child_node->g + child_node->h;
+
+        // Inserimos o nó na nossa fila
+        min_heap_insert(worker->open_set, cost, child_node);
+      }
+      else
+      {
+        // Encontra o custo de chegar do estado pai para este estado
+        int g_attempt = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
+
+        // Se o custo for maior do que o nó já tem, não faz sentido atualizar
+        // existe outro caminho mais curto para este estado
+        if(g_attempt >= child_node->g)
+        {
+          continue;
+        }
+
+        // O estado pai é o caminho mais curto para este estado, atualizamos o pai deste estado
+        child_node->parent = parent_node;
+
+        // Guardamos o custo atual
+        int old_cost = child_node->g + child_node->h;
+
+        // Atualizamos os parâmetros do nó
+        child_node->g = g_attempt;
+        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
+
+        // Calculamos o novo custo
+        int new_cost = child_node->g + child_node->h;
+
+        // Atualizamos a nossa fila prioritária
+        min_heap_update(worker->open_set, old_cost, new_cost, child_node);
+      }
+    }
 
     // Temos pelo menos um nó na nossa lista aberta que podemos processar
     if(worker->open_set->size)
@@ -138,80 +215,8 @@ void* a_star_worker_function(void* arg)
       }
     }
 
-    // Processamos todos os estados que estão no canal para esta tarefa
-    // Aqui que ocorre a atualização do custo do estado
-    while(channel_has_messages(a_star->channel, worker->thread_id))
-    {
-      a_star_message_t* message = channel_receive(a_star->channel, worker->thread_id);
-
-      // Retiramos os dados da mensagem e libertamos a memória
-      a_star_node_t* parent_node = message->parent;
-      state_t* state = message->state;
-      free(message);
-
-      // Se o nó pai não foi enviado é porque estamos a lidar com o estado inicial
-      if(parent_node == NULL)
-      {
-        a_star_node_t* initial_node = a_star_new_node(a_star->common, state);
-        // Atribui ao nó inicial um custo total de 0
-        initial_node->g = 0;
-        initial_node->h = a_star->common->h_func(initial_node->state, a_star->common->goal_state);
-
-        // Inserimos o nó na nossa fila e saímos já que não existem mais mensagens
-        min_heap_insert(worker->open_set, initial_node->h, initial_node);
-        break;
-      }
-
-      // Recebemos um estado para ser processado, verificamos se já existe um nó para este estado
-      a_star_node_t temp_node = { 0, 0, NULL, state };
-      a_star_node_t* child_node = hashtable_contains(a_star->common->nodes, &temp_node);
-
-      if(child_node != NULL)
-      {
-        // Encontra o custo de chegar do estado pai para este estado
-        int g_attempt = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
-
-        // Se o custo for maior do que o nó já tem, não faz sentido atualizar
-        // existe outro caminho mais curto para este estado
-        if(g_attempt >= child_node->g)
-        {
-          continue;
-        }
-
-        // O estado pai é o caminho mais curto para este estado, atualizamos o pai deste estado
-        child_node->parent = parent_node;
-
-        // Guardamos o custo atual
-        int old_cost = child_node->g + child_node->h;
-
-        // Atualizamos os parâmetros do nó
-        child_node->g = g_attempt;
-        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
-
-        // Calculamos o novo custo
-        int new_cost = child_node->g + child_node->h;
-
-        // Atualizamos a nossa fila prioritária
-        min_heap_update(worker->open_set, old_cost, new_cost, child_node);
-      }
-      else
-      {
-        // Este nó ainda não existe, criamos um novo nó para este estado
-        child_node = a_star_new_node(a_star->common, state);
-        child_node->parent = parent_node;
-        worker->expanded++;
-
-        // Encontra o custo de chegar do estado pai a este estado e calculamos a heurística (distância para chegar ao objetivo)
-        child_node->g = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
-        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
-
-        // Calculamos o custo
-        int cost = child_node->g + child_node->h;
-
-        // Inserimos o nó na nossa fila
-        min_heap_insert(worker->open_set, cost, child_node);
-      }
-    }
+    // Este trabalhador considera-se ocioso caso não existam nós a explorar ou mensagens destinadas a si
+    worker->idle = worker->open_set->size == 0 && !channel_has_messages(a_star->channel, worker->thread_id);
   }
 
   pthread_exit(NULL);
@@ -420,7 +425,7 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
 }
 
 // Imprime estatísticas do algoritmo sequencial no formato desejado
-void print_parallel_statistics(a_star_parallel_t* a_star, bool csv, print_solution_function print_solution)
+void a_star_parallel_print_statistics(a_star_parallel_t* a_star, bool csv, print_function print_fn)
 {
   if(a_star == NULL)
   {
@@ -429,23 +434,20 @@ void print_parallel_statistics(a_star_parallel_t* a_star, bool csv, print_soluti
 
   if(!csv)
   {
-    if(a_star->common->solution)
+    if(a_star->stop_on_first_solution)
     {
-      printf("Resultado do algoritmo: Solução encontrada, custo: %d, primeira solução %s\n",
-             a_star->common->solution->g,
-             a_star->stop_on_first_solution ? "sim" : "não");
-      print_solution(a_star->common->solution);
+      printf("Método: Primeira solução\n");
     }
     else
     {
-      printf("Resultado do algoritmo: Solução não encontrada.\n");
+      printf("Método: Melhor solução\n");
     }
+  }
 
-    printf("Estatísticas Globais:\n");
-    printf("- Estados expandidos: %d\n", a_star->common->expanded);
-    printf("- Estados visitados: %d\n", a_star->common->visited);
-    printf("- Tempo de execução: %.6f segundos.\n", a_star->common->execution_time);
+  a_star_print_statistics(a_star->common, csv, print_fn);
 
+  if(!csv)
+  {
     printf("Estatísticas Trabalhadores:\n");
     for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
     {
@@ -453,23 +455,6 @@ void print_parallel_statistics(a_star_parallel_t* a_star, bool csv, print_soluti
              i + 1,
              a_star->scheduler.workers[i].expanded,
              a_star->scheduler.workers[i].visited);
-    }
-  }
-  else
-  {
-    printf("\"Método:\";\"%s\";\n", a_star->stop_on_first_solution ? "Primeira Solução" : "Melhor Solução");
-    printf("\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
-    printf("\"%s\";%d;%d;%d;%.6f\n",
-           a_star->common->solution ? "sim" : "não",
-           a_star->common->solution ? a_star->common->solution->g : 0,
-           a_star->common->expanded,
-           a_star->common->visited,
-           a_star->common->execution_time);
-
-    printf("\"Trabalhador\";\"Estados Expandidos\";\"Estados Visitados\"\n");
-    for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
-    {
-      printf("\"#%ld\";%d;%d\n", i + 1, a_star->scheduler.workers[i].expanded, a_star->scheduler.workers[i].visited);
     }
   }
 }

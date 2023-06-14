@@ -1,0 +1,112 @@
+
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 18
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 399
+- Estados visitados: 257
+- Tempo de execução: 0.000506 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 73, Estados visitados = 48
+- Trabalhador #2: Estados expandidos = 70, Estados visitados = 47
+- Trabalhador #3: Estados expandidos = 88, Estados visitados = 52
+- Trabalhador #4: Estados expandidos = 48, Estados visitados = 31
+- Trabalhador #5: Estados expandidos = 63, Estados visitados = 35
+- Trabalhador #6: Estados expandidos = 57, Estados visitados = 44
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 20
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 759
+- Estados visitados: 489
+- Tempo de execução: 0.000601 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 172, Estados visitados = 90
+- Trabalhador #2: Estados expandidos = 122, Estados visitados = 84
+- Trabalhador #3: Estados expandidos = 129, Estados visitados = 82
+- Trabalhador #4: Estados expandidos = 120, Estados visitados = 89
+- Trabalhador #5: Estados expandidos = 110, Estados visitados = 70
+- Trabalhador #6: Estados expandidos = 106, Estados visitados = 74
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 20
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 1383
+- Estados visitados: 876
+- Tempo de execução: 0.000967 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 218, Estados visitados = 138
+- Trabalhador #2: Estados expandidos = 239, Estados visitados = 155
+- Trabalhador #3: Estados expandidos = 245, Estados visitados = 176
+- Trabalhador #4: Estados expandidos = 239, Estados visitados = 155
+- Trabalhador #5: Estados expandidos = 233, Estados visitados = 139
+- Trabalhador #6: Estados expandidos = 209, Estados visitados = 113
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 31
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 25609
+- Estados visitados: 18737
+- Tempo de execução: 0.051049 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 4490, Estados visitados = 3293
+- Trabalhador #2: Estados expandidos = 3718, Estados visitados = 2728
+- Trabalhador #3: Estados expandidos = 4876, Estados visitados = 3566
+- Trabalhador #4: Estados expandidos = 3803, Estados visitados = 2794
+- Trabalhador #5: Estados expandidos = 4752, Estados visitados = 3464
+- Trabalhador #6: Estados expandidos = 3970, Estados visitados = 2892
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 31
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 24502
+- Estados visitados: 18038
+- Tempo de execução: 0.040650 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 4627, Estados visitados = 3378
+- Trabalhador #2: Estados expandidos = 3912, Estados visitados = 2872
+- Trabalhador #3: Estados expandidos = 4710, Estados visitados = 3436
+- Trabalhador #4: Estados expandidos = 3354, Estados visitados = 2505
+- Trabalhador #5: Estados expandidos = 4475, Estados visitados = 3281
+- Trabalhador #6: Estados expandidos = 3424, Estados visitados = 2566
+Método: Melhor solução
+Resultado do algoritmo: Solução não encontrada.
+Estatísticas Globais:
+- Estados expandidos: 181439
+- Estados visitados: 187728
+- Tempo de execução: 4.001521 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 31968, Estados visitados = 31977
+- Trabalhador #2: Estados expandidos = 29376, Estados visitados = 31090
+- Trabalhador #3: Estados expandidos = 31967, Estados visitados = 32003
+- Trabalhador #4: Estados expandidos = 28512, Estados visitados = 30933
+- Trabalhador #5: Estados expandidos = 31104, Estados visitados = 31315
+- Trabalhador #6: Estados expandidos = 28512, Estados visitados = 30410
+Método: Melhor solução
+Resultado do algoritmo: Solução não encontrada.
+Estatísticas Globais:
+- Estados expandidos: 181439
+- Estados visitados: 184898
+- Tempo de execução: 3.882562 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1: Estados expandidos = 31968, Estados visitados = 31982
+- Trabalhador #2: Estados expandidos = 29376, Estados visitados = 30085
+- Trabalhador #3: Estados expandidos = 31967, Estados visitados = 32023
+- Trabalhador #4: Estados expandidos = 28512, Estados visitados = 29745
+- Trabalhador #5: Estados expandidos = 31104, Estados visitados = 31220
+- Trabalhador #6: Estados expandidos = 28512, Estados visitados = 29843

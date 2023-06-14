@@ -1,6 +1,7 @@
 #include "astar.h"
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Função utilizada na hashtable nodes para comparar se 2 nós são iguais
 // è necessário comparar apenas os state_t
@@ -129,4 +130,40 @@ a_star_node_t* a_star_new_node(a_star_t* a_star, state_t* state)
   hashtable_insert(a_star->nodes, node);
 
   return node;
+}
+
+// Imprime estatísticas do algoritmo sequencial no formato desejado
+void a_star_print_statistics(a_star_t* a_star, bool csv, print_function print_fn)
+{
+  if(a_star == NULL)
+  {
+    return;
+  }
+
+  if(!csv)
+  {
+    if(a_star->solution)
+    {
+      printf("Resultado do algoritmo: Solução encontrada, custo: %d\n", a_star->solution->g);
+      print_fn(a_star->solution);
+    }
+    else
+    {
+      printf("Resultado do algoritmo: Solução não encontrada.\n");
+    }
+
+    printf("Estatísticas Globais:\n");
+    printf("- Estados expandidos: %d\n", a_star->expanded);
+    printf("- Estados visitados: %d\n", a_star->visited);
+    printf("- Tempo de execução: %.6f segundos.\n", a_star->execution_time);
+  }
+  else
+  {
+    printf("\"%s\";%d;%d;%d;%.6f\n",
+           a_star->solution ? "sim" : "não",
+           a_star->solution ? a_star->solution->g : 0,
+           a_star->expanded,
+           a_star->visited,
+           a_star->execution_time);
+  }
 }

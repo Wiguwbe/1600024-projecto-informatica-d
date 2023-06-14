@@ -2,13 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Definição de uma entrada na hashtable
-struct entry_t
-{
-  void* data;
-  struct entry_t* next;
-};
-
 // Função de hashing utilizada
 size_t hash_function(const void* data, size_t size, size_t mod)
 {
@@ -46,7 +39,7 @@ hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_fun
   hashtable->struct_size = struct_size;
 
   // Define a capacidade inicial da hashtable
-  hashtable->capacity = 2048;
+  hashtable->capacity = HASH_CAPACITY;
 
   // Aloca memória para os buckets da hashtable
   hashtable->buckets = (entry_t**)calloc(hashtable->capacity, sizeof(entry_t*));
@@ -64,14 +57,14 @@ hashtable_t* hashtable_create(size_t struct_size, hashtable_compare_func cmp_fun
   }
 
   // Inicializa os mutexes para cada bucket
-  hashtable->mutexes = (pthread_mutex_t*)malloc(hashtable->capacity * sizeof(pthread_mutex_t));
+  hashtable->mutexes = (pthread_mutex_t*)malloc(HASH_MAX_MUTEXES * sizeof(pthread_mutex_t));
   if(hashtable->mutexes == NULL)
   {
     free(hashtable->buckets);
     free(hashtable);
     return NULL;
   }
-  for(size_t i = 0; i < hashtable->capacity; ++i)
+  for(size_t i = 0; i < HASH_MAX_MUTEXES; ++i)
   {
     pthread_mutex_init(&hashtable->mutexes[i], NULL);
   }
@@ -95,15 +88,18 @@ void hashtable_insert(hashtable_t* hashtable, void* data)
   // Copia os dados da struct para a entrada
   entry->data = data;
 
+  // Calcula o mutex para este índice
+  int mutex_id = index % HASH_MAX_MUTEXES;
+
   // bloqueia o respetivo bucket
-  pthread_mutex_lock(&hashtable->mutexes[index]);
+  pthread_mutex_lock(&hashtable->mutexes[mutex_id]);
 
   // Insere a entrada no início do bucket
   entry->next = hashtable->buckets[index];
   hashtable->buckets[index] = entry;
 
   // Desbloqueia o bucket
-  pthread_mutex_unlock(&hashtable->mutexes[index]);
+  pthread_mutex_unlock(&hashtable->mutexes[mutex_id]);
 }
 
 // Verifica se uma struct já está na hashtable, retorna o ponteira para os
@@ -113,8 +109,11 @@ void* hashtable_contains(hashtable_t* hashtable, const void* data)
   // Calcula o índice do bucket
   size_t index = hashtable->hash_func(hashtable, data);
 
+  // Calcula o mutex para este índice
+  int mutex_id = index % HASH_MAX_MUTEXES;
+
   // bloqueia o respetivo bucket
-  pthread_mutex_lock(&hashtable->mutexes[index]);
+  pthread_mutex_lock(&hashtable->mutexes[mutex_id]);
 
   // Percorre as entradas no bucket
   entry_t* entry = hashtable->buckets[index];
@@ -128,7 +127,7 @@ void* hashtable_contains(hashtable_t* hashtable, const void* data)
       if(memcmp(entry->data, data, hashtable->struct_size) == 0)
       {
         // Desbloqueia o bucket
-        pthread_mutex_unlock(&hashtable->mutexes[index]);
+        pthread_mutex_unlock(&hashtable->mutexes[mutex_id]);
 
         return entry->data;
       }
@@ -143,7 +142,7 @@ void* hashtable_contains(hashtable_t* hashtable, const void* data)
       if(hashtable->cmp_func(entry->data, data))
       {
         // Desbloqueia o bucket
-        pthread_mutex_unlock(&hashtable->mutexes[index]);
+        pthread_mutex_unlock(&hashtable->mutexes[mutex_id]);
 
         return entry->data;
       }
@@ -152,7 +151,7 @@ void* hashtable_contains(hashtable_t* hashtable, const void* data)
   }
 
   // Desbloqueia o bucket
-  pthread_mutex_unlock(&hashtable->mutexes[index]);
+  pthread_mutex_unlock(&hashtable->mutexes[mutex_id]);
 
   return NULL;
 }
@@ -163,8 +162,11 @@ void hashtable_destroy(hashtable_t* hashtable, bool free_data)
   // Percorre todos os buckets e Liberta as entradas
   for(size_t i = 0; i < hashtable->capacity; ++i)
   {
+    // Calcula o mutex para este índice
+    int mutex_id = i % HASH_MAX_MUTEXES;
+
     // bloqueia o respetivo bucket
-    pthread_mutex_lock(&hashtable->mutexes[i]);
+    pthread_mutex_lock(&hashtable->mutexes[mutex_id]);
 
     entry_t* entry = hashtable->buckets[i];
     while(entry != NULL)
@@ -177,14 +179,81 @@ void hashtable_destroy(hashtable_t* hashtable, bool free_data)
     }
 
     // Desbloqueia o bucket
-    pthread_mutex_unlock(&hashtable->mutexes[i]);
+    pthread_mutex_unlock(&hashtable->mutexes[mutex_id]);
 
     // Destroy the mutex
-    pthread_mutex_destroy(&hashtable->mutexes[i]);
+    pthread_mutex_destroy(&hashtable->mutexes[mutex_id]);
   }
 
   // Liberta a memória dos mutexes, buckets e da hashtable
   free(hashtable->mutexes);
   free(hashtable->buckets);
   free(hashtable);
+}
+
+entry_t* hashtable_reserve(hashtable_t* hashtable, void* data)
+{
+  // Calcula o índice do bucket
+  size_t index = hashtable->hash_func(hashtable, data);
+
+  // Calcula o mutex para este índice
+  int mutex_id = index % HASH_MAX_MUTEXES;
+
+  // bloqueia o respetivo bucket
+  pthread_mutex_lock(&hashtable->mutexes[mutex_id]);
+
+  // Percorre as entradas no bucket
+  entry_t* entry = hashtable->buckets[index];
+
+  // Se não fornecemos um comparador utilizamos o comparador por defeito
+  if(hashtable->cmp_func == NULL)
+  {
+    while(entry != NULL)
+    {
+      // Compara os dados da struct
+      if(memcmp(entry->data, data, hashtable->struct_size) == 0)
+      {
+        // Desbloqueia o bucket
+        pthread_mutex_unlock(&hashtable->mutexes[mutex_id]);
+
+        return entry;
+      }
+      entry = entry->next;
+    }
+  }
+  else
+  {
+    while(entry != NULL)
+    {
+      // utiliza o comparador fornecido para verificar se os elementos são iguais
+      if(hashtable->cmp_func(entry->data, data))
+      {
+        // Desbloqueia o bucket
+        pthread_mutex_unlock(&hashtable->mutexes[mutex_id]);
+
+        return entry;
+      }
+      entry = entry->next;
+    }
+  }
+
+  // Cria uma nova entrada
+  entry = (entry_t*)malloc(sizeof(entry_t));
+  if(entry == NULL)
+  {
+    pthread_mutex_unlock(&hashtable->mutexes[mutex_id]);
+    return NULL;
+  }
+
+  // Copia os dados da struct para a entrada
+  entry->data = data;
+
+  // Insere a entrada no início do bucket
+  entry->next = hashtable->buckets[index];
+  hashtable->buckets[index] = entry;
+
+  // Desbloqueia o bucket
+  pthread_mutex_unlock(&hashtable->mutexes[mutex_id]);
+
+  return entry;
 }

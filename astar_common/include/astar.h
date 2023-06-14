@@ -23,7 +23,7 @@ typedef bool (*goal_function)(const state_t*, const state_t*);
 typedef int (*distance_function)(const state_t*, const state_t*);
 
 // Tipo para funções que expandem um estado nos estados filho, utilizando o alocador predefinido, atualiza a min_heap e a hash_table
-typedef void (*print_solution_function)(a_star_node_t*);
+typedef void (*print_function)(a_star_node_t*);
 
 // Estrutura que define um estado para o algoritmo A* (data contêm user-defined data)
 struct a_star_node_t
@@ -68,5 +68,8 @@ void a_star_destroy(a_star_t* a_star);
 
 // Função interna para criar um novo nó para ser utilizado pelo nosso algoritmo
 a_star_node_t* a_star_new_node(a_star_t* a_star, state_t* state);
+
+// Imprime as estatísticas possíveis
+void a_star_print_statistics(a_star_t* a_star, bool csv, print_function print_fn);
 
 #endif

@@ -108,3 +108,10 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 
 * Pequenas correções/otimizações do código
 * Re-implementação da função assign_to_worker, desta vez com recurso à posição de memória % numero de trabalhadores
+
+### 13 e 14 de junho de 2023
+
+* Mudanças na impressão de estatísticas
+* Mudança na capacidade das tabelas de hash de 2048 para 32768 com 
+* Pequenas correções no gestor de estados
+* Mudança na logica do trabalhado, processa mensagens primeiro

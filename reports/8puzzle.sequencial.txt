@@ -1,0 +1,56 @@
+
+Resultado do algoritmo: Solução encontrada, custo: 18
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 193
+- Estados visitados: 118
+- Tempo de execução: 0.000090 segundos.
+Resultado do algoritmo: Solução encontrada, custo: 20
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 505
+- Estados visitados: 308
+- Tempo de execução: 0.000415 segundos.
+Resultado do algoritmo: Solução encontrada, custo: 20
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 963
+- Estados visitados: 600
+- Tempo de execução: 0.000451 segundos.
+Resultado do algoritmo: Solução encontrada, custo: 31
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 14679
+- Estados visitados: 9715
+- Tempo de execução: 0.023237 segundos.
+Resultado do algoritmo: Solução encontrada, custo: 31
+Solução:
+123
+456
+78-
+Estatísticas Globais:
+- Estados expandidos: 23637
+- Estados visitados: 16059
+- Tempo de execução: 0.062226 segundos.
+Resultado do algoritmo: Solução não encontrada.
+Estatísticas Globais:
+- Estados expandidos: 181439
+- Estados visitados: 181440
+- Tempo de execução: 11.494382 segundos.
+Resultado do algoritmo: Solução não encontrada.
+Estatísticas Globais:
+- Estados expandidos: 181439
+- Estados visitados: 181440
+- Tempo de execução: 11.952070 segundos.

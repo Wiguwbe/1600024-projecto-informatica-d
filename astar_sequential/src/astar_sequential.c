@@ -1,5 +1,4 @@
 #include "astar_sequential.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -193,38 +192,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 }
 
 // Imprime estatísticas do algoritmo sequencial no formato desejado
-void print_sequential_statistics(a_star_sequential_t* a_star, bool csv, print_solution_function print_solution)
+void a_star_sequential_print_statistics(a_star_sequential_t* a_star, bool csv, print_function print_fn)
 {
-  if(a_star == NULL)
-  {
-    return;
-  }
-
-  if(!csv)
-  {
-    if(a_star->common->solution)
-    {
-      printf("Resultado do algoritmo: Solução encontrada, custo: %d\n", a_star->common->solution->g);
-      print_solution(a_star->common->solution);
-    }
-    else
-    {
-      printf("Resultado do algoritmo: Solução não encontrada.\n");
-    }
-
-    printf("Estatísticas Globais:\n");
-    printf("- Estados expandidos: %d\n", a_star->common->expanded);
-    printf("- Estados visitados: %d\n", a_star->common->visited);
-    printf("- Tempo de execução: %.6f segundos.\n", a_star->common->execution_time);
-  }
-  else
-  {
-    printf("\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"\n");
-    printf("\"%s\";%d;%d;%d;%.6f\n",
-           a_star->common->solution ? "sim" : "não",
-           a_star->common->solution ? a_star->common->solution->g : 0,
-           a_star->common->expanded,
-           a_star->common->visited,
-           a_star->common->execution_time);
-  }
+  a_star_print_statistics(a_star->common, csv, print_fn);
 }

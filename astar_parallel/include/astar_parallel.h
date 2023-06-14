@@ -72,6 +72,6 @@ void a_star_parallel_destroy(a_star_parallel_t* a_star);
 void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal);
 
 // Imprime estatísticas sobre o algoritmo paralelo
-void print_parallel_statistics(a_star_parallel_t* a_star_instance, bool csv, print_solution_function print_solution);
+void a_star_parallel_print_statistics(a_star_parallel_t* a_star_instance, bool csv, print_function print_fn);
 
 #endif // ASTAR_H

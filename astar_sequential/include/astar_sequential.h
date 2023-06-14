@@ -32,6 +32,6 @@ void a_star_sequential_destroy(a_star_sequential_t* a_star);
 void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* goal);
 
 // Imprime estatísticas sobre o algoritmo sequencial
-void print_sequential_statistics(a_star_sequential_t* a_star_instance, bool csv, print_solution_function print_solution);
+void a_star_sequential_print_statistics(a_star_sequential_t* a_star_instance, bool csv, print_function print_fn);
 
 #endif // ASTAR_SEQUENTIAL_H
