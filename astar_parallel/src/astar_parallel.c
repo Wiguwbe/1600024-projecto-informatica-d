@@ -55,10 +55,14 @@ void* a_star_worker_function(void* arg)
 
   while(a_star->running)
   {
+    // Este trabalhador considera-se ocioso caso não existam nós a explorar ou mensagens destinadas a si
+    worker->idle = worker->open_set->size == 0 && !channel_has_messages(a_star->channel, worker->thread_id);
+
     // Processamos todos os estados que estão no canal para esta tarefa
     // Aqui que ocorre a atualização do custo do estado
     while(channel_has_messages(a_star->channel, worker->thread_id))
     {
+      worker->idle = false;      
       a_star_message_t* message = channel_receive(a_star->channel, worker->thread_id);
 
       // Retiramos os dados da mensagem e libertamos a memória
@@ -134,6 +138,7 @@ void* a_star_worker_function(void* arg)
     // Temos pelo menos um nó na nossa lista aberta que podemos processar
     if(worker->open_set->size)
     {
+      worker->idle = false;
       // A seguinte operação pode ocorrer em O(log(N))
       // se nosAbertos é um min-heap ou uma queue prioritária
       heap_node_t top_element = min_heap_pop(worker->open_set);
@@ -214,9 +219,6 @@ void* a_star_worker_function(void* arg)
         linked_list_destroy(neighbors);
       }
     }
-
-    // Este trabalhador considera-se ocioso caso não existam nós a explorar ou mensagens destinadas a si
-    worker->idle = worker->open_set->size == 0 && !channel_has_messages(a_star->channel, worker->thread_id);
   }
 
   pthread_exit(NULL);
@@ -401,10 +403,8 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
 
     // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos, caso
     // tenhamos ativado a saída imediatamente após obtermos uma solução
-    pthread_mutex_lock(&(a_star->lock));
     a_star->running =
         idle_workers < a_star->scheduler.num_workers && (a_star->common->solution == NULL || !a_star->stop_on_first_solution);
-    pthread_mutex_unlock(&(a_star->lock));
   }
 
   // Esperamos que todas os trabalhadores terminem
