@@ -2,7 +2,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#define INITIAL_CAPACITY 1024
+#include <string.h>
+
+#define INITIAL_CAPACITY 8196
 
 min_heap_t* min_heap_create()
 {
@@ -102,11 +104,11 @@ void heapify_down(min_heap_t* heap, size_t index)
   }
 }
 
-void min_heap_insert(min_heap_t* heap, int cost, void* data)
+size_t min_heap_insert(min_heap_t* heap, int cost, void* data)
 {
   if(heap == NULL)
   {
-    return;
+    return SIZE_MAX;
   }
 
   // Garante que o heap tem capacidade suficiente para inserir um novo elemento
@@ -123,6 +125,8 @@ void min_heap_insert(min_heap_t* heap, int cost, void* data)
 
   // Realiza o heapify-up para ajustar a posição do novo elemento no heap
   heapify_up(heap, index);
+
+  return index;
 }
 
 heap_node_t min_heap_pop(min_heap_t* heap)
@@ -183,10 +187,10 @@ void min_heap_remove(min_heap_t* heap, int cost, void* data)
   // Move o último elemento para a posição do elemento a ser removido
   heap->data[index] = heap->data[heap->size - 1];
   heap->size--;
+  //i-1/2
 
   // Reorganiza o heap
   heapify_up(heap, index);
-  heapify_down(heap, index);
 }
 
 void min_heap_update(min_heap_t* heap, int old_cost, int new_cost, void* data)
@@ -210,8 +214,6 @@ void min_heap_update(min_heap_t* heap, int old_cost, int new_cost, void* data)
 
   if(index == SIZE_MAX)
   {
-    // Estes dados não estavam nesta min-heap, inserimos com o novo custo
-    min_heap_insert(heap, new_cost, data);
     return;
   }
 
@@ -220,5 +222,28 @@ void min_heap_update(min_heap_t* heap, int old_cost, int new_cost, void* data)
 
   // Reorganiza o heap
   heapify_up(heap, index);
-  heapify_down(heap, index);
+}
+
+void min_heap_update_cost(min_heap_t* heap, int index, int cost)
+{
+  if(heap == NULL)
+  {
+    return;
+  }
+
+  // Atualiza o custo do elemento
+  heap->data[index].cost = cost;
+
+  heapify_up(heap, index);
+}
+
+// Limpa a min_heap
+void min_heap_clean(min_heap_t* heap)
+{
+  if(heap == NULL)
+  {
+    return;
+  }
+
+  heap->size = 0;
 }

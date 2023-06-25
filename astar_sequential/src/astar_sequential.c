@@ -1,10 +1,15 @@
 #include "astar_sequential.h"
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 // Cria uma nova instância para resolver um problema
-a_star_sequential_t* a_star_sequential_create(
-    size_t struct_size, goal_function goal_func, visit_function visit_func, heuristic_function h_func, distance_function d_func)
+a_star_sequential_t* a_star_sequential_create(size_t struct_size,
+                                              goal_function goal_func,
+                                              visit_function visit_func,
+                                              heuristic_function h_func,
+                                              distance_function d_func,
+                                              print_function print_func)
 {
   a_star_sequential_t* a_star = (a_star_sequential_t*)malloc(sizeof(a_star_sequential_t));
   if(a_star == NULL)
@@ -17,7 +22,7 @@ a_star_sequential_t* a_star_sequential_create(
   a_star->common = NULL;
 
   // Inicializamos a parte comum do nosso algoritmo
-  a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func);
+  a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func, print_func);
 
   if(a_star->common == NULL)
   {
@@ -27,8 +32,7 @@ a_star_sequential_t* a_star_sequential_create(
 
   // Inicializamos a parte especifica para o algoritmo sequencial
 
-  // Conjunto com os nós por expandir e que também possam necessitar de ser expandidos
-  // novamente.
+  // Conjunto com os nós por explorar
   a_star->open_set = min_heap_create();
   if(a_star->open_set == NULL)
   {
@@ -93,7 +97,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
     return;
   }
 
-  a_star_node_t* initial_node = a_star_new_node(a_star->common, initial_state);
+  a_star_node_t* initial_node = node_allocator_new(a_star->common->node_allocator, initial_state);
 
   // Atribui ao nó inicial um custo total de 0
   initial_node->g = 0;
@@ -111,7 +115,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 
     // Nó atual na nossa árvore
     a_star_node_t* current_node = (a_star_node_t*)top_element.data;
-    a_star->common->visited++;
+    a_star->common->explored++;
 
     // Se encontramos o objetivo saímos e retornamos o nó
     if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
@@ -127,16 +131,32 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
     // Executa a função que visita os vizinhos deste nó
     a_star->common->visit_func(current_node->state, a_star->common->state_allocator, neighbors);
 
-    // Itera por todos os vizinhos expandidos e atualiza a nossa árvore de procura
+    // Itera por todos os vizinhos gerados e atualiza a nossa árvore de procura
     for(size_t i = 0; i < linked_list_size(neighbors); i++)
     {
       state_t* neighbor = (state_t*)linked_list_get(neighbors, i);
 
       // Verifica se o nó para este estado já se encontra na nossa lista de nós
-      a_star_node_t temp_node = { 0, 0, NULL, neighbor };
-      a_star_node_t* neighbor_node = hashtable_contains(a_star->common->nodes, &temp_node);
+      a_star_node_t* neighbor_node = node_allocator_get(a_star->common->node_allocator, neighbor);
 
-      if(neighbor_node != NULL)
+      if(neighbor_node == NULL)
+      {
+        // Este nó ainda não existe, criamos um novo nó
+        neighbor_node = node_allocator_new(a_star->common->node_allocator, neighbor);
+        neighbor_node->parent = current_node;
+
+        // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
+        neighbor_node->g = current_node->g + a_star->common->d_func(current_node->state, neighbor_node->state);
+        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->common->goal_state);
+
+        // Calculamos o custo
+        int cost = neighbor_node->g + neighbor_node->h;
+
+        // Inserimos o nó na nossa fila
+        min_heap_insert(a_star->open_set, cost, neighbor_node);
+        a_star->common->generated++;
+      }
+      else
       {
         // Encontra o custo de chegar do nó a este vizinho
         int g_attempt = current_node->g + a_star->common->d_func(current_node->state, neighbor_node->state);
@@ -162,23 +182,6 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
         // Atualizamos a nossa fila prioritária
         min_heap_update(a_star->open_set, old_cost, new_cost, neighbor_node);
       }
-      else
-      {
-        // Este nó ainda não existe, criamos um novo nó
-        neighbor_node = a_star_new_node(a_star->common, neighbor);
-        neighbor_node->parent = current_node;
-
-        // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
-        neighbor_node->g = current_node->g + a_star->common->d_func(current_node->state, neighbor_node->state);
-        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->common->goal_state);
-
-        // Calculamos o custo
-        int cost = neighbor_node->g + neighbor_node->h;
-
-        // Inserimos o nó na nossa fila
-        min_heap_insert(a_star->open_set, cost, neighbor_node);
-        a_star->common->expanded++;
-      }
     }
 
     // Liberta a lista de vizinhos
@@ -192,7 +195,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 }
 
 // Imprime estatísticas do algoritmo sequencial no formato desejado
-void a_star_sequential_print_statistics(a_star_sequential_t* a_star, bool csv, print_function print_fn)
+void a_star_sequential_print_statistics(a_star_sequential_t* a_star, bool csv)
 {
-  a_star_print_statistics(a_star->common, csv, print_fn);
+  a_star_print_statistics(a_star->common, csv);
 }

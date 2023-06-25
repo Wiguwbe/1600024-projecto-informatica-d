@@ -31,7 +31,8 @@
         "astar_sequential.h": "c",
         "stddef.h": "c",
         "time.h": "c",
-        "min_heap.h": "c"
+        "min_heap.h": "c",
+        "astar.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "cSpell.language": "en,pt_PT",

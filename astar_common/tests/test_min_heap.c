@@ -95,6 +95,26 @@ START_TEST(test_update_cost)
 }
 END_TEST
 
+// Teste para limpar o min_heap
+START_TEST(test_clean)
+{
+  min_heap_t* heap = min_heap_create();
+
+  // Insere elementos no heap
+  min_heap_insert(heap, 5, NULL);
+  min_heap_insert(heap, 10, NULL);
+  min_heap_insert(heap, 3, NULL);
+
+  ck_assert_int_eq(heap->size, 3);
+
+  min_heap_clean(heap);
+
+  ck_assert_int_eq(heap->size, 0);
+
+  min_heap_destroy(heap);
+}
+END_TEST
+
 // Criação do conjunto de testes
 Suite* min_heap_suite(void)
 {
@@ -116,6 +136,10 @@ Suite* min_heap_suite(void)
   TCase* tc_update_node = tcase_create("update_node");
   tcase_add_test(tc_update_node, test_update_cost);
   suite_add_tcase(suite, tc_update_node);
+
+  TCase* tc_clean_heap = tcase_create("clean_heap");
+  tcase_add_test(tc_clean_heap, test_clean);
+  suite_add_tcase(suite, tc_clean_heap);
 
   return suite;
 }

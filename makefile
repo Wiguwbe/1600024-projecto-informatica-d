@@ -46,9 +46,9 @@ reports: reports_numberlink reports_8puzzle
 measurements_numberlink: all
 	@echo "A criar medições para o problema numberlink"
 	@mkdir -p measurements
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"" > measurements/numberlink.sequencial.csv
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"" > measurements/numberlink.parallel.best.$(WORKERS)_workers.csv
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"" > measurements/numberlink.parallel.first.$(WORKERS)_workers.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/numberlink.sequencial.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/numberlink.parallel.best.$(WORKERS)_workers.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/numberlink.parallel.first.$(WORKERS)_workers.csv
 	@for TEST in ./instances/numberlink_*; do \
 		echo "Problema: numberlink, Instância: $$TEST"; \
 		echo "Algoritmo sequencial"; \
@@ -62,9 +62,9 @@ measurements_numberlink: all
 measurements_8puzzle: all
 	@echo "A criar medições para o problema 8 puzzle"
 	@mkdir -p measurements
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"" > measurements/8puzzle.sequencial.csv
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"" > measurements/8puzzle.parallel.best.$(WORKERS)_workers.csv
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados Expandidos\";\"Estados Visitados\";\"Tempo de Execução\"" > measurements/8puzzle.parallel.first.$(WORKERS)_workers.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/8puzzle.sequencial.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/8puzzle.parallel.best.$(WORKERS)_workers.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/8puzzle.parallel.first.$(WORKERS)_workers.csv
 	@for TEST in ./instances/8puzzle_*; do \
 		echo "Problema: 8puzzle, Instância: $$TEST"; \
 		echo "Algoritmo sequencial"; \

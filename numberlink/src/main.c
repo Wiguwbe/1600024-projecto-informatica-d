@@ -79,7 +79,7 @@ void solve_parallel(number_link_t* number_link, int num_threads, bool first, boo
 {
   // Criamos a instância do algoritmo A*
   a_star_parallel_t* a_star =
-      a_star_parallel_create(sizeof(number_link_state_t), goal, visit, heuristic, distance, num_threads, first);
+      a_star_parallel_create(sizeof(number_link_state_t), goal, visit, heuristic, distance, print_solution, num_threads, first);
 
   // Criamos o nosso estado inicial para lançar o algoritmo
   number_link_state_t initial = { number_link,
@@ -90,7 +90,7 @@ void solve_parallel(number_link_t* number_link, int num_threads, bool first, boo
   a_star_parallel_solve(a_star, &initial, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_parallel_print_statistics(a_star, csv, print_solution);
+  a_star_parallel_print_statistics(a_star, csv);
 
   // Limpamos a memória
   a_star_parallel_destroy(a_star);
@@ -100,7 +100,7 @@ void solve_parallel(number_link_t* number_link, int num_threads, bool first, boo
 void solve_sequential(number_link_t* number_link, bool csv)
 {
   // Criamos a instância do algoritmo A*
-  a_star_sequential_t* a_star = a_star_sequential_create(sizeof(number_link_state_t), goal, visit, heuristic, distance);
+  a_star_sequential_t* a_star = a_star_sequential_create(sizeof(number_link_state_t), goal, visit, heuristic, distance, print_solution);
 
   // Criamos o nosso estado inicial para lançar o algoritmo
   number_link_state_t initial = { number_link,
@@ -111,7 +111,7 @@ void solve_sequential(number_link_t* number_link, bool csv)
   a_star_sequential_solve(a_star, &initial, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_sequential_print_statistics(a_star, csv, print_solution);
+  a_star_sequential_print_statistics(a_star, csv);
 
   // Limpamos a memória
   a_star_sequential_destroy(a_star);

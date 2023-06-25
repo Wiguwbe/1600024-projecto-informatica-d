@@ -6,7 +6,7 @@
 #include <string.h>
 #include <time.h>
 
-bool load_8puzzle(const char* filename, puzzle_state *puzzle)
+bool load_8puzzle(const char* filename, puzzle_state* puzzle)
 {
   FILE* file = fopen(filename, "r");
   if(file == NULL)
@@ -42,7 +42,6 @@ bool load_8puzzle(const char* filename, puzzle_state *puzzle)
   return true;
 }
 
-
 void print_solution(a_star_node_t* solution)
 {
   printf("Solução:\n");
@@ -61,13 +60,14 @@ void print_solution(a_star_node_t* solution)
 void solve_parallel(puzzle_state instance, int num_threads, bool first, bool csv)
 {
   // Criamos a instância do algoritmo A*
-  a_star_parallel_t* a_star = a_star_parallel_create(sizeof(puzzle_state), goal, visit, heuristic, distance, num_threads, first);
+  a_star_parallel_t* a_star =
+      a_star_parallel_create(sizeof(puzzle_state), goal, visit, heuristic, distance, print_solution, num_threads, first);
 
   // Tentamos resolver o problema
   a_star_parallel_solve(a_star, &instance, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_parallel_print_statistics(a_star, csv, print_solution);
+  a_star_parallel_print_statistics(a_star, csv);
 
   // Limpamos a memória
   a_star_parallel_destroy(a_star);
@@ -77,13 +77,13 @@ void solve_parallel(puzzle_state instance, int num_threads, bool first, bool csv
 void solve_sequential(puzzle_state instance, bool csv)
 {
   // Criamos a instância do algoritmo A*
-  a_star_sequential_t* a_star = a_star_sequential_create(sizeof(puzzle_state), goal, visit, heuristic, distance);
+  a_star_sequential_t* a_star = a_star_sequential_create(sizeof(puzzle_state), goal, visit, heuristic, distance, print_solution);
 
   // Tentamos resolver o problema
   a_star_sequential_solve(a_star, &instance, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_sequential_print_statistics(a_star, csv, print_solution);
+  a_star_sequential_print_statistics(a_star, csv);
 
   // Limpamos a memória
   a_star_sequential_destroy(a_star);
@@ -124,30 +124,31 @@ int main(int argc, char* argv[])
         printf("Erro: o número de trabalhadores não é um valor válido.\n");
         return 1;
       }
-      filename_arg +=2;
+      filename_arg += 2;
       continue;
     }
 
     if(strcmp(opt, "-p") == 0)
     {
       first = true;
-      filename_arg ++;
+      filename_arg++;
       continue;
     }
 
     if(strcmp(opt, "-r") == 0)
     {
       csv = true;
-      filename_arg ++;
+      filename_arg++;
       continue;
     }
   }
 
-  if (filename_arg >= argc ) {
-        printf("Erro: o falta nome do ficheiro com dados .\n");
-        return 1;
+  if(filename_arg >= argc)
+  {
+    printf("Erro: o falta nome do ficheiro com dados .\n");
+    return 1;
   }
-  
+
   // Ler as instâncias do arquivo
   puzzle_state puzzle;
 

@@ -53,8 +53,8 @@ struct a_star_worker_t
   min_heap_t* open_set;
 
   // Variáveis para estatísticas
-  int expanded;
-  int visited;
+  int generated;
+  int explored;
 };
 
 // Cria uma nova instância do algoritmo A* para resolver um problema
@@ -63,6 +63,7 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
                                           visit_function visit_func,
                                           heuristic_function h_func,
                                           distance_function d_func,
+                                          print_function print_func,
                                           int num_workers, bool first);
 
 // Liberta uma instância do algoritmo A* paralelo
@@ -72,6 +73,6 @@ void a_star_parallel_destroy(a_star_parallel_t* a_star);
 void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal);
 
 // Imprime estatísticas sobre o algoritmo paralelo
-void a_star_parallel_print_statistics(a_star_parallel_t* a_star_instance, bool csv, print_function print_fn);
+void a_star_parallel_print_statistics(a_star_parallel_t* a_star_instance, bool csv);
 
 #endif // ASTAR_H

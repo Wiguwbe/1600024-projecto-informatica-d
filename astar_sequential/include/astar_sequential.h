@@ -22,8 +22,12 @@ struct a_star_sequential_t
 };
 
 // Cria uma nova instância do algoritmo A* sequencial para resolver um problema
-a_star_sequential_t* a_star_sequential_create(
-    size_t struct_size, goal_function goal_func, visit_function visit_func, heuristic_function h_func, distance_function d_func);
+a_star_sequential_t* a_star_sequential_create(size_t struct_size,
+                                              goal_function goal_func,
+                                              visit_function visit_func,
+                                              heuristic_function h_func,
+                                              distance_function d_func,
+                                              print_function print_func);
 
 // Liberta uma instância do algoritmo A* sequencial
 void a_star_sequential_destroy(a_star_sequential_t* a_star);
@@ -32,6 +36,6 @@ void a_star_sequential_destroy(a_star_sequential_t* a_star);
 void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* goal);
 
 // Imprime estatísticas sobre o algoritmo sequencial
-void a_star_sequential_print_statistics(a_star_sequential_t* a_star_instance, bool csv, print_function print_fn);
+void a_star_sequential_print_statistics(a_star_sequential_t* a_star_instance, bool csv);
 
 #endif // ASTAR_SEQUENTIAL_H

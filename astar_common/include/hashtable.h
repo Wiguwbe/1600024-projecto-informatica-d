@@ -61,7 +61,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #define HASH_MAX_MUTEXES 8192
-#define HASH_CAPACITY 32768
+#define HASH_CAPACITY 65533
 
 typedef struct entry_t entry_t;
 typedef struct hashtable_t hashtable_t;

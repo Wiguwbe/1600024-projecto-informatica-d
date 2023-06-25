@@ -12,13 +12,13 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 
 * Desenvolvimento inicial de um alocador de paginas de 1 GB para alocar os estados expandido
 * Desenvolvimento inicial de um min-heap para ser utilizada no algoritmo A* na sua forma sequencial
-* Desenvolvimento inicial de uma hashtable para ser utilizada para manter informação de quais nós já foram expandidos
+* Desenvolvimento inicial de uma hashtable para ser utilizada para manter informação de quais nós já foram gerados
 * Organização do projecto utilizando Makefiles
 * Inclusão de testes unitários para o min-heap e para o alocador de memória
 
 ### 20 de maio de 2023
 
-* Desenvolvimento inicial de uma linked-list para guardar temporariamente os vizinhos expandidos
+* Desenvolvimento inicial de uma linked-list para guardar temporariamente os vizinhos gerados
 * Desenvolvimento inicial do algoritmo A*
 * Adicionada task para correr tests (vscode)
 * Adicionada formatação por clang
@@ -48,7 +48,7 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Algoritmo A* sequencial a funcionar, teste efetuado para o problema Puzzle
 * Implementação de uma ferramenta para gerar problemas para Puzzle 8 de dificuldade elevada
 * Pequenas correções ortográficas
-* Correção da da lista de nós já expandidos (necessitava hash própria, ver comentários)
+* Correção da da lista de nós já gerados (necessitava hash própria, ver comentários)
 * Execução de alguns testes preliminares
 
 ### 31 de maio de 2023
@@ -115,3 +115,10 @@ Para os testes unitários foi utilizada a biblioteca [Check](https://libcheck.gi
 * Mudança na capacidade das tabelas de hash de 2048 para 32768 com 
 * Pequenas correções no gestor de estados
 * Mudança na logica do trabalhado, processa mensagens primeiro
+
+### 22 a 25 de junho de 2023
+
+* Pequenas melhorias no código
+* Consolidação dos métodos relacionados com a alocação e gestão de nós num componente próprio
+* Implementação do métodos min_heap_clean e min_heap_update_cost
+* Diagramas adicionados

@@ -43,8 +43,7 @@ struct state_t
 typedef struct
 {
   size_t struct_size;
-  allocator_t* state_allocator;
-  allocator_t* state_data_allocator;
+  allocator_t* allocator;
   hashtable_t* states;
 } state_allocator_t;
 

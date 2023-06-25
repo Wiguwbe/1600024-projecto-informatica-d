@@ -67,13 +67,13 @@ typedef struct
 } min_heap_t;
 
 // Cria um novo min-heap
-min_heap_t* min_heap_create();
+min_heap_t* min_heap_create();\
 
 // Destroi o min-heap e liberta a memória
 void min_heap_destroy(min_heap_t* heap);
 
 // Insere um novo elemento no heap
-void min_heap_insert(min_heap_t* heap, int cost, void* data);
+size_t min_heap_insert(min_heap_t* heap, int cost, void* data);
 
 // Extrai e retorna o elemento de custo mínimo do heap
 heap_node_t min_heap_pop(min_heap_t* heap);
@@ -83,5 +83,11 @@ void min_heap_remove(min_heap_t* heap, int cost, void* data);
 
 // Atualiza o custo de um nó específico no heap
 void min_heap_update(min_heap_t* heap, int old_cost, int new_cost, void* data);
+
+// Atualiza o custo de um nó específico no heap
+void min_heap_update_cost(min_heap_t* heap, int index, int cost);
+
+// Limpa a min_heap
+void min_heap_clean(min_heap_t* heap);
 
 #endif

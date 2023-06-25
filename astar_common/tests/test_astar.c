@@ -1,6 +1,7 @@
 #include "astar.h"
 #include <check.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 typedef struct
 {
@@ -12,7 +13,7 @@ START_TEST(test_astar)
 {
   state_allocator_t* allocator = state_allocator_create(sizeof(my_struct_t));
 
-  a_star_t* a_star = a_star_create(sizeof(my_struct_t), NULL, NULL, NULL, NULL);
+  a_star_t* a_star = a_star_create(sizeof(my_struct_t), NULL, NULL, NULL, NULL, NULL);
 
   my_struct_t state_data_1 = { 2, 2 };
   my_struct_t state_data_2 = { 3, 3 };
@@ -24,10 +25,10 @@ START_TEST(test_astar)
   state_t* state_3 = state_allocator_new(allocator, &state_data_3);
   state_t* state_4 = state_allocator_new(allocator, &state_data_4);
 
-  a_star_node_t* node_1 = a_star_new_node(a_star, state_1);
-  a_star_node_t* node_2 = a_star_new_node(a_star, state_2);
-  a_star_node_t* node_3 = a_star_new_node(a_star, state_3);
-  a_star_node_t* node_4 = a_star_new_node(a_star, state_4);
+  a_star_node_t* node_1 = node_allocator_new(a_star->node_allocator, state_1);
+  a_star_node_t* node_2 = node_allocator_new(a_star->node_allocator, state_2);
+  a_star_node_t* node_3 = node_allocator_new(a_star->node_allocator, state_3);
+  a_star_node_t* node_4 = node_allocator_new(a_star->node_allocator, state_4);
 
   my_struct_t state_data_5 = { state_data_2.x - 1, state_data_2.x - 1 };
   my_struct_t state_data_6 = { state_data_1.x + 1, state_data_1.x + 1 };
@@ -39,17 +40,10 @@ START_TEST(test_astar)
   state_t* state_7 = state_allocator_new(allocator, &state_data_7);
   state_t* state_8 = state_allocator_new(allocator, &state_data_8);
 
-  a_star_node_t temp_node_1 = { 0, 0, NULL, state_5 };
-  a_star_node_t* child_node_1 = hashtable_contains(a_star->nodes, &temp_node_1);
-
-  a_star_node_t temp_node_2 = { 0, 0, NULL, state_6 };
-  a_star_node_t* child_node_2 = hashtable_contains(a_star->nodes, &temp_node_2);
-
-  a_star_node_t temp_node_3 = { 0, 0, NULL, state_7 };
-  a_star_node_t* child_node_3 = hashtable_contains(a_star->nodes, &temp_node_3);
-
-  a_star_node_t temp_node_4 = { 0, 0, NULL, state_8 };
-  a_star_node_t* child_node_4 = hashtable_contains(a_star->nodes, &temp_node_4);
+  a_star_node_t* child_node_1 = node_allocator_get(a_star->node_allocator, state_5);
+  a_star_node_t* child_node_2 = node_allocator_get(a_star->node_allocator, state_6);
+  a_star_node_t* child_node_3 = node_allocator_get(a_star->node_allocator, state_7);
+  a_star_node_t* child_node_4 = node_allocator_get(a_star->node_allocator, state_8);
 
   ck_assert_ptr_eq(child_node_1, node_1);
   ck_assert_int_eq(((my_struct_t*)child_node_1->state->data)->x, 2);

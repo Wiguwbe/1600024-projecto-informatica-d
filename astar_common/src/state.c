@@ -34,7 +34,7 @@ state_allocator_t* state_allocator_create(size_t struct_size)
 
   // Nos utilizamos 2 alocadores diferents, um para os estados, outro
   // para os dados do estado (dependente do algoritmo)
-  allocator->state_data_allocator = allocator_create(struct_size);
+  allocator->allocator = allocator_create(struct_size);
 
   // Para indexarmos os estados que já existem
   allocator->states = hashtable_create(struct_size, compare_state_t, NULL);
@@ -52,7 +52,7 @@ void state_allocator_destroy(state_allocator_t* allocator)
 
   // Limpamos a nossa memória
   hashtable_destroy(allocator->states, true);
-  allocator_destroy(allocator->state_data_allocator);
+  allocator_destroy(allocator->allocator);
 
   // Libertamos o alocador
   free(allocator);
@@ -85,7 +85,7 @@ state_t* state_allocator_new(state_allocator_t* allocator, void* state_data)
   }
 
   // Guardamos os dados no nosso gestor de memória e indexamos o estado gerado
-  new_state->data = allocator_alloc(allocator->state_data_allocator);
+  new_state->data = allocator_alloc(allocator->allocator);
   memcpy(new_state->data, state_data, allocator->struct_size);
   hashtable_insert(allocator->states, new_state);
 
