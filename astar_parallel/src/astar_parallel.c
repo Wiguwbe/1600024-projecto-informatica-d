@@ -29,6 +29,12 @@ void* a_star_worker_function(void* arg)
   // Reinicia as estatísticas para este trabalhador
   worker->generated = 0;
   worker->explored = 0;
+  worker->max_min_heap_size = 0;
+  worker->nodes_new = 0;
+  worker->nodes_reinserted = 0;
+  worker->nodes_better = 0;
+  worker->nodes_worst_or_equals = 0;
+
   worker->idle = false;
 
   while(a_star->running)
@@ -81,6 +87,7 @@ void* a_star_worker_function(void* arg)
 
         // Inserimos o nó na nossa fila
         child_node->index_in_open_set = min_heap_insert(worker->open_set, cost, child_node);
+        worker->nodes_new++;
       }
       else
       {
@@ -91,6 +98,7 @@ void* a_star_worker_function(void* arg)
         // existe outro caminho mais curto para este estado
         if(g_attempt >= child_node->g)
         {
+          worker->nodes_worst_or_equals++;
           continue;
         }
 
@@ -104,10 +112,12 @@ void* a_star_worker_function(void* arg)
         // Calculamos o novo custo
         int cost = child_node->g + child_node->h;
 
+        worker->nodes_better++;
         if(child_node->index_in_open_set == SIZE_MAX)
         {
           // Inserimos o nó na nossa fila novamente
           child_node->index_in_open_set = min_heap_insert(worker->open_set, cost, child_node);
+          worker->nodes_reinserted++;
         }
         else
         {
@@ -116,6 +126,9 @@ void* a_star_worker_function(void* arg)
         }
       }
     }
+
+    if(worker->max_min_heap_size < worker->open_set->size)
+      worker->max_min_heap_size = worker->open_set->size;
 
     // Temos pelo menos um nó na nossa lista aberta que podemos processar
     if(worker->open_set->size)
@@ -379,27 +392,31 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
   while(a_star->running)
   {
     // Solução já foi encontrada e queremos sair à primeira solução
-    if (a_star->common->solution != NULL && a_star->stop_on_first_solution) {
+    if(a_star->common->solution != NULL && a_star->stop_on_first_solution)
+    {
       a_star->running = false;
       break;
-    } 
+    }
 
     // Verificamos quantos workers estão ociosos, caso todos estejam ociosos assumimos que não existem mais nós a explorar
     // ou a solução já foi encontrada
     size_t idle_workers = 0;
-    for(size_t i = 0; i < a_star->scheduler.num_workers; i++) {
+    for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
+    {
 
       a_star_worker_t* worker = &(a_star->scheduler.workers[i]);
-      
-      if (!worker->idle) {
+
+      if(!worker->idle)
+      {
         continue;
       }
 
       idle_workers++;
+
+      // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos
+      a_star->running = idle_workers < a_star->scheduler.num_workers;
     }
 
-    // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos
-    a_star->running = idle_workers < a_star->scheduler.num_workers;
   }
 
   // Esperamos que todas os trabalhadores terminem
@@ -446,10 +463,17 @@ void a_star_parallel_print_statistics(a_star_parallel_t* a_star, bool csv)
     printf("Estatísticas Trabalhadores:\n");
     for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
     {
-      printf("- Trabalhador #%ld: Estados gerados = %d, Estados explorados = %d\n",
+      printf("- Trabalhador #%ld:\n  * Estados gerados = %d, Estados explorados = %d\n  * Max nós min_heap = %d, Novos nós = %d, "
+             "Nós "
+             "reinseridos = %d, Nós piores (ignorados) = %d, Nós melhores (atualizados) = %d\n",
              i + 1,
              a_star->scheduler.workers[i].generated,
-             a_star->scheduler.workers[i].explored);
+             a_star->scheduler.workers[i].explored,
+             a_star->scheduler.workers[i].max_min_heap_size,
+             a_star->scheduler.workers[i].nodes_new,
+             a_star->scheduler.workers[i].nodes_reinserted,
+             a_star->scheduler.workers[i].nodes_worst_or_equals,
+             a_star->scheduler.workers[i].nodes_better);
     }
   }
 }

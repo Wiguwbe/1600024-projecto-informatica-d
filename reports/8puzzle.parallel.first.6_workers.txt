@@ -6,16 +6,28 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados expandidos: 489
-- Estados visitados: 301
-- Tempo de execução: 0.000380 segundos.
+- Estados gerados: 446
+- Estados explorados: 279
+- Tempo de execução: 0.000389 segundos.
 Estatísticas Trabalhadores:
-- Trabalhador #1: Estados expandidos = 86, Estados visitados = 50
-- Trabalhador #2: Estados expandidos = 81, Estados visitados = 57
-- Trabalhador #3: Estados expandidos = 94, Estados visitados = 44
-- Trabalhador #4: Estados expandidos = 66, Estados visitados = 46
-- Trabalhador #5: Estados expandidos = 79, Estados visitados = 48
-- Trabalhador #6: Estados expandidos = 83, Estados visitados = 56
+- Trabalhador #1:
+  * Estados gerados = 74, Estados explorados = 43
+  * Max nós min_heap = 34, Novos nós = 74, Nós reinseridos = 0, Nós piores (ignorados) = 47, Nós melhores (atualizados) = 1
+- Trabalhador #2:
+  * Estados gerados = 68, Estados explorados = 48
+  * Max nós min_heap = 22, Novos nós = 68, Nós reinseridos = 0, Nós piores (ignorados) = 43, Nós melhores (atualizados) = 0
+- Trabalhador #3:
+  * Estados gerados = 68, Estados explorados = 37
+  * Max nós min_heap = 33, Novos nós = 68, Nós reinseridos = 0, Nós piores (ignorados) = 54, Nós melhores (atualizados) = 0
+- Trabalhador #4:
+  * Estados gerados = 72, Estados explorados = 51
+  * Max nós min_heap = 22, Novos nós = 72, Nós reinseridos = 0, Nós piores (ignorados) = 40, Nós melhores (atualizados) = 0
+- Trabalhador #5:
+  * Estados gerados = 87, Estados explorados = 44
+  * Max nós min_heap = 46, Novos nós = 87, Nós reinseridos = 0, Nós piores (ignorados) = 52, Nós melhores (atualizados) = 0
+- Trabalhador #6:
+  * Estados gerados = 77, Estados explorados = 56
+  * Max nós min_heap = 23, Novos nós = 77, Nós reinseridos = 1, Nós piores (ignorados) = 52, Nós melhores (atualizados) = 1
 Método: Primeira solução
 Resultado do algoritmo: Solução encontrada, custo: 20
 Solução:
@@ -23,16 +35,28 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados expandidos: 907
-- Estados visitados: 570
-- Tempo de execução: 0.000629 segundos.
+- Estados gerados: 879
+- Estados explorados: 549
+- Tempo de execução: 0.000413 segundos.
 Estatísticas Trabalhadores:
-- Trabalhador #1: Estados expandidos = 188, Estados visitados = 99
-- Trabalhador #2: Estados expandidos = 159, Estados visitados = 109
-- Trabalhador #3: Estados expandidos = 150, Estados visitados = 95
-- Trabalhador #4: Estados expandidos = 140, Estados visitados = 97
-- Trabalhador #5: Estados expandidos = 135, Estados visitados = 86
-- Trabalhador #6: Estados expandidos = 135, Estados visitados = 84
+- Trabalhador #1:
+  * Estados gerados = 152, Estados explorados = 81
+  * Max nós min_heap = 73, Novos nós = 152, Nós reinseridos = 0, Nós piores (ignorados) = 104, Nós melhores (atualizados) = 1
+- Trabalhador #2:
+  * Estados gerados = 142, Estados explorados = 103
+  * Max nós min_heap = 42, Novos nós = 142, Nós reinseridos = 0, Nós piores (ignorados) = 97, Nós melhores (atualizados) = 0
+- Trabalhador #3:
+  * Estados gerados = 169, Estados explorados = 94
+  * Max nós min_heap = 77, Novos nós = 169, Nós reinseridos = 0, Nós piores (ignorados) = 100, Nós melhores (atualizados) = 0
+- Trabalhador #4:
+  * Estados gerados = 124, Estados explorados = 93
+  * Max nós min_heap = 32, Novos nós = 124, Nós reinseridos = 0, Nós piores (ignorados) = 86, Nós melhores (atualizados) = 1
+- Trabalhador #5:
+  * Estados gerados = 144, Estados explorados = 87
+  * Max nós min_heap = 59, Novos nós = 144, Nós reinseridos = 0, Nós piores (ignorados) = 89, Nós melhores (atualizados) = 1
+- Trabalhador #6:
+  * Estados gerados = 148, Estados explorados = 91
+  * Max nós min_heap = 64, Novos nós = 148, Nós reinseridos = 0, Nós piores (ignorados) = 96, Nós melhores (atualizados) = 2
 Método: Primeira solução
 Resultado do algoritmo: Solução encontrada, custo: 20
 Solução:
@@ -40,16 +64,28 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados expandidos: 1052
-- Estados visitados: 660
-- Tempo de execução: 0.000575 segundos.
+- Estados gerados: 1151
+- Estados explorados: 723
+- Tempo de execução: 0.000727 segundos.
 Estatísticas Trabalhadores:
-- Trabalhador #1: Estados expandidos = 166, Estados visitados = 112
-- Trabalhador #2: Estados expandidos = 174, Estados visitados = 112
-- Trabalhador #3: Estados expandidos = 187, Estados visitados = 114
-- Trabalhador #4: Estados expandidos = 187, Estados visitados = 110
-- Trabalhador #5: Estados expandidos = 176, Estados visitados = 106
-- Trabalhador #6: Estados expandidos = 162, Estados visitados = 106
+- Trabalhador #1:
+  * Estados gerados = 223, Estados explorados = 114
+  * Max nós min_heap = 112, Novos nós = 223, Nós reinseridos = 2, Nós piores (ignorados) = 129, Nós melhores (atualizados) = 5
+- Trabalhador #2:
+  * Estados gerados = 182, Estados explorados = 109
+  * Max nós min_heap = 74, Novos nós = 182, Nós reinseridos = 0, Nós piores (ignorados) = 118, Nós melhores (atualizados) = 5
+- Trabalhador #3:
+  * Estados gerados = 209, Estados explorados = 117
+  * Max nós min_heap = 97, Novos nós = 209, Nós reinseridos = 0, Nós piores (ignorados) = 139, Nós melhores (atualizados) = 2
+- Trabalhador #4:
+  * Estados gerados = 180, Estados explorados = 138
+  * Max nós min_heap = 51, Novos nós = 180, Nós reinseridos = 4, Nós piores (ignorados) = 115, Nós melhores (atualizados) = 7
+- Trabalhador #5:
+  * Estados gerados = 181, Estados explorados = 115
+  * Max nós min_heap = 73, Novos nós = 181, Nós reinseridos = 2, Nós piores (ignorados) = 132, Nós melhores (atualizados) = 2
+- Trabalhador #6:
+  * Estados gerados = 176, Estados explorados = 130
+  * Max nós min_heap = 47, Novos nós = 176, Nós reinseridos = 0, Nós piores (ignorados) = 124, Nós melhores (atualizados) = 0
 Método: Primeira solução
 Resultado do algoritmo: Solução encontrada, custo: 31
 Solução:
@@ -57,16 +93,28 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados expandidos: 25101
-- Estados visitados: 17122
-- Tempo de execução: 0.037117 segundos.
+- Estados gerados: 14232
+- Estados explorados: 9326
+- Tempo de execução: 0.008723 segundos.
 Estatísticas Trabalhadores:
-- Trabalhador #1: Estados expandidos = 4169, Estados visitados = 2604
-- Trabalhador #2: Estados expandidos = 4259, Estados visitados = 3221
-- Trabalhador #3: Estados expandidos = 4440, Estados visitados = 3001
-- Trabalhador #4: Estados expandidos = 3930, Estados visitados = 2796
-- Trabalhador #5: Estados expandidos = 4330, Estados visitados = 2794
-- Trabalhador #6: Estados expandidos = 3973, Estados visitados = 2706
+- Trabalhador #1:
+  * Estados gerados = 2483, Estados explorados = 1412
+  * Max nós min_heap = 1090, Novos nós = 2483, Nós reinseridos = 18, Nós piores (ignorados) = 1673, Nós melhores (atualizados) = 81
+- Trabalhador #2:
+  * Estados gerados = 2269, Estados explorados = 1581
+  * Max nós min_heap = 709, Novos nós = 2269, Nós reinseridos = 20, Nós piores (ignorados) = 1657, Nós melhores (atualizados) = 65
+- Trabalhador #3:
+  * Estados gerados = 2462, Estados explorados = 1587
+  * Max nós min_heap = 896, Novos nós = 2462, Nós reinseridos = 19, Nós piores (ignorados) = 1797, Nós melhores (atualizados) = 96
+- Trabalhador #4:
+  * Estados gerados = 2259, Estados explorados = 1615
+  * Max nós min_heap = 663, Novos nós = 2259, Nós reinseridos = 17, Nós piores (ignorados) = 1644, Nós melhores (atualizados) = 69
+- Trabalhador #5:
+  * Estados gerados = 2497, Estados explorados = 1540
+  * Max nós min_heap = 976, Novos nós = 2497, Nós reinseridos = 15, Nós piores (ignorados) = 1722, Nós melhores (atualizados) = 79
+- Trabalhador #6:
+  * Estados gerados = 2262, Estados explorados = 1591
+  * Max nós min_heap = 696, Novos nós = 2262, Nós reinseridos = 23, Nós piores (ignorados) = 1676, Nós melhores (atualizados) = 75
 Método: Primeira solução
 Resultado do algoritmo: Solução encontrada, custo: 31
 Solução:
@@ -74,39 +122,75 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados expandidos: 19323
-- Estados visitados: 12878
-- Tempo de execução: 0.020613 segundos.
+- Estados gerados: 15966
+- Estados explorados: 10403
+- Tempo de execução: 0.009851 segundos.
 Estatísticas Trabalhadores:
-- Trabalhador #1: Estados expandidos = 3229, Estados visitados = 1838
-- Trabalhador #2: Estados expandidos = 3315, Estados visitados = 2446
-- Trabalhador #3: Estados expandidos = 3336, Estados visitados = 2229
-- Trabalhador #4: Estados expandidos = 2994, Estados visitados = 2095
-- Trabalhador #5: Estados expandidos = 3482, Estados visitados = 2401
-- Trabalhador #6: Estados expandidos = 2967, Estados visitados = 1869
+- Trabalhador #1:
+  * Estados gerados = 2933, Estados explorados = 1795
+  * Max nós min_heap = 1141, Novos nós = 2933, Nós reinseridos = 2, Nós piores (ignorados) = 2044, Nós melhores (atualizados) = 63
+- Trabalhador #2:
+  * Estados gerados = 2526, Estados explorados = 1489
+  * Max nós min_heap = 1040, Novos nós = 2526, Nós reinseridos = 2, Nós piores (ignorados) = 1681, Nós melhores (atualizados) = 59
+- Trabalhador #3:
+  * Estados gerados = 2745, Estados explorados = 1649
+  * Max nós min_heap = 1105, Novos nós = 2745, Nós reinseridos = 8, Nós piores (ignorados) = 1900, Nós melhores (atualizados) = 63
+- Trabalhador #4:
+  * Estados gerados = 2514, Estados explorados = 1821
+  * Max nós min_heap = 705, Novos nós = 2514, Nós reinseridos = 10, Nós piores (ignorados) = 1859, Nós melhores (atualizados) = 67
+- Trabalhador #5:
+  * Estados gerados = 2664, Estados explorados = 1827
+  * Max nós min_heap = 845, Novos nós = 2664, Nós reinseridos = 6, Nós piores (ignorados) = 2005, Nós melhores (atualizados) = 52
+- Trabalhador #6:
+  * Estados gerados = 2584, Estados explorados = 1822
+  * Max nós min_heap = 778, Novos nós = 2584, Nós reinseridos = 10, Nós piores (ignorados) = 1911, Nós melhores (atualizados) = 65
 Método: Primeira solução
 Resultado do algoritmo: Solução não encontrada.
 Estatísticas Globais:
-- Estados expandidos: 181439
-- Estados visitados: 185962
-- Tempo de execução: 4.090142 segundos.
+- Estados gerados: 181371
+- Estados explorados: 186151
+- Tempo de execução: 3.399838 segundos.
 Estatísticas Trabalhadores:
-- Trabalhador #1: Estados expandidos = 31968, Estados visitados = 32104
-- Trabalhador #2: Estados expandidos = 29376, Estados visitados = 30320
-- Trabalhador #3: Estados expandidos = 31967, Estados visitados = 31968
-- Trabalhador #4: Estados expandidos = 28512, Estados visitados = 30411
-- Trabalhador #5: Estados expandidos = 31104, Estados visitados = 31109
-- Trabalhador #6: Estados expandidos = 28512, Estados visitados = 30050
+- Trabalhador #1:
+  * Estados gerados = 32053, Estados explorados = 32382
+  * Max nós min_heap = 4683, Novos nós = 32053, Nós reinseridos = 329, Nós piores (ignorados) = 52633, Nós melhores (atualizados) = 3191
+- Trabalhador #2:
+  * Estados gerados = 28982, Estados explorados = 30195
+  * Max nós min_heap = 2612, Novos nós = 28982, Nós reinseridos = 1212, Nós piores (ignorados) = 47905, Nós melhores (atualizados) = 2793
+- Trabalhador #3:
+  * Estados gerados = 31474, Estados explorados = 31921
+  * Max nós min_heap = 3991, Novos nós = 31474, Nós reinseridos = 447, Nós piores (ignorados) = 50801, Nós melhores (atualizados) = 2745
+- Trabalhador #4:
+  * Estados gerados = 28407, Estados explorados = 29909
+  * Max nós min_heap = 1908, Novos nós = 28407, Nós reinseridos = 1502, Nós piores (ignorados) = 46944, Nós melhores (atualizados) = 2738
+- Trabalhador #5:
+  * Estados gerados = 31478, Estados explorados = 31743
+  * Max nós min_heap = 4803, Novos nós = 31478, Nós reinseridos = 265, Nós piores (ignorados) = 51412, Nós melhores (atualizados) = 3140
+- Trabalhador #6:
+  * Estados gerados = 28977, Estados explorados = 30001
+  * Max nós min_heap = 2542, Novos nós = 28977, Nós reinseridos = 1024, Nós piores (ignorados) = 47581, Nós melhores (atualizados) = 2634
 Método: Primeira solução
 Resultado do algoritmo: Solução não encontrada.
 Estatísticas Globais:
-- Estados expandidos: 181439
-- Estados visitados: 188500
-- Tempo de execução: 3.957957 segundos.
+- Estados gerados: 181396
+- Estados explorados: 186139
+- Tempo de execução: 3.448755 segundos.
 Estatísticas Trabalhadores:
-- Trabalhador #1: Estados expandidos = 31968, Estados visitados = 31980
-- Trabalhador #2: Estados expandidos = 29376, Estados visitados = 31426
-- Trabalhador #3: Estados expandidos = 31967, Estados visitados = 32023
-- Trabalhador #4: Estados expandidos = 28512, Estados visitados = 31641
-- Trabalhador #5: Estados expandidos = 31104, Estados visitados = 31151
-- Trabalhador #6: Estados expandidos = 28512, Estados visitados = 30279
+- Trabalhador #1:
+  * Estados gerados = 32055, Estados explorados = 32336
+  * Max nós min_heap = 4714, Novos nós = 32055, Nós reinseridos = 281, Nós piores (ignorados) = 52559, Nós melhores (atualizados) = 3258
+- Trabalhador #2:
+  * Estados gerados = 28986, Estados explorados = 30003
+  * Max nós min_heap = 2763, Novos nós = 28986, Nós reinseridos = 1017, Nós piores (ignorados) = 47980, Nós melhores (atualizados) = 2602
+- Trabalhador #3:
+  * Estados gerados = 31476, Estados explorados = 31770
+  * Max nós min_heap = 4252, Novos nós = 31476, Nós reinseridos = 294, Nós piores (ignorados) = 51029, Nós melhores (atualizados) = 2907
+- Trabalhador #4:
+  * Estados gerados = 28412, Estados explorados = 29879
+  * Max nós min_heap = 2139, Novos nós = 28412, Nós reinseridos = 1467, Nós piores (ignorados) = 46811, Nós melhores (atualizados) = 2792
+- Trabalhador #5:
+  * Estados gerados = 31480, Estados explorados = 31821
+  * Max nós min_heap = 4256, Novos nós = 31480, Nós reinseridos = 340, Nós piores (ignorados) = 51446, Nós melhores (atualizados) = 2797
+- Trabalhador #6:
+  * Estados gerados = 28987, Estados explorados = 30330
+  * Max nós min_heap = 2116, Novos nós = 28987, Nós reinseridos = 1343, Nós piores (ignorados) = 47569, Nós melhores (atualizados) = 2693

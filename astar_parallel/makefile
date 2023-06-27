@@ -6,7 +6,7 @@ LDFLAGS := -lcheck -lm -lpthread -L../astar_common/lib -lastar_common
 ifdef DEBUG_BUILD
 CFLAGS_EXTRA := -DDEBUG -g
 else
-CFLAGS_EXTRA := -O3
+CFLAGS_EXTRA := -O1
 endif
 
 SRC_DIR := src

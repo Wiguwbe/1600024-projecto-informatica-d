@@ -1,0 +1,51 @@
+
+Resultado do algoritmo: Solução encontrada, custo: 6
+Solução:
+ABb
+a.b
+aAB
+Estatísticas Globais:
+- Estados gerados: 33
+- Estados explorados: 17
+- Tempo de execução: 0.000072 segundos.
+Resultado do algoritmo: Solução encontrada, custo: 10
+Solução:
+A.....
+aBb...
+aabb..
+.A.bbB
+Estatísticas Globais:
+- Estados gerados: 158
+- Estados explorados: 44
+- Tempo de execução: 0.000125 segundos.
+Resultado do algoritmo: Solução encontrada, custo: 28
+Solução:
+CccccccccC
+........bB
+Bbbbbbbbb.
+AaaaaaaaaA
+Estatísticas Globais:
+- Estados gerados: 1723
+- Estados explorados: 434
+- Tempo de execução: 0.001181 segundos.
+Resultado do algoritmo: Solução encontrada, custo: 20
+Solução:
+B.A.CddD..
+b.aacd....
+bbBaCD....
+...aaaaaaA
+Estatísticas Globais:
+- Estados gerados: 3482
+- Estados explorados: 774
+- Tempo de execução: 0.002407 segundos.
+Resultado do algoritmo: Solução encontrada, custo: 20
+Solução:
+bbbbb....
+bA..bbbB.
+baa......
+bBaaaaaA.
+.........
+Estatísticas Globais:
+- Estados gerados: 112890
+- Estados explorados: 41277
+- Tempo de execução: 0.179350 segundos.

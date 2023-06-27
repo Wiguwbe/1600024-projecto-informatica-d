@@ -1,0 +1,6 @@
+"Solução";"Custo da Solução";"Estados gerados";"Estados explorados";"Tempo de Execução"
+"sim";6;41;31;0.000211
+"sim";10;170;59;0.000300
+"sim";28;2983;739;0.002290
+"sim";20;5280;1061;0.003534
+"sim";20;113524;41576;0.114969

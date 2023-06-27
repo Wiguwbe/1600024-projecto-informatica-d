@@ -1,0 +1,151 @@
+
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 6
+Solução:
+ABb
+a.b
+aAB
+Estatísticas Globais:
+- Estados gerados: 48
+- Estados explorados: 45
+- Tempo de execução: 0.000412 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1:
+  * Estados gerados = 10, Estados explorados = 9
+  * Max nós min_heap = 5, Novos nós = 10, Nós reinseridos = 0, Nós piores (ignorados) = 6, Nós melhores (atualizados) = 0
+- Trabalhador #2:
+  * Estados gerados = 6, Estados explorados = 6
+  * Max nós min_heap = 2, Novos nós = 6, Nós reinseridos = 0, Nós piores (ignorados) = 3, Nós melhores (atualizados) = 0
+- Trabalhador #3:
+  * Estados gerados = 10, Estados explorados = 8
+  * Max nós min_heap = 8, Novos nós = 10, Nós reinseridos = 0, Nós piores (ignorados) = 6, Nós melhores (atualizados) = 0
+- Trabalhador #4:
+  * Estados gerados = 6, Estados explorados = 6
+  * Max nós min_heap = 1, Novos nós = 6, Nós reinseridos = 0, Nós piores (ignorados) = 4, Nós melhores (atualizados) = 0
+- Trabalhador #5:
+  * Estados gerados = 11, Estados explorados = 10
+  * Max nós min_heap = 5, Novos nós = 11, Nós reinseridos = 0, Nós piores (ignorados) = 2, Nós melhores (atualizados) = 0
+- Trabalhador #6:
+  * Estados gerados = 5, Estados explorados = 6
+  * Max nós min_heap = 2, Novos nós = 5, Nós reinseridos = 0, Nós piores (ignorados) = 4, Nós melhores (atualizados) = 0
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 10
+Solução:
+A.....
+aBb...
+aabb..
+.A.bbB
+Estatísticas Globais:
+- Estados gerados: 688
+- Estados explorados: 389
+- Tempo de execução: 0.000891 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1:
+  * Estados gerados = 160, Estados explorados = 81
+  * Max nós min_heap = 82, Novos nós = 160, Nós reinseridos = 0, Nós piores (ignorados) = 65, Nós melhores (atualizados) = 0
+- Trabalhador #2:
+  * Estados gerados = 74, Estados explorados = 50
+  * Max nós min_heap = 31, Novos nós = 74, Nós reinseridos = 0, Nós piores (ignorados) = 44, Nós melhores (atualizados) = 0
+- Trabalhador #3:
+  * Estados gerados = 151, Estados explorados = 78
+  * Max nós min_heap = 75, Novos nós = 151, Nós reinseridos = 0, Nós piores (ignorados) = 65, Nós melhores (atualizados) = 0
+- Trabalhador #4:
+  * Estados gerados = 77, Estados explorados = 55
+  * Max nós min_heap = 29, Novos nós = 77, Nós reinseridos = 0, Nós piores (ignorados) = 45, Nós melhores (atualizados) = 0
+- Trabalhador #5:
+  * Estados gerados = 160, Estados explorados = 75
+  * Max nós min_heap = 87, Novos nós = 160, Nós reinseridos = 0, Nós piores (ignorados) = 58, Nós melhores (atualizados) = 0
+- Trabalhador #6:
+  * Estados gerados = 66, Estados explorados = 50
+  * Max nós min_heap = 15, Novos nós = 66, Nós reinseridos = 0, Nós piores (ignorados) = 36, Nós melhores (atualizados) = 0
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 28
+Solução:
+CccccccccC
+........bB
+Bbbbbbbbb.
+AaaaaaaaaA
+Estatísticas Globais:
+- Estados gerados: 20138
+- Estados explorados: 7042
+- Tempo de execução: 0.007047 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1:
+  * Estados gerados = 3304, Estados explorados = 1130
+  * Max nós min_heap = 2165, Novos nós = 3304, Nós reinseridos = 0, Nós piores (ignorados) = 2116, Nós melhores (atualizados) = 0
+- Trabalhador #2:
+  * Estados gerados = 3412, Estados explorados = 1217
+  * Max nós min_heap = 2242, Novos nós = 3412, Nós reinseridos = 0, Nós piores (ignorados) = 2193, Nós melhores (atualizados) = 0
+- Trabalhador #3:
+  * Estados gerados = 3314, Estados explorados = 1194
+  * Max nós min_heap = 2054, Novos nós = 3314, Nós reinseridos = 0, Nós piores (ignorados) = 2061, Nós melhores (atualizados) = 0
+- Trabalhador #4:
+  * Estados gerados = 3391, Estados explorados = 1171
+  * Max nós min_heap = 2224, Novos nós = 3391, Nós reinseridos = 0, Nós piores (ignorados) = 2127, Nós melhores (atualizados) = 0
+- Trabalhador #5:
+  * Estados gerados = 3273, Estados explorados = 1143
+  * Max nós min_heap = 2085, Novos nós = 3273, Nós reinseridos = 0, Nós piores (ignorados) = 2063, Nós melhores (atualizados) = 0
+- Trabalhador #6:
+  * Estados gerados = 3444, Estados explorados = 1187
+  * Max nós min_heap = 2327, Novos nós = 3444, Nós reinseridos = 0, Nós piores (ignorados) = 2129, Nós melhores (atualizados) = 0
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 20
+Solução:
+B.AaC..D..
+b..ac.dd..
+bbBaCDd...
+...aaaaaaA
+Estatísticas Globais:
+- Estados gerados: 78723
+- Estados explorados: 22288
+- Tempo de execução: 0.030365 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1:
+  * Estados gerados = 12328, Estados explorados = 3336
+  * Max nós min_heap = 9122, Novos nós = 12328, Nós reinseridos = 0, Nós piores (ignorados) = 7962, Nós melhores (atualizados) = 0
+- Trabalhador #2:
+  * Estados gerados = 12890, Estados explorados = 3292
+  * Max nós min_heap = 9868, Novos nós = 12890, Nós reinseridos = 0, Nós piores (ignorados) = 7852, Nós melhores (atualizados) = 0
+- Trabalhador #3:
+  * Estados gerados = 13509, Estados explorados = 3731
+  * Max nós min_heap = 9778, Novos nós = 13509, Nós reinseridos = 0, Nós piores (ignorados) = 8855, Nós melhores (atualizados) = 0
+- Trabalhador #4:
+  * Estados gerados = 13611, Estados explorados = 4093
+  * Max nós min_heap = 9542, Novos nós = 13611, Nós reinseridos = 0, Nós piores (ignorados) = 9402, Nós melhores (atualizados) = 0
+- Trabalhador #5:
+  * Estados gerados = 13614, Estados explorados = 3967
+  * Max nós min_heap = 9128, Novos nós = 13614, Nós reinseridos = 0, Nós piores (ignorados) = 8709, Nós melhores (atualizados) = 0
+- Trabalhador #6:
+  * Estados gerados = 12771, Estados explorados = 3869
+  * Max nós min_heap = 6326, Novos nós = 12771, Nós reinseridos = 0, Nós piores (ignorados) = 8365, Nós melhores (atualizados) = 0
+Método: Melhor solução
+Resultado do algoritmo: Solução encontrada, custo: 20
+Solução:
+bbbbbbb..
+bAaa..bB.
+bb.aaaaa.
+.B.....A.
+.........
+Estatísticas Globais:
+- Estados gerados: 750819
+- Estados explorados: 323163
+- Tempo de execução: 2.157689 segundos.
+Estatísticas Trabalhadores:
+- Trabalhador #1:
+  * Estados gerados = 124999, Estados explorados = 53797
+  * Max nós min_heap = 71142, Novos nós = 124999, Nós reinseridos = 0, Nós piores (ignorados) = 57424, Nós melhores (atualizados) = 0
+- Trabalhador #2:
+  * Estados gerados = 125171, Estados explorados = 53659
+  * Max nós min_heap = 71519, Novos nós = 125171, Nós reinseridos = 0, Nós piores (ignorados) = 57387, Nós melhores (atualizados) = 0
+- Trabalhador #3:
+  * Estados gerados = 125041, Estados explorados = 53851
+  * Max nós min_heap = 71190, Novos nós = 125041, Nós reinseridos = 0, Nós piores (ignorados) = 57476, Nós melhores (atualizados) = 0
+- Trabalhador #4:
+  * Estados gerados = 125392, Estados explorados = 54141
+  * Max nós min_heap = 71201, Novos nós = 125392, Nós reinseridos = 0, Nós piores (ignorados) = 57681, Nós melhores (atualizados) = 0
+- Trabalhador #5:
+  * Estados gerados = 124960, Estados explorados = 53657
+  * Max nós min_heap = 71448, Novos nós = 124960, Nós reinseridos = 0, Nós piores (ignorados) = 57527, Nós melhores (atualizados) = 0
+- Trabalhador #6:
+  * Estados gerados = 125256, Estados explorados = 54058
+  * Max nós min_heap = 71179, Novos nós = 125256, Nós reinseridos = 0, Nós piores (ignorados) = 57675, Nós melhores (atualizados) = 0
