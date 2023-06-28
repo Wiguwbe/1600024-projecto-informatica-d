@@ -42,9 +42,14 @@ struct a_star_t
 
   // Informação estatística
   int generated;
-  int explored;
+  int expanded;
   struct timespec start_time, end_time;
   double execution_time;
+  size_t max_min_heap_size;
+  int nodes_new;
+  int nodes_reinserted;
+  int paths_worst_or_equals;
+  int paths_better;
 };
 
 // Funções comuns do algoritmo

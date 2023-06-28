@@ -28,12 +28,12 @@ void* a_star_worker_function(void* arg)
 
   // Reinicia as estatísticas para este trabalhador
   worker->generated = 0;
-  worker->explored = 0;
+  worker->expanded = 0;
   worker->max_min_heap_size = 0;
   worker->nodes_new = 0;
   worker->nodes_reinserted = 0;
-  worker->nodes_better = 0;
-  worker->nodes_worst_or_equals = 0;
+  worker->paths_better = 0;
+  worker->paths_worst_or_equals = 0;
 
   worker->idle = false;
 
@@ -98,7 +98,7 @@ void* a_star_worker_function(void* arg)
         // existe outro caminho mais curto para este estado
         if(g_attempt >= child_node->g)
         {
-          worker->nodes_worst_or_equals++;
+          worker->paths_worst_or_equals++;
           continue;
         }
 
@@ -112,7 +112,7 @@ void* a_star_worker_function(void* arg)
         // Calculamos o novo custo
         int cost = child_node->g + child_node->h;
 
-        worker->nodes_better++;
+        worker->paths_better++;
         if(child_node->index_in_open_set == SIZE_MAX)
         {
           // Inserimos o nó na nossa fila novamente
@@ -141,7 +141,7 @@ void* a_star_worker_function(void* arg)
       // Nó atual na nossa árvore
       a_star_node_t* current_node = (a_star_node_t*)top_element.data;
       current_node->index_in_open_set = SIZE_MAX;
-      worker->explored++;
+      worker->expanded++;
 
       // Verificamos se já existe uma solução, caso já exista temos de verificar se
       // este trabalhador está a procurar por soluções que se encontram a uma distância maior
@@ -281,7 +281,7 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
     a_star->scheduler.workers[i].idle = true;
 
     // Reiniciamos as estatísticas internas do trabalhador
-    a_star->scheduler.workers[i].explored = 0;
+    a_star->scheduler.workers[i].expanded = 0;
     a_star->scheduler.workers[i].generated = 0;
   }
 
@@ -416,7 +416,6 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
       // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos
       a_star->running = idle_workers < a_star->scheduler.num_workers;
     }
-
   }
 
   // Esperamos que todas os trabalhadores terminem
@@ -429,8 +428,13 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
   // Calculamos o tempo de execução e outras estatísticas
   for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
   {
-    a_star->common->explored += a_star->scheduler.workers[i].explored;
+    a_star->common->expanded += a_star->scheduler.workers[i].expanded;
     a_star->common->generated += a_star->scheduler.workers[i].generated;
+    a_star->common->max_min_heap_size += a_star->scheduler.workers[i].max_min_heap_size;
+    a_star->common->nodes_new += a_star->scheduler.workers[i].nodes_new;
+    a_star->common->nodes_reinserted += a_star->scheduler.workers[i].nodes_reinserted;
+    a_star->common->paths_better += a_star->scheduler.workers[i].paths_better;
+    a_star->common->paths_worst_or_equals += a_star->scheduler.workers[i].paths_worst_or_equals;
   }
   a_star->common->execution_time = (a_star->common->end_time.tv_sec - a_star->common->start_time.tv_sec);
   a_star->common->execution_time += (a_star->common->end_time.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
@@ -463,17 +467,17 @@ void a_star_parallel_print_statistics(a_star_parallel_t* a_star, bool csv)
     printf("Estatísticas Trabalhadores:\n");
     for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
     {
-      printf("- Trabalhador #%ld:\n  * Estados gerados = %d, Estados explorados = %d\n  * Max nós min_heap = %d, Novos nós = %d, "
-             "Nós "
-             "reinseridos = %d, Nós piores (ignorados) = %d, Nós melhores (atualizados) = %d\n",
-             i + 1,
+      printf("- Trabalhador #%ld\n", i + 1);
+      printf("  * Estados gerados: %d, Estados expandidos: %d\n",
              a_star->scheduler.workers[i].generated,
-             a_star->scheduler.workers[i].explored,
+             a_star->scheduler.workers[i].expanded);
+      printf("  * Max nós min_heap: %ld, Novos nós: %d, Nós reinseridos: %d, Caminhos piores (ignorados): %d, Caminhos "
+             "melhores (atualizados): %d\n",
              a_star->scheduler.workers[i].max_min_heap_size,
              a_star->scheduler.workers[i].nodes_new,
              a_star->scheduler.workers[i].nodes_reinserted,
-             a_star->scheduler.workers[i].nodes_worst_or_equals,
-             a_star->scheduler.workers[i].nodes_better);
+             a_star->scheduler.workers[i].paths_worst_or_equals,
+             a_star->scheduler.workers[i].paths_better);
     }
   }
 }

@@ -6,28 +6,33 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 495
-- Estados explorados: 309
-- Tempo de execução: 0.000356 segundos.
+- Estados gerados: 522
+- Estados expandidos: 322
+- Max nós min_heap: 213
+- Novos nós: 522
+- Nós reinseridos: 0
+- Caminhos piores (ignorados): 326
+- Caminhos melhores (atualizados): 3
+
 Estatísticas Trabalhadores:
-- Trabalhador #1:
-  * Estados gerados = 88, Estados explorados = 45
-  * Max nós min_heap = 44, Novos nós = 88, Nós reinseridos = 0, Nós piores (ignorados) = 53, Nós melhores (atualizados) = 2
-- Trabalhador #2:
-  * Estados gerados = 77, Estados explorados = 50
-  * Max nós min_heap = 28, Novos nós = 77, Nós reinseridos = 0, Nós piores (ignorados) = 49, Nós melhores (atualizados) = 0
-- Trabalhador #3:
-  * Estados gerados = 77, Estados explorados = 42
-  * Max nós min_heap = 36, Novos nós = 77, Nós reinseridos = 0, Nós piores (ignorados) = 50, Nós melhores (atualizados) = 0
-- Trabalhador #4:
-  * Estados gerados = 84, Estados explorados = 65
-  * Max nós min_heap = 22, Novos nós = 84, Nós reinseridos = 2, Nós piores (ignorados) = 53, Nós melhores (atualizados) = 2
-- Trabalhador #5:
-  * Estados gerados = 90, Estados explorados = 55
-  * Max nós min_heap = 38, Novos nós = 90, Nós reinseridos = 0, Nós piores (ignorados) = 61, Nós melhores (atualizados) = 1
-- Trabalhador #6:
-  * Estados gerados = 79, Estados explorados = 52
-  * Max nós min_heap = 29, Novos nós = 79, Nós reinseridos = 0, Nós piores (ignorados) = 56, Nós melhores (atualizados) = 0
+- Trabalhador #1
+  * Estados gerados: 97, Estados expandidos: 54
+  * Max nós min_heap: 44, Novos nós: 97, Nós reinseridos: 0, Caminhos piores (ignorados): 60, Caminhos melhores (atualizados): 1
+- Trabalhador #2
+  * Estados gerados: 77, Estados expandidos: 48
+  * Max nós min_heap: 31, Novos nós: 77, Nós reinseridos: 0, Caminhos piores (ignorados): 49, Caminhos melhores (atualizados): 1
+- Trabalhador #3
+  * Estados gerados: 83, Estados expandidos: 42
+  * Max nós min_heap: 42, Novos nós: 83, Nós reinseridos: 0, Caminhos piores (ignorados): 51, Caminhos melhores (atualizados): 0
+- Trabalhador #4
+  * Estados gerados: 82, Estados expandidos: 64
+  * Max nós min_heap: 21, Novos nós: 82, Nós reinseridos: 0, Caminhos piores (ignorados): 58, Caminhos melhores (atualizados): 0
+- Trabalhador #5
+  * Estados gerados: 99, Estados expandidos: 57
+  * Max nós min_heap: 45, Novos nós: 99, Nós reinseridos: 0, Caminhos piores (ignorados): 55, Caminhos melhores (atualizados): 1
+- Trabalhador #6
+  * Estados gerados: 84, Estados expandidos: 57
+  * Max nós min_heap: 30, Novos nós: 84, Nós reinseridos: 0, Caminhos piores (ignorados): 53, Caminhos melhores (atualizados): 0
 Método: Melhor solução
 Resultado do algoritmo: Solução encontrada, custo: 20
 Solução:
@@ -35,28 +40,33 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 861
-- Estados explorados: 549
-- Tempo de execução: 0.000459 segundos.
+- Estados gerados: 872
+- Estados expandidos: 551
+- Max nós min_heap: 342
+- Novos nós: 872
+- Nós reinseridos: 3
+- Caminhos piores (ignorados): 579
+- Caminhos melhores (atualizados): 13
+
 Estatísticas Trabalhadores:
-- Trabalhador #1:
-  * Estados gerados = 152, Estados explorados = 77
-  * Max nós min_heap = 77, Novos nós = 152, Nós reinseridos = 0, Nós piores (ignorados) = 96, Nós melhores (atualizados) = 4
-- Trabalhador #2:
-  * Estados gerados = 149, Estados explorados = 108
-  * Max nós min_heap = 42, Novos nós = 149, Nós reinseridos = 0, Nós piores (ignorados) = 101, Nós melhores (atualizados) = 3
-- Trabalhador #3:
-  * Estados gerados = 149, Estados explorados = 82
-  * Max nós min_heap = 69, Novos nós = 149, Nós reinseridos = 0, Nós piores (ignorados) = 93, Nós melhores (atualizados) = 1
-- Trabalhador #4:
-  * Estados gerados = 127, Estados explorados = 99
-  * Max nós min_heap = 31, Novos nós = 127, Nós reinseridos = 0, Nós piores (ignorados) = 88, Nós melhores (atualizados) = 0
-- Trabalhador #5:
-  * Estados gerados = 139, Estados explorados = 95
-  * Max nós min_heap = 48, Novos nós = 139, Nós reinseridos = 2, Nós piores (ignorados) = 101, Nós melhores (atualizados) = 3
-- Trabalhador #6:
-  * Estados gerados = 145, Estados explorados = 88
-  * Max nós min_heap = 62, Novos nós = 145, Nós reinseridos = 0, Nós piores (ignorados) = 101, Nós melhores (atualizados) = 3
+- Trabalhador #1
+  * Estados gerados: 156, Estados expandidos: 96
+  * Max nós min_heap: 62, Novos nós: 156, Nós reinseridos: 1, Caminhos piores (ignorados): 111, Caminhos melhores (atualizados): 4
+- Trabalhador #2
+  * Estados gerados: 148, Estados expandidos: 94
+  * Max nós min_heap: 57, Novos nós: 148, Nós reinseridos: 1, Caminhos piores (ignorados): 86, Caminhos melhores (atualizados): 2
+- Trabalhador #3
+  * Estados gerados: 151, Estados expandidos: 74
+  * Max nós min_heap: 79, Novos nós: 151, Nós reinseridos: 0, Caminhos piores (ignorados): 92, Caminhos melhores (atualizados): 1
+- Trabalhador #4
+  * Estados gerados: 128, Estados expandidos: 90
+  * Max nós min_heap: 42, Novos nós: 128, Nós reinseridos: 0, Caminhos piores (ignorados): 89, Caminhos melhores (atualizados): 1
+- Trabalhador #5
+  * Estados gerados: 140, Estados expandidos: 102
+  * Max nós min_heap: 40, Novos nós: 140, Nós reinseridos: 0, Caminhos piores (ignorados): 104, Caminhos melhores (atualizados): 1
+- Trabalhador #6
+  * Estados gerados: 149, Estados expandidos: 95
+  * Max nós min_heap: 62, Novos nós: 149, Nós reinseridos: 1, Caminhos piores (ignorados): 97, Caminhos melhores (atualizados): 4
 Método: Melhor solução
 Resultado do algoritmo: Solução encontrada, custo: 20
 Solução:
@@ -64,28 +74,33 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 970
-- Estados explorados: 637
-- Tempo de execução: 0.000473 segundos.
+- Estados gerados: 1110
+- Estados expandidos: 771
+- Max nós min_heap: 358
+- Novos nós: 1110
+- Nós reinseridos: 6
+- Caminhos piores (ignorados): 728
+- Caminhos melhores (atualizados): 21
+
 Estatísticas Trabalhadores:
-- Trabalhador #1:
-  * Estados gerados = 183, Estados explorados = 119
-  * Max nós min_heap = 72, Novos nós = 183, Nós reinseridos = 2, Nós piores (ignorados) = 120, Nós melhores (atualizados) = 3
-- Trabalhador #2:
-  * Estados gerados = 166, Estados explorados = 101
-  * Max nós min_heap = 61, Novos nós = 166, Nós reinseridos = 0, Nós piores (ignorados) = 103, Nós melhores (atualizados) = 5
-- Trabalhador #3:
-  * Estados gerados = 175, Estados explorados = 93
-  * Max nós min_heap = 85, Novos nós = 175, Nós reinseridos = 0, Nós piores (ignorados) = 109, Nós melhores (atualizados) = 2
-- Trabalhador #4:
-  * Estados gerados = 148, Estados explorados = 112
-  * Max nós min_heap = 38, Novos nós = 148, Nós reinseridos = 2, Nós piores (ignorados) = 98, Nós melhores (atualizados) = 3
-- Trabalhador #5:
-  * Estados gerados = 151, Estados explorados = 111
-  * Max nós min_heap = 47, Novos nós = 151, Nós reinseridos = 0, Nós piores (ignorados) = 107, Nós melhores (atualizados) = 1
-- Trabalhador #6:
-  * Estados gerados = 147, Estados explorados = 101
-  * Max nós min_heap = 48, Novos nós = 147, Nós reinseridos = 0, Nós piores (ignorados) = 93, Nós melhores (atualizados) = 0
+- Trabalhador #1
+  * Estados gerados: 209, Estados expandidos: 137
+  * Max nós min_heap: 80, Novos nós: 209, Nós reinseridos: 2, Caminhos piores (ignorados): 139, Caminhos melhores (atualizados): 3
+- Trabalhador #2
+  * Estados gerados: 185, Estados expandidos: 139
+  * Max nós min_heap: 39, Novos nós: 185, Nós reinseridos: 1, Caminhos piores (ignorados): 119, Caminhos melhores (atualizados): 7
+- Trabalhador #3
+  * Estados gerados: 196, Estados expandidos: 123
+  * Max nós min_heap: 78, Novos nós: 196, Nós reinseridos: 0, Caminhos piores (ignorados): 124, Caminhos melhores (atualizados): 3
+- Trabalhador #4
+  * Estados gerados: 173, Estados expandidos: 124
+  * Max nós min_heap: 41, Novos nós: 173, Nós reinseridos: 1, Caminhos piores (ignorados): 104, Caminhos melhores (atualizados): 3
+- Trabalhador #5
+  * Estados gerados: 181, Estados expandidos: 115
+  * Max nós min_heap: 88, Novos nós: 181, Nós reinseridos: 0, Caminhos piores (ignorados): 128, Caminhos melhores (atualizados): 2
+- Trabalhador #6
+  * Estados gerados: 166, Estados expandidos: 133
+  * Max nós min_heap: 32, Novos nós: 166, Nós reinseridos: 2, Caminhos piores (ignorados): 114, Caminhos melhores (atualizados): 3
 Método: Melhor solução
 Resultado do algoritmo: Solução encontrada, custo: 31
 Solução:
@@ -93,28 +108,33 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 29653
-- Estados explorados: 20338
-- Tempo de execução: 0.027893 segundos.
+- Estados gerados: 15897
+- Estados expandidos: 10600
+- Max nós min_heap: 5298
+- Novos nós: 15897
+- Nós reinseridos: 44
+- Caminhos piores (ignorados): 11439
+- Caminhos melhores (atualizados): 403
+
 Estatísticas Trabalhadores:
-- Trabalhador #1:
-  * Estados gerados = 5208, Estados explorados = 3128
-  * Max nós min_heap = 2107, Novos nós = 5208, Nós reinseridos = 23, Nós piores (ignorados) = 3826, Nós melhores (atualizados) = 258
-- Trabalhador #2:
-  * Estados gerados = 4755, Estados explorados = 3462
-  * Max nós min_heap = 1352, Novos nós = 4755, Nós reinseridos = 58, Nós piores (ignorados) = 3723, Nós melhores (atualizados) = 234
-- Trabalhador #3:
-  * Estados gerados = 5136, Estados explorados = 3331
-  * Max nós min_heap = 1861, Novos nós = 5136, Nós reinseridos = 52, Nós piores (ignorados) = 3939, Nós melhores (atualizados) = 276
-- Trabalhador #4:
-  * Estados gerados = 4660, Estados explorados = 3476
-  * Max nós min_heap = 1254, Novos nós = 4660, Nós reinseridos = 68, Nós piores (ignorados) = 3671, Nós melhores (atualizados) = 229
-- Trabalhador #5:
-  * Estados gerados = 5229, Estados explorados = 3362
-  * Max nós min_heap = 1916, Novos nós = 5229, Nós reinseridos = 44, Nós piores (ignorados) = 3956, Nós melhores (atualizados) = 259
-- Trabalhador #6:
-  * Estados gerados = 4665, Estados explorados = 3579
-  * Max nós min_heap = 1165, Novos nós = 4665, Nós reinseridos = 78, Nós piores (ignorados) = 3835, Nós melhores (atualizados) = 224
+- Trabalhador #1
+  * Estados gerados: 2838, Estados expandidos: 1738
+  * Max nós min_heap: 1085, Novos nós: 2838, Nós reinseridos: 2, Caminhos piores (ignorados): 1975, Caminhos melhores (atualizados): 62
+- Trabalhador #2
+  * Estados gerados: 2552, Estados expandidos: 1785
+  * Max nós min_heap: 755, Novos nós: 2552, Nós reinseridos: 14, Caminhos piores (ignorados): 1818, Caminhos melhores (atualizados): 67
+- Trabalhador #3
+  * Estados gerados: 2760, Estados expandidos: 1752
+  * Max nós min_heap: 1058, Novos nós: 2760, Nós reinseridos: 6, Caminhos piores (ignorados): 1983, Caminhos melhores (atualizados): 89
+- Trabalhador #4
+  * Estados gerados: 2539, Estados expandidos: 1875
+  * Max nós min_heap: 683, Novos nós: 2539, Nós reinseridos: 9, Caminhos piores (ignorados): 1926, Caminhos melhores (atualizados): 59
+- Trabalhador #5
+  * Estados gerados: 2750, Estados expandidos: 1692
+  * Max nós min_heap: 1023, Novos nós: 2750, Nós reinseridos: 6, Caminhos piores (ignorados): 1864, Caminhos melhores (atualizados): 65
+- Trabalhador #6
+  * Estados gerados: 2458, Estados expandidos: 1758
+  * Max nós min_heap: 694, Novos nós: 2458, Nós reinseridos: 7, Caminhos piores (ignorados): 1873, Caminhos melhores (atualizados): 61
 Método: Melhor solução
 Resultado do algoritmo: Solução encontrada, custo: 31
 Solução:
@@ -122,75 +142,90 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 17290
-- Estados explorados: 11471
-- Tempo de execução: 0.011912 segundos.
+- Estados gerados: 21747
+- Estados expandidos: 14455
+- Max nós min_heap: 7362
+- Novos nós: 21747
+- Nós reinseridos: 86
+- Caminhos piores (ignorados): 15898
+- Caminhos melhores (atualizados): 664
+
 Estatísticas Trabalhadores:
-- Trabalhador #1:
-  * Estados gerados = 3115, Estados explorados = 1868
-  * Max nós min_heap = 1246, Novos nós = 3115, Nós reinseridos = 5, Nós piores (ignorados) = 2168, Nós melhores (atualizados) = 79
-- Trabalhador #2:
-  * Estados gerados = 2774, Estados explorados = 1961
-  * Max nós min_heap = 835, Novos nós = 2774, Nós reinseridos = 19, Nós piores (ignorados) = 2054, Nós melhores (atualizados) = 81
-- Trabalhador #3:
-  * Estados gerados = 2930, Estados explorados = 1890
-  * Max nós min_heap = 1053, Novos nós = 2930, Nós reinseridos = 9, Nós piores (ignorados) = 2045, Nós melhores (atualizados) = 69
-- Trabalhador #4:
-  * Estados gerados = 2678, Estados explorados = 1985
-  * Max nós min_heap = 706, Novos nós = 2678, Nós reinseridos = 15, Nós piores (ignorados) = 2027, Nós melhores (atualizados) = 80
-- Trabalhador #5:
-  * Estados gerados = 3030, Estados explorados = 1977
-  * Max nós min_heap = 1052, Novos nós = 3030, Nós reinseridos = 15, Nós piores (ignorados) = 2237, Nós melhores (atualizados) = 88
-- Trabalhador #6:
-  * Estados gerados = 2763, Estados explorados = 1790
-  * Max nós min_heap = 973, Novos nós = 2763, Nós reinseridos = 5, Nós piores (ignorados) = 2013, Nós melhores (atualizados) = 70
+- Trabalhador #1
+  * Estados gerados: 3953, Estados expandidos: 2458
+  * Max nós min_heap: 1531, Novos nós: 3953, Nós reinseridos: 18, Caminhos piores (ignorados): 2820, Caminhos melhores (atualizados): 136
+- Trabalhador #2
+  * Estados gerados: 3379, Estados expandidos: 2678
+  * Max nós min_heap: 722, Novos nós: 3379, Nós reinseridos: 30, Caminhos piores (ignorados): 2634, Caminhos melhores (atualizados): 101
+- Trabalhador #3
+  * Estados gerados: 3704, Estados expandidos: 2536
+  * Max nós min_heap: 1176, Novos nós: 3704, Nós reinseridos: 9, Caminhos piores (ignorados): 2738, Caminhos melhores (atualizados): 98
+- Trabalhador #4
+  * Estados gerados: 3448, Estados expandidos: 2570
+  * Max nós min_heap: 881, Novos nós: 3448, Nós reinseridos: 16, Caminhos piores (ignorados): 2671, Caminhos melhores (atualizados): 115
+- Trabalhador #5
+  * Estados gerados: 3777, Estados expandidos: 2022
+  * Max nós min_heap: 1760, Novos nós: 3777, Nós reinseridos: 5, Caminhos piores (ignorados): 2517, Caminhos melhores (atualizados): 114
+- Trabalhador #6
+  * Estados gerados: 3486, Estados expandidos: 2191
+  * Max nós min_heap: 1292, Novos nós: 3486, Nós reinseridos: 8, Caminhos piores (ignorados): 2518, Caminhos melhores (atualizados): 100
 Método: Melhor solução
 Resultado do algoritmo: Solução não encontrada.
 Estatísticas Globais:
-- Estados gerados: 181391
-- Estados explorados: 186810
-- Tempo de execução: 3.474097 segundos.
+- Estados gerados: 181398
+- Estados expandidos: 186716
+- Max nós min_heap: 20583
+- Novos nós: 181398
+- Nós reinseridos: 5317
+- Caminhos piores (ignorados): 297710
+- Caminhos melhores (atualizados): 18139
+
 Estatísticas Trabalhadores:
-- Trabalhador #1:
-  * Estados gerados = 32057, Estados explorados = 32357
-  * Max nós min_heap = 5148, Novos nós = 32057, Nós reinseridos = 300, Nós piores (ignorados) = 52949, Nós melhores (atualizados) = 3347
-- Trabalhador #2:
-  * Estados gerados = 28980, Estados explorados = 30329
-  * Max nós min_heap = 2369, Novos nós = 28980, Nós reinseridos = 1348, Nós piores (ignorados) = 48076, Nós melhores (atualizados) = 2796
-- Trabalhador #3:
-  * Estados gerados = 31474, Estados explorados = 31886
-  * Max nós min_heap = 4149, Novos nós = 31474, Nós reinseridos = 412, Nós piores (ignorados) = 50890, Nós melhores (atualizados) = 2984
-- Trabalhador #4:
-  * Estados gerados = 28413, Estados explorados = 30027
-  * Max nós min_heap = 1975, Novos nós = 28413, Nós reinseridos = 1614, Nós piores (ignorados) = 46927, Nós melhores (atualizados) = 2911
-- Trabalhador #5:
-  * Estados gerados = 31482, Estados explorados = 31828
-  * Max nós min_heap = 4595, Novos nós = 31482, Nós reinseridos = 346, Nós piores (ignorados) = 51495, Nós melhores (atualizados) = 3084
-- Trabalhador #6:
-  * Estados gerados = 28985, Estados explorados = 30383
-  * Max nós min_heap = 2356, Novos nós = 28985, Nós reinseridos = 1398, Nós piores (ignorados) = 47773, Nós melhores (atualizados) = 2804
+- Trabalhador #1
+  * Estados gerados: 32056, Estados expandidos: 32354
+  * Max nós min_heap: 4707, Novos nós: 32056, Nós reinseridos: 298, Caminhos piores (ignorados): 52678, Caminhos melhores (atualizados): 3165
+- Trabalhador #2
+  * Estados gerados: 28983, Estados expandidos: 30350
+  * Max nós min_heap: 2309, Novos nós: 28983, Nós reinseridos: 1366, Caminhos piores (ignorados): 48011, Caminhos melhores (atualizados): 2893
+- Trabalhador #3
+  * Estados gerados: 31482, Estados expandidos: 31829
+  * Max nós min_heap: 4763, Novos nós: 31482, Nós reinseridos: 347, Caminhos piores (ignorados): 51067, Caminhos melhores (atualizados): 3198
+- Trabalhador #4
+  * Estados gerados: 28411, Estados expandidos: 29839
+  * Max nós min_heap: 2198, Novos nós: 28411, Nós reinseridos: 1428, Caminhos piores (ignorados): 46907, Caminhos melhores (atualizados): 2834
+- Trabalhador #5
+  * Estados gerados: 31479, Estados expandidos: 31752
+  * Max nós min_heap: 4748, Novos nós: 31479, Nós reinseridos: 273, Caminhos piores (ignorados): 51443, Caminhos melhores (atualizados): 3103
+- Trabalhador #6
+  * Estados gerados: 28987, Estados expandidos: 30592
+  * Max nós min_heap: 1858, Novos nós: 28987, Nós reinseridos: 1605, Caminhos piores (ignorados): 47604, Caminhos melhores (atualizados): 2946
 Método: Melhor solução
 Resultado do algoritmo: Solução não encontrada.
 Estatísticas Globais:
-- Estados gerados: 181380
-- Estados explorados: 185949
-- Tempo de execução: 3.401912 segundos.
+- Estados gerados: 181387
+- Estados expandidos: 187674
+- Max nós min_heap: 20660
+- Novos nós: 181387
+- Nós reinseridos: 6286
+- Caminhos piores (ignorados): 298895
+- Caminhos melhores (atualizados): 19584
+
 Estatísticas Trabalhadores:
-- Trabalhador #1:
-  * Estados gerados = 32053, Estados explorados = 32298
-  * Max nós min_heap = 4679, Novos nós = 32053, Nós reinseridos = 245, Nós piores (ignorados) = 52601, Nós melhores (atualizados) = 3265
-- Trabalhador #2:
-  * Estados gerados = 28986, Estados explorados = 30002
-  * Max nós min_heap = 2716, Novos nós = 28986, Nós reinseridos = 1016, Nós piores (ignorados) = 47833, Nós melhores (atualizados) = 2556
-- Trabalhador #3:
-  * Estados gerados = 31474, Estados explorados = 31773
-  * Max nós min_heap = 4222, Novos nós = 31474, Nós reinseridos = 299, Nós piores (ignorados) = 50865, Nós melhores (atualizados) = 2831
-- Trabalhador #4:
-  * Estados gerados = 28410, Estados explorados = 29861
-  * Max nós min_heap = 2187, Novos nós = 28410, Nós reinseridos = 1451, Nós piores (ignorados) = 46778, Nós melhores (atualizados) = 2788
-- Trabalhador #5:
-  * Estados gerados = 31475, Estados explorados = 31798
-  * Max nós min_heap = 4216, Novos nós = 31475, Nós reinseridos = 322, Nós piores (ignorados) = 51357, Nós melhores (atualizados) = 2789
-- Trabalhador #6:
-  * Estados gerados = 28982, Estados explorados = 30217
-  * Max nós min_heap = 2205, Novos nós = 28982, Nós reinseridos = 1235, Nós piores (ignorados) = 47520, Nós melhores (atualizados) = 2635
+- Trabalhador #1
+  * Estados gerados: 32055, Estados expandidos: 32369
+  * Max nós min_heap: 5447, Novos nós: 32055, Nós reinseridos: 314, Caminhos piores (ignorados): 53139, Caminhos melhores (atualizados): 3815
+- Trabalhador #2
+  * Estados gerados: 28979, Estados expandidos: 30465
+  * Max nós min_heap: 2408, Novos nós: 28979, Nós reinseridos: 1486, Caminhos piores (ignorados): 48089, Caminhos melhores (atualizados): 3069
+- Trabalhador #3
+  * Estados gerados: 31481, Estados expandidos: 32011
+  * Max nós min_heap: 4070, Novos nós: 31481, Nós reinseridos: 530, Caminhos piores (ignorados): 51121, Caminhos melhores (atualizados): 3235
+- Trabalhador #4
+  * Estados gerados: 28406, Estados expandidos: 30493
+  * Max nós min_heap: 1787, Novos nós: 28406, Nós reinseridos: 2087, Caminhos piores (ignorados): 47041, Caminhos melhores (atualizados): 3254
+- Trabalhador #5
+  * Estados gerados: 31481, Estados expandidos: 31819
+  * Max nós min_heap: 4827, Novos nós: 31481, Nós reinseridos: 337, Caminhos piores (ignorados): 51634, Caminhos melhores (atualizados): 3306
+- Trabalhador #6
+  * Estados gerados: 28985, Estados expandidos: 30517
+  * Max nós min_heap: 2121, Novos nós: 28985, Nós reinseridos: 1532, Caminhos piores (ignorados): 47871, Caminhos melhores (atualizados): 2905

@@ -109,13 +109,17 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->start_time));
   while(a_star->open_set->size)
   {
+    if(a_star->common->max_min_heap_size < a_star->open_set->size)
+      a_star->common->max_min_heap_size = a_star->open_set->size;
+
     // A seguinte operação pode ocorrer em O(log(N))
     // se nosAbertos é um min-heap ou uma queue prioritária
     heap_node_t top_element = min_heap_pop(a_star->open_set);
 
     // Nó atual na nossa árvore
     a_star_node_t* current_node = (a_star_node_t*)top_element.data;
-    a_star->common->explored++;
+    current_node->index_in_open_set = SIZE_MAX;
+    a_star->common->expanded++;
 
     // Se encontramos o objetivo saímos e retornamos o nó
     if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
@@ -137,50 +141,60 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
       state_t* neighbor = (state_t*)linked_list_get(neighbors, i);
 
       // Verifica se o nó para este estado já se encontra na nossa lista de nós
-      a_star_node_t* neighbor_node = node_allocator_get(a_star->common->node_allocator, neighbor);
+      a_star_node_t* child_node = node_allocator_get(a_star->common->node_allocator, neighbor);
 
-      if(neighbor_node == NULL)
+      if(!child_node)
       {
         // Este nó ainda não existe, criamos um novo nó
-        neighbor_node = node_allocator_new(a_star->common->node_allocator, neighbor);
-        neighbor_node->parent = current_node;
+        child_node = node_allocator_new(a_star->common->node_allocator, neighbor);
+        child_node->parent = current_node;
 
         // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
-        neighbor_node->g = current_node->g + a_star->common->d_func(current_node->state, neighbor_node->state);
-        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->common->goal_state);
+        child_node->g = current_node->g + a_star->common->d_func(current_node->state, child_node->state);
+        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
 
         // Calculamos o custo
-        int cost = neighbor_node->g + neighbor_node->h;
+        int cost = child_node->g + child_node->h;
 
         // Inserimos o nó na nossa fila
-        min_heap_insert(a_star->open_set, cost, neighbor_node);
+        child_node->index_in_open_set = min_heap_insert(a_star->open_set, cost, child_node);
         a_star->common->generated++;
+        a_star->common->nodes_new++;
       }
       else
       {
         // Encontra o custo de chegar do nó a este vizinho
-        int g_attempt = current_node->g + a_star->common->d_func(current_node->state, neighbor_node->state);
+        int g_attempt = current_node->g + a_star->common->d_func(current_node->state, child_node->state);
 
         // Se o custo for maior do que o nó já tem, não faz sentido atualizar
         // existe outro caminho mais curto para este nó
-        if(g_attempt >= neighbor_node->g)
+        if(g_attempt >= child_node->g) {
+          a_star->common->paths_worst_or_equals++;
           continue;
+        }
 
         // O nó atual é o caminho mais curto para este vizinho, atualizamos
-        neighbor_node->parent = current_node;
-
-        // Guardamos o custo atual
-        int old_cost = neighbor_node->g + neighbor_node->h;
+        child_node->parent = current_node;
 
         // Atualizamos os parâmetros do nó
-        neighbor_node->g = g_attempt;
-        neighbor_node->h = a_star->common->h_func(neighbor_node->state, a_star->common->goal_state);
+        child_node->g = g_attempt;
+        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
 
         // Calculamos o novo custo
-        int new_cost = neighbor_node->g + neighbor_node->h;
+        int cost = child_node->g + child_node->h;
 
-        // Atualizamos a nossa fila prioritária
-        min_heap_update(a_star->open_set, old_cost, new_cost, neighbor_node);
+        a_star->common->paths_better++;
+        if(child_node->index_in_open_set == SIZE_MAX)
+        {
+          // Inserimos o nó na nossa fila novamente
+          child_node->index_in_open_set = min_heap_insert(a_star->open_set, cost, child_node);
+          a_star->common->nodes_reinserted++;
+        }
+        else
+        {
+          // Atualizamos a nossa fila prioritária
+          min_heap_update_cost(a_star->open_set, child_node->index_in_open_set, cost);
+        }
       }
     }
 

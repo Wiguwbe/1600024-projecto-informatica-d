@@ -54,12 +54,12 @@ struct a_star_worker_t
 
   // Variáveis para estatísticas
   int generated;
-  int explored;
-  int max_min_heap_size;
+  int expanded;
+  size_t max_min_heap_size;
   int nodes_new;
   int nodes_reinserted;
-  int nodes_worst_or_equals;
-  int nodes_better;
+  int paths_worst_or_equals;
+  int paths_better;
 };
 
 // Cria uma nova instância do algoritmo A* para resolver um problema

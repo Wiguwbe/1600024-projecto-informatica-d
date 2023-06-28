@@ -1,12 +1,16 @@
 #include "astar.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 // Funções internas do algoritmo
-a_star_t* a_star_create(
-    size_t struct_size, goal_function goal_func, visit_function visit_func, heuristic_function h_func, distance_function d_func, print_function print_func)
+a_star_t* a_star_create(size_t struct_size,
+                        goal_function goal_func,
+                        visit_function visit_func,
+                        heuristic_function h_func,
+                        distance_function d_func,
+                        print_function print_func)
 {
   a_star_t* a_star = (a_star_t*)malloc(sizeof(a_star_t));
   if(a_star == NULL)
@@ -45,7 +49,12 @@ a_star_t* a_star_create(
 
   // Reinicia as estatísticas
   a_star->generated = 0;
-  a_star->explored = 0;
+  a_star->expanded = 0;
+  a_star->max_min_heap_size = 0;
+  a_star->nodes_new = 0;
+  a_star->nodes_reinserted = 0;
+  a_star->paths_better = 0;
+  a_star->paths_worst_or_equals = 0;
 
   return a_star;
 }
@@ -94,16 +103,25 @@ void a_star_print_statistics(a_star_t* a_star, bool csv)
 
     printf("Estatísticas Globais:\n");
     printf("- Estados gerados: %d\n", a_star->generated);
-    printf("- Estados explorados: %d\n", a_star->explored);
-    printf("- Tempo de execução: %.6f segundos.\n", a_star->execution_time);
+    printf("- Estados expandidos: %d\n", a_star->expanded);
+    printf("- Max nós min_heap: %ld\n", a_star->max_min_heap_size);
+    printf("- Novos nós: %d\n", a_star->nodes_new);
+    printf("- Nós reinseridos: %d\n", a_star->nodes_reinserted);
+    printf("- Caminhos piores (ignorados): %d\n", a_star->paths_worst_or_equals);
+    printf("- Caminhos melhores (atualizados): %d\n\n", a_star->paths_better);
   }
   else
   {
-    printf("\"%s\";%d;%d;%d;%.6f\n",
+    printf("\"%s\";%d;%d;%d;%ld;%d;%d;%d;%d;%.6f\n",
            a_star->solution ? "sim" : "não",
            a_star->solution ? a_star->solution->g : 0,
            a_star->generated,
-           a_star->explored,
+           a_star->expanded,
+           a_star->max_min_heap_size,
+           a_star->nodes_new,
+           a_star->nodes_reinserted,
+           a_star->paths_worst_or_equals,
+           a_star->paths_better,
            a_star->execution_time);
   }
 }

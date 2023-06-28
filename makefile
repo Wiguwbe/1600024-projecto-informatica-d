@@ -46,33 +46,33 @@ reports: reports_numberlink reports_8puzzle
 measurements_numberlink: all
 	@echo "A criar medições para o problema numberlink"
 	@mkdir -p measurements
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/numberlink.sequencial.csv
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/numberlink.parallel.best.$(WORKERS)_workers.csv
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/numberlink.parallel.first.$(WORKERS)_workers.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados expandidos\";\"Tempo de Execução\"" > measurements/numberlink.sequencial.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados expandidos\";\"Tempo de Execução\"" > measurements/numberlink.parallel.best.$(WORKERS)_workers.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados expandidos\";\"Tempo de Execução\"" > measurements/numberlink.parallel.first.$(WORKERS)_workers.csv
 	@for TEST in ./instances/numberlink_*; do \
 		echo "Problema: numberlink, Instância: $$TEST"; \
 		echo "Algoritmo sequencial"; \
-		./numberlink/$(BIN_DIR)/numberlink -r $$TEST >> measurements/numberlink.sequencial.csv ; sleep 2; \
+		python measure.py ./numberlink/$(BIN_DIR)/numberlink -r $$TEST >> measurements/numberlink.sequencial.csv ; sleep 2; \
 		echo "Algoritmo paralelo - $(WORKERS) trabalhadores, melhor solução"; \
-		./numberlink/$(BIN_DIR)/numberlink -n $(WORKERS) -r $$TEST >> measurements/numberlink.parallel.best.$(WORKERS)_workers.csv ; sleep 2; \
+		python measure.py ./numberlink/$(BIN_DIR)/numberlink -n $(WORKERS) -r $$TEST >> measurements/numberlink.parallel.best.$(WORKERS)_workers.csv ; sleep 2; \
 		echo "Algoritmo paralelo - $(WORKERS) trabalhadores, primeira solução"; \
-		./numberlink/$(BIN_DIR)/numberlink -n $(WORKERS) -p -r $$TEST >> measurements/numberlink.parallel.first.$(WORKERS)_workers.csv ; sleep 2;\
+		python measure.py ./numberlink/$(BIN_DIR)/numberlink -n $(WORKERS) -p -r $$TEST >> measurements/numberlink.parallel.first.$(WORKERS)_workers.csv ; sleep 2;\
 	done
 
 measurements_8puzzle: all
 	@echo "A criar medições para o problema 8 puzzle"
 	@mkdir -p measurements
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/8puzzle.sequencial.csv
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/8puzzle.parallel.best.$(WORKERS)_workers.csv
-	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados explorados\";\"Tempo de Execução\"" > measurements/8puzzle.parallel.first.$(WORKERS)_workers.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados expandidos\";\"Tempo de Execução\"" > measurements/8puzzle.sequencial.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados expandidos\";\"Tempo de Execução\"" > measurements/8puzzle.parallel.best.$(WORKERS)_workers.csv
+	@echo "\"Solução\";\"Custo da Solução\";\"Estados gerados\";\"Estados expandidos\";\"Tempo de Execução\"" > measurements/8puzzle.parallel.first.$(WORKERS)_workers.csv
 	@for TEST in ./instances/8puzzle_*; do \
 		echo "Problema: 8puzzle, Instância: $$TEST"; \
 		echo "Algoritmo sequencial"; \
-		./8puzzle/$(BIN_DIR)/8puzzle -r $$TEST >> measurements/8puzzle.sequencial.csv ; sleep 2; \
+		python measure.py ./8puzzle/$(BIN_DIR)/8puzzle -r $$TEST >> measurements/8puzzle.sequencial.csv ; sleep 2; \
 		echo "Algoritmo paralelo - $(WORKERS) trabalhadores, melhor solução"; \
-		./8puzzle/$(BIN_DIR)/8puzzle -n $(WORKERS) -r $$TEST >> measurements/8puzzle.parallel.best.$(WORKERS)_workers.csv ; sleep 2; \
+		python measure.py ./8puzzle/$(BIN_DIR)/8puzzle -n $(WORKERS) -r $$TEST >> measurements/8puzzle.parallel.best.$(WORKERS)_workers.csv ; sleep 2; \
 		echo "Algoritmo paralelo - $(WORKERS) trabalhadores, primeira solução"; \
-		./8puzzle/$(BIN_DIR)/8puzzle -n $(WORKERS) -p -r $$TEST >> measurements/8puzzle.parallel.first.$(WORKERS)_workers.csv ; sleep 2;\
+		python measure.py ./8puzzle/$(BIN_DIR)/8puzzle -n $(WORKERS) -p -r $$TEST >> measurements/8puzzle.parallel.first.$(WORKERS)_workers.csv ; sleep 2;\
 	done; \
 
 

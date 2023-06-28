@@ -5,52 +5,87 @@ Solução:
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 193
-- Estados explorados: 118
-- Tempo de execução: 0.000120 segundos.
+- Estados gerados: 192
+- Estados expandidos: 117
+- Max nós min_heap: 77
+- Novos nós: 192
+- Nós reinseridos: 0
+- Caminhos piores (ignorados): 122
+- Caminhos melhores (atualizados): 1
+
 Resultado do algoritmo: Solução encontrada, custo: 20
 Solução:
 123
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 505
-- Estados explorados: 308
-- Tempo de execução: 0.000224 segundos.
+- Estados gerados: 442
+- Estados expandidos: 268
+- Max nós min_heap: 176
+- Novos nós: 442
+- Nós reinseridos: 0
+- Caminhos piores (ignorados): 274
+- Caminhos melhores (atualizados): 2
+
 Resultado do algoritmo: Solução encontrada, custo: 20
 Solução:
 123
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 963
-- Estados explorados: 600
-- Tempo de execução: 0.000350 segundos.
+- Estados gerados: 1034
+- Estados expandidos: 646
+- Max nós min_heap: 390
+- Novos nós: 1034
+- Nós reinseridos: 0
+- Caminhos piores (ignorados): 690
+- Caminhos melhores (atualizados): 8
+
 Resultado do algoritmo: Solução encontrada, custo: 31
 Solução:
 123
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 14679
-- Estados explorados: 9715
-- Tempo de execução: 0.016860 segundos.
+- Estados gerados: 12127
+- Estados expandidos: 7920
+- Max nós min_heap: 4230
+- Novos nós: 12127
+- Nós reinseridos: 20
+- Caminhos piores (ignorados): 8688
+- Caminhos melhores (atualizados): 255
+
 Resultado do algoritmo: Solução encontrada, custo: 31
 Solução:
 123
 456
 78-
 Estatísticas Globais:
-- Estados gerados: 23637
-- Estados explorados: 16059
-- Tempo de execução: 0.035269 segundos.
+- Estados gerados: 13944
+- Estados expandidos: 9123
+- Max nós min_heap: 4829
+- Novos nós: 13944
+- Nós reinseridos: 6
+- Caminhos piores (ignorados): 9990
+- Caminhos melhores (atualizados): 276
+
 Resultado do algoritmo: Solução não encontrada.
 Estatísticas Globais:
-- Estados gerados: 181439
-- Estados explorados: 181440
-- Tempo de execução: 7.428516 segundos.
+- Estados gerados: 181394
+- Estados expandidos: 182782
+- Max nós min_heap: 19597
+- Novos nós: 181394
+- Nós reinseridos: 1387
+- Caminhos piores (ignorados): 293679
+- Caminhos melhores (atualizados): 11868
+
 Resultado do algoritmo: Solução não encontrada.
 Estatísticas Globais:
-- Estados gerados: 181439
-- Estados explorados: 181440
-- Tempo de execução: 7.657898 segundos.
+- Estados gerados: 181401
+- Estados expandidos: 182676
+- Max nós min_heap: 19530
+- Novos nós: 181401
+- Nós reinseridos: 1274
+- Caminhos piores (ignorados): 293614
+- Caminhos melhores (atualizados): 11700
+
