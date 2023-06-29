@@ -61,7 +61,8 @@ int heuristic(const state_t* current_state, const state_t*)
   number_link_t* number_link = state->number_link;
   board_data_t board_data = number_link_wrap_board(number_link, state->board_data);
 
-  int h = 0;
+  // A heurística é o número de pares por ligar mais a distancia de manhattan de cada para até o objectivo  ´
+  int h = number_link->num_pairs - state->matched_pairs;
   for(int i = 0; i < number_link->num_pairs; i++)
   {
     coord curr = board_data.coords[i];
@@ -140,7 +141,22 @@ bool goal(const state_t* state_a, const state_t*)
   return state->matched_pairs == number_link->num_pairs;
 }
 
-int distance(const state_t*, const state_t*)
+int distance(const state_t* parent, const state_t* neighbor)
 {
-  return 1;
+  number_link_state_t* parent_state = (number_link_state_t*)parent->data;
+  number_link_state_t* neighbor_state = (number_link_state_t*)neighbor->data;
+  number_link_t* number_link = parent_state->number_link;
+
+  board_data_t parent_board_data = number_link_wrap_board(number_link, parent_state->board_data);
+  board_data_t neighbor_board_data = number_link_wrap_board(number_link, neighbor_state->board_data);
+
+  // A distancia percorrida é o números de par ligados mais a distância percorrida por cada par
+  int d = neighbor_state->matched_pairs;;
+  for(int i = 0; i < number_link->num_pairs; i++)
+  {
+    coord parent_last_pos = parent_board_data.coords[i];
+    coord neighbor_curr_pos = neighbor_board_data.coords[i];
+    d += abs(parent_last_pos.col - neighbor_curr_pos.col) + abs(parent_last_pos.row - neighbor_curr_pos.row);
+  }
+  return d;
 }
