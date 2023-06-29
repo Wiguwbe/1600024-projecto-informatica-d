@@ -62,7 +62,7 @@ int heuristic(const state_t* current_state, const state_t*)
   board_data_t board_data = number_link_wrap_board(number_link, state->board_data);
 
   // A heurística é o número de pares por ligar mais a distancia de manhattan de cada para até o objectivo  ´
-  int h = number_link->num_pairs - state->matched_pairs;
+  int h = (number_link->num_pairs - state->matched_pairs);
   for(int i = 0; i < number_link->num_pairs; i++)
   {
     coord curr = board_data.coords[i];
@@ -151,7 +151,7 @@ int distance(const state_t* parent, const state_t* neighbor)
   board_data_t neighbor_board_data = number_link_wrap_board(number_link, neighbor_state->board_data);
 
   // A distancia percorrida é o números de par ligados mais a distância percorrida por cada par
-  int d = neighbor_state->matched_pairs;;
+  int d = (neighbor_state->matched_pairs - parent_state->matched_pairs);
   for(int i = 0; i < number_link->num_pairs; i++)
   {
     coord parent_last_pos = parent_board_data.coords[i];

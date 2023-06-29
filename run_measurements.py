@@ -10,6 +10,11 @@ problems = {
     "numberlink": [1, 2, 3, 4, 5, 6]
 }
 
+row_par_first_excluded = {
+    "8puzzle": [],
+    "numberlink": [6]
+}
+
 num_runs = 10
 
 threads = [2, 4, 6]
@@ -78,6 +83,23 @@ def measure(problems, threads, executions, output="measurements.csv"):
                 # Parallel
                 for thread_num in threads:
 
+                    # First solution
+                    row_par_first = [f"\"{problem}-{instance}\"",
+                                     "\"paralelo - primeira solução\"", thread_num]
+                    results_par_first = run_executable(f"./{problem}/bin/{problem}", ["-r", "-n", str(
+                        thread_num), "-p", f"./instances/{problem}_{instance}"], executions)
+                    row_par_first.extend(calculate_average(results_par_first))
+                    logger.debug(f"Média Paralelo (primeira solução): {str(';'.join(map(str, row_par_first))).replace('.', ',')}")
+                    # Calculate speed-up
+                    par_exec_time = row_par_first[-1]
+                    row_par_first.append(round(seq_exec_time/par_exec_time, 3))
+
+                    problem_measurements["paralelo - primeira solução"].append(
+                        row_par_first)
+
+                    if instance in row_par_first_excluded[problem]:
+                        continue
+
                     # Exhaustive search
                     row_par_exhaust = [
                         f"\"{problem}-{instance}\"", "\"paralelo - procura exaustiva\"", thread_num]
@@ -93,19 +115,6 @@ def measure(problems, threads, executions, output="measurements.csv"):
                     problem_measurements["paralelo - procura exaustiva"].append(
                         row_par_exhaust)
 
-                    # First solution
-                    row_par_first = [f"\"{problem}-{instance}\"",
-                                     "\"paralelo - primeira solução\"", thread_num]
-                    results_par_first = run_executable(f"./{problem}/bin/{problem}", ["-r", "-n", str(
-                        thread_num), "-p", f"./instances/{problem}_{instance}"], executions)
-                    row_par_first.extend(calculate_average(results_par_first))
-                    logger.debug(f"Média Paralelo (primeira solução): {str(';'.join(map(str, row_par_first))).replace('.', ',')}")
-                    # Calculate speed-up
-                    par_exec_time = row_par_first[-1]
-                    row_par_first.append(round(seq_exec_time/par_exec_time, 3))
-
-                    problem_measurements["paralelo - primeira solução"].append(
-                        row_par_first)
 
             f.write(f"Medições - {problem}\n")
             for algo, measurement in problem_measurements.items():
