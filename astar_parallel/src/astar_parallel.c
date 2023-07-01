@@ -406,7 +406,7 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
 
       a_star_worker_t* worker = &(a_star->scheduler.workers[i]);
 
-      if(!worker->idle)
+      if(!worker->idle || channel_has_messages(a_star->channel, worker->thread_id) || worker->open_set->size > 0)
       {
         continue;
       }

@@ -32,7 +32,9 @@
         "stddef.h": "c",
         "time.h": "c",
         "min_heap.h": "c",
-        "astar.h": "c"
+        "astar.h": "c",
+        "tuple": "c",
+        "iterator": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "cSpell.language": "en,pt_PT",
