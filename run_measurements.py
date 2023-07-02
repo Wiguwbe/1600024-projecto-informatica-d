@@ -7,13 +7,31 @@ logger = logging.getLogger()
 
 problems = {
     "8puzzle": ["easy_1", "easy_2", "easy_3", "hard_1", "hard_2", "impossible_1", "impossible_2"],
-    "numberlink": [1, 2, 3, 4, 5, 6]
+    "numberlink": [1, 2, 3, 4, 5, 6],
+    "maze": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+}
+
+excluded_problems = []
+
+excluded_instances = {
+    "8puzzle": [],
+    "numberlink": [],
+    "maze": []
 }
 
 row_par_first_excluded = {
     "8puzzle": [],
-    "numberlink": [6]
+    "numberlink": [],
+    "maze": []
 }
+
+row_par_exhausted_excluded = {
+    "8puzzle": [],
+    "numberlink": [6],
+    "maze": []
+}
+
+
 
 num_runs = 10
 
@@ -32,9 +50,10 @@ def run_executable(executable, arguments, executions=20):
 
 def calculate_average(rows):
     num_rows = len(rows)
-    average_row = ['sim', 0, 0, 0, 0, 0, 0, 0, 0, 0.0]
+    average_row = ['', 0, 0, 0, 0, 0, 0, 0, 0, 0.0]
 
     for row in rows:
+        average_row[0] = row[0]
         average_row[1] += int(row[1])
         average_row[2] += int(row[2])
         average_row[3] += int(row[3])
@@ -45,7 +64,6 @@ def calculate_average(rows):
         average_row[8] += int(row[8])
         average_row[9] += float(row[9])
 
-    average_row[0] = row[0]
     average_row[1] = average_row[1] // num_rows
     average_row[2] = average_row[2] // num_rows
     average_row[3] = average_row[3] // num_rows
@@ -63,12 +81,20 @@ def measure(problems, threads, executions, output="measurements.csv"):
 
     with open(f"measurements/{output}", "wt") as f:
         for problem, instances in problems.items():
+
+            if problem in excluded_problems:
+                continue
+
             problem_measurements = {
                 "sequencial": [],
                 "paralelo - procura exaustiva": [],
                 "paralelo - primeira solução": [],
             }
             for instance in instances:
+
+                if instance in excluded_instances[problem]:
+                    continue
+
                 # Sequencial
                 row_seq = [f"\"{problem}-{instance}\"", "\"sequencial\""]
                 results_seq = run_executable(
@@ -83,37 +109,37 @@ def measure(problems, threads, executions, output="measurements.csv"):
                 # Parallel
                 for thread_num in threads:
 
-                    # First solution
-                    row_par_first = [f"\"{problem}-{instance}\"",
-                                     "\"paralelo - primeira solução\"", thread_num]
-                    results_par_first = run_executable(f"./{problem}/bin/{problem}", ["-r", "-n", str(
-                        thread_num), "-p", f"./instances/{problem}_{instance}"], executions)
-                    row_par_first.extend(calculate_average(results_par_first))
-                    logger.debug(f"Média Paralelo (primeira solução): {str(';'.join(map(str, row_par_first))).replace('.', ',')}")
-                    # Calculate speed-up
-                    par_exec_time = row_par_first[-1]
-                    row_par_first.append(round(seq_exec_time/par_exec_time, 3))
+                    if instance not in row_par_first_excluded[problem]:
+                        # First solution
+                        row_par_first = [f"\"{problem}-{instance}\"",
+                                        "\"paralelo - primeira solução\"", thread_num]
+                        results_par_first = run_executable(f"./{problem}/bin/{problem}", ["-r", "-n", str(
+                            thread_num), "-p", f"./instances/{problem}_{instance}"], executions)
+                        row_par_first.extend(calculate_average(results_par_first))
+                        logger.debug(f"Média Paralelo (primeira solução): {str(';'.join(map(str, row_par_first))).replace('.', ',')}")
+                        # Calculate speed-up
+                        par_exec_time = row_par_first[-1]
+                        row_par_first.append(round(seq_exec_time/par_exec_time, 3))
 
-                    problem_measurements["paralelo - primeira solução"].append(
-                        row_par_first)
+                        problem_measurements["paralelo - primeira solução"].append(
+                            row_par_first)
 
-                    if instance in row_par_first_excluded[problem]:
-                        continue
 
-                    # Exhaustive search
-                    row_par_exhaust = [
-                        f"\"{problem}-{instance}\"", "\"paralelo - procura exaustiva\"", thread_num]
-                    results_par_exhaust = run_executable(f"./{problem}/bin/{problem}", [
-                                                         "-r", "-n", str(thread_num), f"./instances/{problem}_{instance}"], executions)
-                    row_par_exhaust.extend(
-                        calculate_average(results_par_exhaust))
-                    logger.debug(f"Média Paralelo (procura exaustiva): {str(';'.join(map(str, row_par_exhaust))).replace('.', ',')}")
-                    # Calculate speed-up
-                    par_exec_time = row_par_exhaust[-1]
-                    row_par_exhaust.append(
-                        round(seq_exec_time/par_exec_time, 3))
-                    problem_measurements["paralelo - procura exaustiva"].append(
-                        row_par_exhaust)
+                    if instance not in row_par_exhausted_excluded[problem]:
+                        # Exhaustive search
+                        row_par_exhaust = [
+                            f"\"{problem}-{instance}\"", "\"paralelo - procura exaustiva\"", thread_num]
+                        results_par_exhaust = run_executable(f"./{problem}/bin/{problem}", [
+                                                            "-r", "-n", str(thread_num), f"./instances/{problem}_{instance}"], executions)
+                        row_par_exhaust.extend(
+                            calculate_average(results_par_exhaust))
+                        logger.debug(f"Média Paralelo (procura exaustiva): {str(';'.join(map(str, row_par_exhaust))).replace('.', ',')}")
+                        # Calculate speed-up
+                        par_exec_time = row_par_exhaust[-1]
+                        row_par_exhaust.append(
+                            round(seq_exec_time/par_exec_time, 3))
+                        problem_measurements["paralelo - procura exaustiva"].append(
+                            row_par_exhaust)
 
 
             f.write(f"Medições - {problem}\n")

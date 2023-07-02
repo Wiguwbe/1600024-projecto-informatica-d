@@ -1,116 +1,163 @@
 Medições - 8puzzle
 Algoritmo A* - sequencial
-"8puzzle-easy_1";"sequencial";"sim";18;192;117;77;192;0;122;1;0,000103
-"8puzzle-easy_2";"sequencial";"sim";20;442;268;176;442;0;274;2;0,000212
-"8puzzle-easy_3";"sequencial";"sim";20;1034;646;390;1034;0;690;8;0,000448
-"8puzzle-hard_1";"sequencial";"sim";31;12127;7920;4230;12127;20;8688;255;0,010223
-"8puzzle-hard_2";"sequencial";"sim";31;13944;9123;4829;13944;6;9990;276;0,012941
-"8puzzle-impossible_1";"sequencial";"não";0;181394;182782;19597;181394;1387;293679;11868;7,78228
-"8puzzle-impossible_2";"sequencial";"não";0;181401;182676;19530;181401;1274;293614;11700;7,730221
+"8puzzle-easy_1";"sequencial";"sim";18;192;117;77;192;0;122;1;0,000102
+"8puzzle-easy_2";"sequencial";"sim";20;442;268;176;442;0;274;2;0,000193
+"8puzzle-easy_3";"sequencial";"sim";20;1034;646;390;1034;0;690;8;0,000445
+"8puzzle-hard_1";"sequencial";"sim";31;12127;7920;4230;12127;20;8688;255;0,010008
+"8puzzle-hard_2";"sequencial";"sim";31;13944;9123;4829;13944;6;9990;276;0,012789
+"8puzzle-impossible_1";"sequencial";"não";0;181394;182782;19597;181394;1387;293679;11868;7,501287
+"8puzzle-impossible_2";"sequencial";"não";0;181401;182676;19530;181401;1274;293614;11700;7,41182
 Algoritmo A* - paralelo - procura exaustiva
-"8puzzle-easy_1";"paralelo - procura exaustiva";2;"sim";18;374;240;136;374;0;239;1;0,000302;0,341
-"8puzzle-easy_1";"paralelo - procura exaustiva";4;"sim";18;440;275;175;440;0;278;2;0,000289;0,356
-"8puzzle-easy_1";"paralelo - procura exaustiva";5;"sim";18;418;269;156;418;0;266;4;0,000235;0,438
-"8puzzle-easy_1";"paralelo - procura exaustiva";6;"sim";18;457;288;183;457;1;290;3;0,000324;0,318
-"8puzzle-easy_2";"paralelo - procura exaustiva";2;"sim";20;671;414;261;671;0;431;7;0,000466;0,455
-"8puzzle-easy_2";"paralelo - procura exaustiva";4;"sim";20;730;456;283;730;0;470;7;0,000407;0,521
-"8puzzle-easy_2";"paralelo - procura exaustiva";5;"sim";20;962;611;358;962;2;628;16;0,000457;0,464
-"8puzzle-easy_2";"paralelo - procura exaustiva";6;"sim";20;846;533;328;846;1;555;12;0,00039;0,544
-"8puzzle-easy_3";"paralelo - procura exaustiva";2;"sim";20;1037;667;368;1037;0;684;9;0,000659;0,68
-"8puzzle-easy_3";"paralelo - procura exaustiva";4;"sim";20;1099;716;397;1099;1;728;11;0,00053;0,845
-"8puzzle-easy_3";"paralelo - procura exaustiva";5;"sim";20;1136;726;421;1136;1;752;13;0,000492;0,911
-"8puzzle-easy_3";"paralelo - procura exaustiva";6;"sim";20;1151;740;428;1151;2;761;12;0,000472;0,949
-"8puzzle-hard_1";"paralelo - procura exaustiva";2;"sim";31;19016;12624;6409;19016;39;14025;509;0,021646;0,472
-"8puzzle-hard_1";"paralelo - procura exaustiva";4;"sim";31;20934;14072;6876;20934;50;15608;609;0,018683;0,547
-"8puzzle-hard_1";"paralelo - procura exaustiva";5;"sim";31;18163;12097;6065;18163;31;13300;461;0,0125;0,818
-"8puzzle-hard_1";"paralelo - procura exaustiva";6;"sim";31;19204;12916;6328;19204;70;14142;568;0,013237;0,772
-"8puzzle-hard_2";"paralelo - procura exaustiva";2;"sim";31;17974;11920;6070;17974;40;13213;482;0,020272;0,638
-"8puzzle-hard_2";"paralelo - procura exaustiva";4;"sim";31;20675;13859;6859;20675;57;15378;604;0,018256;0,709
-"8puzzle-hard_2";"paralelo - procura exaustiva";5;"sim";31;18415;12262;6151;18415;31;13466;473;0,012866;1,006
-"8puzzle-hard_2";"paralelo - procura exaustiva";6;"sim";31;19977;13440;6559;19977;53;14755;579;0,014317;0,904
-"8puzzle-impossible_1";"paralelo - procura exaustiva";2;"não";0;181391;187220;20806;181391;5828;298227;18969;5,701266;1,365
-"8puzzle-impossible_1";"paralelo - procura exaustiva";4;"não";0;181388;187668;20647;181388;6278;299521;18785;3,994531;1,948
-"8puzzle-impossible_1";"paralelo - procura exaustiva";5;"não";0;181391;183306;19527;181391;1913;293992;12727;3,437815;2,264
-"8puzzle-impossible_1";"paralelo - procura exaustiva";6;"não";0;181387;186230;20489;181387;4842;297335;17247;3,471595;2,242
-"8puzzle-impossible_2";"paralelo - procura exaustiva";2;"não";0;181394;187378;20585;181394;5982;298541;19165;5,695015;1,357
-"8puzzle-impossible_2";"paralelo - procura exaustiva";4;"não";0;181391;187847;20441;181391;6454;299778;19014;3,979967;1,942
-"8puzzle-impossible_2";"paralelo - procura exaustiva";5;"não";0;181396;183254;19287;181396;1856;294028;12559;3,430167;2,254
-"8puzzle-impossible_2";"paralelo - procura exaustiva";6;"não";0;181391;186031;20283;181391;4638;297239;16876;3,460578;2,234
+"8puzzle-easy_1";"paralelo - procura exaustiva";2;"sim";18;390;248;147;390;0;248;2;0,000298;0,342
+"8puzzle-easy_1";"paralelo - procura exaustiva";4;"sim";18;441;275;175;441;0;278;2;0,000243;0,42
+"8puzzle-easy_1";"paralelo - procura exaustiva";6;"sim";18;449;282;180;449;0;284;2;0,000239;0,427
+"8puzzle-easy_2";"paralelo - procura exaustiva";2;"sim";20;612;381;229;612;0;391;6;0,000426;0,453
+"8puzzle-easy_2";"paralelo - procura exaustiva";4;"sim";20;720;453;278;720;0;467;7;0,000355;0,544
+"8puzzle-easy_2";"paralelo - procura exaustiva";6;"sim";20;825;522;318;825;2;541;13;0,000313;0,617
+"8puzzle-easy_3";"paralelo - procura exaustiva";2;"sim";20;996;638;355;996;0;659;7;0,000637;0,699
+"8puzzle-easy_3";"paralelo - procura exaustiva";4;"sim";20;1118;729;400;1118;1;743;10;0,000512;0,869
+"8puzzle-easy_3";"paralelo - procura exaustiva";6;"sim";20;1142;729;428;1142;1;748;13;0,000408;1,091
+"8puzzle-hard_1";"paralelo - procura exaustiva";2;"sim";31;20778;13836;6971;20778;41;15440;568;0,025392;0,394
+"8puzzle-hard_1";"paralelo - procura exaustiva";4;"sim";31;21745;14640;7135;21745;60;16331;676;0,020345;0,492
+"8puzzle-hard_1";"paralelo - procura exaustiva";6;"sim";31;19146;12901;6270;19146;67;14135;569;0,013129;0,762
+"8puzzle-hard_2";"paralelo - procura exaustiva";2;"sim";31;19290;12821;6495;19290;44;14272;535;0,023288;0,549
+"8puzzle-hard_2";"paralelo - procura exaustiva";4;"sim";31;25094;17025;8123;25094;61;19125;808;0,025423;0,503
+"8puzzle-hard_2";"paralelo - procura exaustiva";6;"sim";31;18907;12671;6259;18907;56;13850;532;0,012621;1,013
+"8puzzle-impossible_1";"paralelo - procura exaustiva";2;"não";0;181391;187152;20790;181391;5760;298128;18874;5,568729;1,347
+"8puzzle-impossible_1";"paralelo - procura exaustiva";4;"não";0;181392;187602;20598;181392;6209;299447;18690;3,89994;1,923
+"8puzzle-impossible_1";"paralelo - procura exaustiva";6;"não";0;181389;186034;20430;181389;4644;297165;16930;3,34581;2,242
+"8puzzle-impossible_2";"paralelo - procura exaustiva";2;"não";0;181391;187569;20630;181391;6177;298667;19568;5,558559;1,333
+"8puzzle-impossible_2";"paralelo - procura exaustiva";4;"não";0;181396;187912;20422;181396;6515;299919;19047;3,890555;1,905
+"8puzzle-impossible_2";"paralelo - procura exaustiva";6;"não";0;181389;186020;20250;181389;4629;297218;16853;3,361018;2,205
 Algoritmo A* - paralelo - primeira solução
-"8puzzle-easy_1";"paralelo - primeira solução";2;"sim";18;327;200;130;327;0;207;1;0,000268;0,384
-"8puzzle-easy_1";"paralelo - primeira solução";4;"sim";18;421;259;170;421;0;266;2;0,00028;0,368
-"8puzzle-easy_1";"paralelo - primeira solução";5;"sim";18;373;232;149;373;0;236;3;0,000203;0,507
-"8puzzle-easy_1";"paralelo - primeira solução";6;"sim";18;450;278;185;450;1;285;4;0,000315;0,327
-"8puzzle-easy_2";"paralelo - primeira solução";2;"sim";20;635;388;251;635;0;404;6;0,000437;0,485
-"8puzzle-easy_2";"paralelo - primeira solução";4;"sim";20;701;433;277;701;0;451;7;0,000386;0,549
-"8puzzle-easy_2";"paralelo - primeira solução";5;"sim";20;887;553;344;887;3;576;15;0,000414;0,512
-"8puzzle-easy_2";"paralelo - primeira solução";6;"sim";20;830;519;325;830;1;544;10;0,000379;0,559
-"8puzzle-easy_3";"paralelo - primeira solução";2;"sim";20;927;573;359;927;0;604;7;0,000576;0,778
-"8puzzle-easy_3";"paralelo - primeira solução";4;"sim";20;1020;634;395;1020;0;669;9;0,000479;0,935
-"8puzzle-easy_3";"paralelo - primeira solução";5;"sim";20;1068;667;411;1068;1;703;12;0,000447;1,002
-"8puzzle-easy_3";"paralelo - primeira solução";6;"sim";20;1080;672;421;1080;1;707;10;0,000435;1,03
-"8puzzle-hard_1";"paralelo - primeira solução";2;"sim";31;17603;11663;5981;17603;36;12945;470;0,019603;0,522
-"8puzzle-hard_1";"paralelo - primeira solução";4;"sim";31;20599;13777;6892;20599;57;15395;623;0,018751;0,545
-"8puzzle-hard_1";"paralelo - primeira solução";5;"sim";31;17255;11394;5900;17255;29;12588;433;0,011409;0,896
-"8puzzle-hard_1";"paralelo - primeira solução";6;"sim";31;17319;11449;5945;17319;61;12639;496;0,011121;0,919
-"8puzzle-hard_2";"paralelo - primeira solução";2;"sim";31;18313;12138;6220;18313;39;13486;495;0,020863;0,62
-"8puzzle-hard_2";"paralelo - primeira solução";4;"sim";31;20875;13971;6971;20875;54;15620;626;0,019088;0,678
-"8puzzle-hard_2";"paralelo - primeira solução";5;"sim";31;17157;11296;5897;17157;26;12453;421;0,011141;1,162
-"8puzzle-hard_2";"paralelo - primeira solução";6;"sim";31;17988;11893;6152;17988;41;13147;486;0,011745;1,102
-"8puzzle-impossible_1";"paralelo - primeira solução";2;"não";0;181393;187134;20787;181393;5740;298160;18796;5,678274;1,371
-"8puzzle-impossible_1";"paralelo - primeira solução";4;"não";0;181391;187721;20624;181391;6329;299614;18835;3,999207;1,946
-"8puzzle-impossible_1";"paralelo - primeira solução";5;"não";0;181391;183325;19538;181391;1932;294000;12755;3,443548;2,26
-"8puzzle-impossible_1";"paralelo - primeira solução";6;"não";0;181388;186161;20490;181388;4772;297275;17109;3,466452;2,245
-"8puzzle-impossible_2";"paralelo - primeira solução";2;"não";0;181392;187364;20580;181392;5970;298487;19182;5,69659;1,357
-"8puzzle-impossible_2";"paralelo - primeira solução";4;"não";0;181393;187883;20432;181393;6488;299854;19050;3,994744;1,935
-"8puzzle-impossible_2";"paralelo - primeira solução";5;"não";0;181393;183219;19284;181393;1825;293995;12506;3,439808;2,247
-"8puzzle-impossible_2";"paralelo - primeira solução";6;"não";0;181388;186049;20306;181388;4660;297213;16938;3,477734;2,223
+"8puzzle-easy_1";"paralelo - primeira solução";2;"sim";18;341;209;136;341;0;214;2;0,000267;0,382
+"8puzzle-easy_1";"paralelo - primeira solução";4;"sim";18;439;271;177;439;0;279;2;0,000252;0,405
+"8puzzle-easy_1";"paralelo - primeira solução";6;"sim";18;469;288;193;469;1;295;4;0,000232;0,44
+"8puzzle-easy_2";"paralelo - primeira solução";2;"sim";20;624;386;245;624;1;401;7;0,000425;0,454
+"8puzzle-easy_2";"paralelo - primeira solução";4;"sim";20;669;415;264;669;0;430;4;0,000332;0,581
+"8puzzle-easy_2";"paralelo - primeira solução";6;"sim";20;811;506;320;811;1;527;10;0,0003;0,643
+"8puzzle-easy_3";"paralelo - primeira solução";2;"sim";20;891;551;344;891;0;578;7;0,000578;0,77
+"8puzzle-easy_3";"paralelo - primeira solução";4;"sim";20;1048;653;404;1048;1;685;12;0,000459;0,969
+"8puzzle-easy_3";"paralelo - primeira solução";6;"sim";20;1140;713;442;1140;2;749;13;0,000382;1,165
+"8puzzle-hard_1";"paralelo - primeira solução";2;"sim";31;20937;13966;7022;20937;44;15620;608;0,026338;0,38
+"8puzzle-hard_1";"paralelo - primeira solução";4;"sim";31;21761;14572;7272;21761;70;16298;674;0,019769;0,506
+"8puzzle-hard_1";"paralelo - primeira solução";6;"sim";31;20649;13839;6901;20649;76;15448;673;0,015202;0,658
+"8puzzle-hard_2";"paralelo - primeira solução";2;"sim";31;16871;11125;5797;16871;45;12311;465;0,018535;0,69
+"8puzzle-hard_2";"paralelo - primeira solução";4;"sim";31;19282;12827;6509;19282;42;14289;550;0,016506;0,775
+"8puzzle-hard_2";"paralelo - primeira solução";6;"sim";31;18986;12604;6448;18986;51;13972;543;0,012901;0,991
+"8puzzle-impossible_1";"paralelo - primeira solução";2;"não";0;181390;187105;20780;181390;5714;298029;18838;5,621727;1,334
+"8puzzle-impossible_1";"paralelo - primeira solução";4;"não";0;181391;187680;20575;181391;6287;299586;18762;3,89512;1,926
+"8puzzle-impossible_1";"paralelo - primeira solução";6;"não";0;181387;186030;20413;181387;4642;297157;16932;3,346404;2,242
+"8puzzle-impossible_2";"paralelo - primeira solução";2;"não";0;181396;187415;20572;181396;6017;298527;19243;5,58963;1,326
+"8puzzle-impossible_2";"paralelo - primeira solução";4;"não";0;181394;187869;20459;181394;6474;299820;19041;3,888584;1,906
+"8puzzle-impossible_2";"paralelo - primeira solução";6;"não";0;181392;186152;20352;181392;4758;297358;17083;3,359991;2,206
 Medições - numberlink
 Algoritmo A* - sequencial
-"numberlink-1";"sequencial";"sim";6;33;17;18;33;0;6;0;3,5e-05
-"numberlink-2";"sequencial";"sim";10;158;44;116;158;0;19;0;0,000119
-"numberlink-3";"sequencial";"sim";28;1723;434;1292;1723;0;589;0;0,001206
-"numberlink-4";"sequencial";"sim";20;3482;774;2711;3482;0;1428;0;0,002188
-"numberlink-5";"sequencial";"sim";20;112890;41277;71615;112890;0;41885;0;0,151092
+"numberlink-1";"sequencial";"sim";8;33;17;18;33;0;6;0;3,6e-05
+"numberlink-2";"sequencial";"sim";12;158;44;116;158;0;19;0;0,000112
+"numberlink-3";"sequencial";"sim";31;1723;434;1292;1723;0;589;0;0,00118
+"numberlink-4";"sequencial";"sim";24;3482;774;2711;3482;0;1428;0;0,002113
+"numberlink-5";"sequencial";"sim";22;112890;41277;71615;112890;0;41885;0;0,142798
+"numberlink-6";"sequencial";"sim";61;3692322;653369;3038956;3692322;0;2847774;0;25,117462
 Algoritmo A* - paralelo - procura exaustiva
-"numberlink-1";"paralelo - procura exaustiva";2;"sim";6;46;39;20;46;0;24;0;0,000138;0,254
-"numberlink-1";"paralelo - procura exaustiva";4;"sim";6;47;43;21;47;0;25;0;0,000148;0,236
-"numberlink-1";"paralelo - procura exaustiva";5;"sim";6;46;39;18;46;0;24;0;0,000174;0,201
-"numberlink-1";"paralelo - procura exaustiva";6;"sim";6;48;46;21;48;0;26;0;0,000186;0,188
-"numberlink-2";"paralelo - procura exaustiva";2;"sim";10;688;381;303;688;0;313;0;0,000815;0,146
-"numberlink-2";"paralelo - procura exaustiva";4;"sim";10;688;380;306;688;0;313;0;0,000905;0,131
-"numberlink-2";"paralelo - procura exaustiva";5;"sim";10;688;379;316;688;0;313;0;0,000959;0,124
-"numberlink-2";"paralelo - procura exaustiva";6;"sim";10;698;417;290;698;0;315;0;0,000663;0,179
-"numberlink-3";"paralelo - procura exaustiva";2;"sim";28;19912;6667;12904;19912;0;11896;0;0,012589;0,096
-"numberlink-3";"paralelo - procura exaustiva";4;"sim";28;19994;6695;11682;19994;0;12060;0;0,00934;0,129
-"numberlink-3";"paralelo - procura exaustiva";5;"sim";28;19942;6820;13115;19942;0;12070;0;0,008452;0,143
-"numberlink-3";"paralelo - procura exaustiva";6;"sim";28;20002;6852;13128;20002;0;12052;0;0,00803;0,15
-"numberlink-4";"paralelo - procura exaustiva";2;"sim";20;78420;21620;56422;78420;0;50478;0;0,058006;0,038
-"numberlink-4";"paralelo - procura exaustiva";4;"sim";20;78673;21926;54989;78673;0;51300;0;0,036635;0,06
-"numberlink-4";"paralelo - procura exaustiva";5;"sim";20;78762;22281;56426;78762;0;51875;0;0,031518;0,069
-"numberlink-4";"paralelo - procura exaustiva";6;"sim";20;78759;22036;53423;78759;0;51694;0;0,028807;0,076
-"numberlink-5";"paralelo - procura exaustiva";2;"sim";20;750785;322589;428162;750785;0;345209;0;5,136427;0,029
-"numberlink-5";"paralelo - procura exaustiva";4;"sim";20;751109;323056;428066;751109;0;345847;0;2,895037;0,052
-"numberlink-5";"paralelo - procura exaustiva";5;"sim";20;751112;323195;427958;751112;0;345975;0;2,417414;0,063
-"numberlink-5";"paralelo - procura exaustiva";6;"sim";20;751106;323250;427871;751106;0;345983;0;2,137949;0,071
+"numberlink-1";"paralelo - procura exaustiva";2;"sim";8;46;39;20;46;0;24;0;0,000119;0,303
+"numberlink-1";"paralelo - procura exaustiva";4;"sim";8;47;44;20;47;0;26;0;0,0001;0,36
+"numberlink-1";"paralelo - procura exaustiva";6;"sim";8;48;45;22;48;0;26;0;0,000103;0,35
+"numberlink-2";"paralelo - procura exaustiva";2;"sim";12;688;382;295;688;0;313;0;0,00084;0,133
+"numberlink-2";"paralelo - procura exaustiva";4;"sim";12;688;380;316;688;0;313;0;0,000812;0,138
+"numberlink-2";"paralelo - procura exaustiva";6;"sim";12;693;409;290;693;0;314;0;0,000563;0,199
+"numberlink-3";"paralelo - procura exaustiva";2;"sim";31;19920;6630;13043;19920;0;11846;0;0,012931;0,091
+"numberlink-3";"paralelo - procura exaustiva";4;"sim";31;19906;6638;11273;19906;0;11943;0;0,009442;0,125
+"numberlink-3";"paralelo - procura exaustiva";6;"sim";31;19946;6764;13160;19946;0;11912;0;0,007832;0,151
+"numberlink-4";"paralelo - procura exaustiva";2;"sim";24;78381;21572;56465;78381;0;50270;0;0,06056;0,035
+"numberlink-4";"paralelo - procura exaustiva";4;"sim";24;78549;21760;55446;78549;0;50704;0;0,037427;0,056
+"numberlink-4";"paralelo - procura exaustiva";6;"sim";24;78632;21911;53930;78632;0;51384;0;0,028967;0,073
+"numberlink-5";"paralelo - procura exaustiva";2;"sim";22;750832;322613;428201;750832;0;345337;0;5,161887;0,028
+"numberlink-5";"paralelo - procura exaustiva";4;"sim";22;751118;323172;427962;751118;0;345713;0;2,895863;0,049
+"numberlink-5";"paralelo - procura exaustiva";6;"sim";22;750943;323053;427889;750943;0;345508;0;2,135345;0,067
 Algoritmo A* - paralelo - primeira solução
-"numberlink-1";"paralelo - primeira solução";2;"sim";6;38;24;19;38;0;12;0;0,000123;0,285
-"numberlink-1";"paralelo - primeira solução";4;"sim";6;41;31;20;41;0;15;0;0,000134;0,261
-"numberlink-1";"paralelo - primeira solução";5;"sim";6;35;23;17;35;0;9;0;0,000149;0,235
-"numberlink-1";"paralelo - primeira solução";6;"sim";6;40;33;20;40;0;15;0;0,000169;0,207
-"numberlink-2";"paralelo - primeira solução";2;"sim";10;145;51;97;145;0;15;0;0,000224;0,531
-"numberlink-2";"paralelo - primeira solução";4;"sim";10;111;38;77;111;0;10;0;0,00023;0,517
-"numberlink-2";"paralelo - primeira solução";5;"sim";10;101;35;71;101;0;9;0;0,00024;0,496
-"numberlink-2";"paralelo - primeira solução";6;"sim";10;237;90;155;237;0;36;0;0,000292;0,408
-"numberlink-3";"paralelo - primeira solução";2;"sim";28;2011;475;1546;2011;0;582;0;0,001635;0,738
-"numberlink-3";"paralelo - primeira solução";4;"sim";28;1010;232;802;1010;0;262;0;0,001161;1,039
-"numberlink-3";"paralelo - primeira solução";5;"sim";28;6734;1781;4960;6734;0;2458;0;0,002968;0,406
-"numberlink-3";"paralelo - primeira solução";6;"sim";28;4129;1022;3120;4129;0;1280;0;0,002026;0,595
-"numberlink-4";"paralelo - primeira solução";2;"sim";20;4919;1033;3890;4919;0;1579;0;0,00308;0,71
-"numberlink-4";"paralelo - primeira solução";4;"sim";20;929;199;738;929;0;147;0;0,000796;2,749
-"numberlink-4";"paralelo - primeira solução";5;"sim";20;11084;2385;8706;11084;0;4009;0;0,003766;0,581
-"numberlink-4";"paralelo - primeira solução";6;"sim";20;645;123;531;645;0;89;0;0,000746;2,933
-"numberlink-5";"paralelo - primeira solução";2;"sim";20;118613;43529;75088;118613;0;44048;0;0,12152;1,243
-"numberlink-5";"paralelo - primeira solução";4;"sim";20;125531;46145;79392;125531;0;46421;0;0,079546;1,899
-"numberlink-5";"paralelo - primeira solução";5;"sim";20;125605;46309;79304;125605;0;46527;0;0,066947;2,257
-"numberlink-5";"paralelo - primeira solução";6;"sim";20;127141;46859;80291;127141;0;47000;0;0,059811;2,526
+"numberlink-1";"paralelo - primeira solução";2;"sim";8;39;26;20;39;0;12;0;0,000103;0,35
+"numberlink-1";"paralelo - primeira solução";4;"sim";8;44;35;22;44;0;19;0;8,9e-05;0,404
+"numberlink-1";"paralelo - primeira solução";6;"sim";8;46;39;22;46;0;19;0;0,000118;0,305
+"numberlink-2";"paralelo - primeira solução";2;"sim";12;154;53;105;154;0;14;0;0,000213;0,526
+"numberlink-2";"paralelo - primeira solução";4;"sim";12;117;39;81;117;0;10;0;0,000164;0,683
+"numberlink-2";"paralelo - primeira solução";6;"sim";12;242;96;157;242;0;38;0;0,000222;0,505
+"numberlink-3";"paralelo - primeira solução";2;"sim";31;1544;373;1176;1544;0;410;0;0,00141;0,837
+"numberlink-3";"paralelo - primeira solução";4;"sim";31;1176;268;931;1176;0;300;0;0,001229;0,96
+"numberlink-3";"paralelo - primeira solução";6;"sim";31;4104;1037;3078;4104;0;1203;0;0,001939;0,609
+"numberlink-4";"paralelo - primeira solução";2;"sim";24;5179;1091;4094;5179;0;1621;0;0,003342;0,632
+"numberlink-4";"paralelo - primeira solução";4;"sim";24;1042;231;819;1042;0;170;0;0,000815;2,593
+"numberlink-4";"paralelo - primeira solução";6;"sim";24;660;128;544;660;0;94;0;0,000655;3,226
+"numberlink-5";"paralelo - primeira solução";2;"sim";22;122618;45103;77518;122618;0;45562;0;0,129276;1,105
+"numberlink-5";"paralelo - primeira solução";4;"sim";22;123501;45470;78038;123501;0;45975;0;0,077124;1,852
+"numberlink-5";"paralelo - primeira solução";6;"sim";22;125024;46087;78946;125024;0;46413;0;0,05761;2,479
+"numberlink-6";"paralelo - primeira solução";2;"sim";61;3637144;518289;3118866;3637144;0;2356283;0;31,143823;0,806
+"numberlink-6";"paralelo - primeira solução";4;"sim";61;2998247;407661;2590599;2998247;0;1617838;0;8,564932;2,933
+"numberlink-6";"paralelo - primeira solução";6;"sim";61;242962;30011;212978;242962;0;99010;0;0,111528;225,212
+Medições - maze
+Algoritmo A* - sequencial
+"maze-1";"sequencial";"sim";22;40;36;6;40;0;0;0;7e-05
+"maze-2";"sequencial";"sim";50;311;277;36;311;0;0;0;0,000546
+"maze-3";"sequencial";"sim";66;344;303;43;344;0;0;0;0,000843
+"maze-4";"sequencial";"sim";130;8749;8507;246;8749;0;0;0;0,021904
+"maze-5";"sequencial";"sim";174;1251;1220;35;1251;0;0;0;0,004859
+"maze-6";"sequencial";"sim";162;47266;43489;3779;47266;0;0;0;0,27908
+"maze-7";"sequencial";"sim";178;26084;24735;1382;26084;0;0;0;0,181981
+"maze-8";"sequencial";"sim";240;455488;414651;40839;455488;0;0;0;8,672004
+"maze-9";"sequencial";"sim";328;388397;376738;11873;388397;0;0;0;6,223839
+Algoritmo A* - paralelo - procura exaustiva
+"maze-1";"paralelo - procura exaustiva";2;"sim";22;48;48;6;48;0;0;0;0,000159;0,44
+"maze-1";"paralelo - procura exaustiva";4;"sim";22;49;50;5;49;0;0;0;0,000168;0,417
+"maze-1";"paralelo - procura exaustiva";6;"sim";22;48;48;5;48;0;0;0;0,000159;0,44
+"maze-2";"paralelo - procura exaustiva";2;"sim";50;320;293;35;320;0;0;0;0,000668;0,817
+"maze-2";"paralelo - procura exaustiva";4;"sim";50;338;315;38;338;0;0;0;0,000558;0,978
+"maze-2";"paralelo - procura exaustiva";6;"sim";50;373;358;37;373;0;0;0;0,000606;0,901
+"maze-3";"paralelo - procura exaustiva";2;"sim";66;431;396;44;431;0;0;0;0,000944;0,893
+"maze-3";"paralelo - procura exaustiva";4;"sim";66;475;442;45;475;0;0;0;0,000777;1,085
+"maze-3";"paralelo - procura exaustiva";6;"sim";66;478;446;103;478;0;0;0;0,001032;0,817
+"maze-4";"paralelo - procura exaustiva";2;"sim";130;9273;9066;237;9273;0;0;0;0,015113;1,449
+"maze-4";"paralelo - procura exaustiva";4;"sim";130;9303;9138;252;9303;0;0;0;0,008861;2,472
+"maze-4";"paralelo - procura exaustiva";6;"sim";130;9304;9113;286;9304;0;0;0;0,006963;3,146
+"maze-5";"paralelo - procura exaustiva";2;"sim";174;1341;1308;43;1341;0;0;0;0,003469;1,401
+"maze-5";"paralelo - procura exaustiva";4;"sim";174;1406;1372;50;1406;0;0;0;0,002349;2,069
+"maze-5";"paralelo - procura exaustiva";6;"sim";174;1501;1467;55;1501;0;0;0;0,002056;2,363
+"maze-6";"paralelo - procura exaustiva";2;"sim";162;62457;57589;4821;62457;0;0;0;0,23507;1,187
+"maze-6";"paralelo - procura exaustiva";4;"sim";162;62457;57694;4776;62457;0;0;0;0,129424;2,156
+"maze-6";"paralelo - procura exaustiva";6;"sim";162;62457;57862;4552;62457;0;0;0;0,095455;2,924
+"maze-7";"paralelo - procura exaustiva";2;"sim";178;31479;29875;1624;31479;0;0;0;0,124232;1,465
+"maze-7";"paralelo - procura exaustiva";4;"sim";178;31485;29956;1580;31485;0;0;0;0,066855;2,722
+"maze-7";"paralelo - procura exaustiva";6;"sim";178;31948;30510;1520;31948;0;0;0;0,049157;3,702
+"maze-8";"paralelo - procura exaustiva";2;"sim";240;500405;461173;45402;500405;0;0;0;5,93634;1,461
+"maze-8";"paralelo - procura exaustiva";4;"sim";240;527487;486144;49966;527487;0;0;0;3,77611;2,297
+"maze-8";"paralelo - procura exaustiva";6;"sim";240;553971;510811;52159;553971;0;0;0;3,174174;2,732
+"maze-9";"paralelo - procura exaustiva";2;"sim";328;407119;396918;13667;407119;0;0;0;3,692407;1,686
+"maze-9";"paralelo - procura exaustiva";4;"sim";328;435031;422461;16917;435031;0;0;0;2,254659;2,76
+"maze-9";"paralelo - procura exaustiva";6;"sim";328;448343;435808;16092;448343;0;0;0;1,811035;3,437
+Algoritmo A* - paralelo - primeira solução
+"maze-1";"paralelo - primeira solução";2;"sim";22;48;49;5;48;0;0;0;0,000166;0,422
+"maze-1";"paralelo - primeira solução";4;"sim";22;49;50;5;49;0;0;0;0,000176;0,398
+"maze-1";"paralelo - primeira solução";6;"sim";22;48;49;5;48;0;0;0;0,000172;0,407
+"maze-2";"paralelo - primeira solução";2;"sim";50;287;258;34;287;0;0;0;0,000615;0,888
+"maze-2";"paralelo - primeira solução";4;"sim";50;304;279;37;304;0;0;0;0,000539;1,013
+"maze-2";"paralelo - primeira solução";6;"sim";50;363;347;37;363;0;0;0;0,000591;0,924
+"maze-3";"paralelo - primeira solução";2;"sim";66;402;364;44;402;0;0;0;0,000898;0,939
+"maze-3";"paralelo - primeira solução";4;"sim";66;463;428;47;463;0;0;0;0,000742;1,136
+"maze-3";"paralelo - primeira solução";6;"sim";66;482;450;105;482;0;0;0;0,001042;0,809
+"maze-4";"paralelo - primeira solução";2;"sim";130;8351;8184;230;8351;0;0;0;0,013491;1,624
+"maze-4";"paralelo - primeira solução";4;"sim";130;8364;8202;251;8364;0;0;0;0,007874;2,782
+"maze-4";"paralelo - primeira solução";6;"sim";130;8470;8323;292;8470;0;0;0;0,00608;3,603
+"maze-5";"paralelo - primeira solução";2;"sim";174;1310;1277;43;1310;0;0;0;0,003342;1,454
+"maze-5";"paralelo - primeira solução";4;"sim";174;1398;1365;54;1398;0;0;0;0,00232;2,094
+"maze-5";"paralelo - primeira solução";6;"sim";174;1494;1458;55;1494;0;0;0;0,00205;2,37
+"maze-6";"paralelo - primeira solução";2;"sim";162;44962;41525;3454;44962;0;0;0;0,155935;1,79
+"maze-6";"paralelo - primeira solução";4;"sim";162;45316;41788;3539;45316;0;0;0;0,08572;3,256
+"maze-6";"paralelo - primeira solução";6;"sim";162;45950;42354;3628;45950;0;0;0;0,062219;4,485
+"maze-7";"paralelo - primeira solução";2;"sim";178;26789;25434;1402;26789;0;0;0;0,104814;1,736
+"maze-7";"paralelo - primeira solução";4;"sim";178;27775;26377;1461;27775;0;0;0;0,0588;3,095
+"maze-7";"paralelo - primeira solução";6;"sim";178;28332;26918;1459;28332;0;0;0;0,042128;4,32
+"maze-8";"paralelo - primeira solução";2;"sim";240;472088;429868;45771;472088;0;0;0;5,350527;1,621
+"maze-8";"paralelo - primeira solução";4;"sim";240;502598;457945;49320;502598;0;0;0;3,438463;2,522
+"maze-8";"paralelo - primeira solução";6;"sim";240;515115;469224;51088;515115;0;0;0;2,740843;3,164
+"maze-9";"paralelo - primeira solução";2;"sim";328;403591;391726;13295;403591;0;0;0;3,612528;1,723
+"maze-9";"paralelo - primeira solução";4;"sim";328;419949;407088;15817;419949;0;0;0;2,134041;2,916
+"maze-9";"paralelo - primeira solução";6;"sim";329;443101;428631;16598;443101;0;0;0;1,732556;3,592

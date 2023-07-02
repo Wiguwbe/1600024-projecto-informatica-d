@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_IDLE_TIME 10000
+
 // Estrutura que contem a mensagem a ser passada nas queues
 typedef struct
 {
@@ -389,11 +391,13 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
   // Ciclo de execução que espera pela solução ou que todos os trabalhadores fiquem
   // sem nós para processar
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->start_time));
+  int idle_tries = MAX_IDLE_TIME;
   while(a_star->running)
   {
     // Solução já foi encontrada e queremos sair à primeira solução
     if(a_star->common->solution != NULL && a_star->stop_on_first_solution)
     {
+      clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
       a_star->running = false;
       break;
     }
@@ -406,16 +410,29 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
 
       a_star_worker_t* worker = &(a_star->scheduler.workers[i]);
 
-      if(!worker->idle || channel_has_messages(a_star->channel, worker->thread_id) || worker->open_set->size > 0)
+      if(!worker->idle)
       {
+        idle_tries = MAX_IDLE_TIME;
         continue;
       }
 
       idle_workers++;
-
-      // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos
-      a_star->running = idle_workers < a_star->scheduler.num_workers;
     }
+
+    if (idle_workers == a_star->scheduler.num_workers) {
+      if (idle_tries == MAX_IDLE_TIME) {
+        clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
+      }
+      idle_tries--;
+    }
+
+    if (idle_tries <= 0) {
+      a_star->running = false;
+      break;
+    } 
+
+    // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos
+    a_star->running = true;
   }
 
   // Esperamos que todas os trabalhadores terminem
@@ -423,7 +440,6 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
   {
     pthread_join(a_star->scheduler.workers[i].thread, NULL);
   }
-  clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
 
   // Calculamos o tempo de execução e outras estatísticas
   for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
