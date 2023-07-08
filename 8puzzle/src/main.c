@@ -44,7 +44,6 @@ bool load_8puzzle(const char* filename, puzzle_state* puzzle)
 
 void print_solution(a_star_node_t* solution)
 {
-  printf("Solução:\n");
   for(int y = 0; y < 3; y++)
   {
     for(int x = 0; x < 3; x++)
@@ -57,7 +56,7 @@ void print_solution(a_star_node_t* solution)
 }
 
 // Resolve a instância utilizando a versão paralela do algoritmo A*
-void solve_parallel(puzzle_state instance, int num_threads, bool first, bool csv)
+void solve_parallel(puzzle_state instance, int num_threads, bool first, bool csv, bool show_solution)
 {
   // Criamos a instância do algoritmo A*
   a_star_parallel_t* a_star =
@@ -67,14 +66,14 @@ void solve_parallel(puzzle_state instance, int num_threads, bool first, bool csv
   a_star_parallel_solve(a_star, &instance, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_parallel_print_statistics(a_star, csv);
+  a_star_parallel_print_statistics(a_star, csv, show_solution);
 
   // Limpamos a memória
   a_star_parallel_destroy(a_star);
 }
 
 // Resolve a instância utilizando a versão sequencial do algoritmo A*
-void solve_sequential(puzzle_state instance, bool csv)
+void solve_sequential(puzzle_state instance, bool csv, bool show_solution)
 {
   // Criamos a instância do algoritmo A*
   a_star_sequential_t* a_star = a_star_sequential_create(sizeof(puzzle_state), goal, visit, heuristic, distance, print_solution);
@@ -83,7 +82,7 @@ void solve_sequential(puzzle_state instance, bool csv)
   a_star_sequential_solve(a_star, &instance, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_sequential_print_statistics(a_star, csv);
+  a_star_sequential_print_statistics(a_star, csv, show_solution);
 
   // Limpamos a memória
   a_star_sequential_destroy(a_star);
@@ -106,6 +105,7 @@ int main(int argc, char* argv[])
   int num_threads = 0;
   bool first = false;
   bool csv = false;
+  bool show_solution = false;
 
   // Verificamos se mais opções foram passadas
   int filename_arg = 1;
@@ -141,6 +141,12 @@ int main(int argc, char* argv[])
       filename_arg++;
       continue;
     }
+
+    if(strcmp(opt, "-s") == 0) {
+      show_solution = true;
+      filename_arg++;
+      continue;
+    }
   }
 
   if(filename_arg >= argc)
@@ -161,10 +167,10 @@ int main(int argc, char* argv[])
 
   if(num_threads > 0)
   {
-    solve_parallel(puzzle, num_threads, first, csv);
+    solve_parallel(puzzle, num_threads, first, csv, show_solution);
   }
   else
   {
-    solve_sequential(puzzle, csv);
+    solve_sequential(puzzle, csv, show_solution);
   }
 }

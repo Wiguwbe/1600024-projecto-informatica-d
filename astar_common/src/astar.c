@@ -55,6 +55,9 @@ a_star_t* a_star_create(size_t struct_size,
   a_star->nodes_reinserted = 0;
   a_star->paths_better = 0;
   a_star->paths_worst_or_equals = 0;
+  a_star->num_solutions = 0;
+  a_star->num_worst_solutions = 0;
+  a_star->num_better_solutions = 0;
 
   return a_star;
 }
@@ -82,11 +85,19 @@ void a_star_destroy(a_star_t* a_star)
 }
 
 // Imprime estatísticas do algoritmo sequencial no formato desejado
-void a_star_print_statistics(a_star_t* a_star, bool csv)
+void a_star_print_statistics(a_star_t* a_star, bool csv, bool show_solution)
 {
   if(a_star == NULL)
   {
     return;
+  }
+
+  if(show_solution)
+  {
+    if(a_star->solution)
+    {
+      a_star->node_allocator->print_func(a_star->solution);
+    }
   }
 
   if(!csv)
@@ -94,13 +105,11 @@ void a_star_print_statistics(a_star_t* a_star, bool csv)
     if(a_star->solution)
     {
       printf("Resultado do algoritmo: Solução encontrada, custo: %d\n", a_star->solution->g);
-      a_star->node_allocator->print_func(a_star->solution);
     }
     else
     {
       printf("Resultado do algoritmo: Solução não encontrada.\n");
     }
-
     printf("Estatísticas Globais:\n");
     printf("- Estados gerados: %d\n", a_star->generated);
     printf("- Estados expandidos: %d\n", a_star->expanded);
@@ -108,11 +117,14 @@ void a_star_print_statistics(a_star_t* a_star, bool csv)
     printf("- Novos nós: %d\n", a_star->nodes_new);
     printf("- Nós reinseridos: %d\n", a_star->nodes_reinserted);
     printf("- Caminhos piores (ignorados): %d\n", a_star->paths_worst_or_equals);
-    printf("- Caminhos melhores (atualizados): %d\n\n", a_star->paths_better);
+    printf("- Caminhos melhores (atualizados): %d\n", a_star->paths_better);
+    printf("- Soluções encontradas: %d\n", a_star->num_solutions);
+    printf("- Soluções piores encontradas (não atualizadas): %d\n", a_star->num_worst_solutions);
+    printf("- Soluções melhores encontradas (atualizadas): %d\n", a_star->num_better_solutions);
   }
   else
   {
-    printf("\"%s\";%d;%d;%d;%ld;%d;%d;%d;%d;%.6f\n",
+    printf("\"%s\";%d;%d;%d;%ld;%d;%d;%d;%d;%d;%d;%d;%.6f\n",
            a_star->solution ? "sim" : "não",
            a_star->solution ? a_star->solution->g : 0,
            a_star->generated,
@@ -122,6 +134,9 @@ void a_star_print_statistics(a_star_t* a_star, bool csv)
            a_star->nodes_reinserted,
            a_star->paths_worst_or_equals,
            a_star->paths_better,
+           a_star->num_solutions,
+           a_star->num_worst_solutions,
+           a_star->num_better_solutions,
            a_star->execution_time);
   }
 }

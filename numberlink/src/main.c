@@ -61,8 +61,6 @@ void print_solution(a_star_node_t* solution)
   number_link_state_t* state = (number_link_state_t*)solution->state->data;
   number_link_t* number_link = state->number_link;
   board_data_t board_data = number_link_wrap_board(number_link, state->board_data);
-
-  printf("Solução:\n");
   for(int y = 0; y < number_link->rows; y++)
   {
     for(int x = 0; x < number_link->cols; x++)
@@ -75,7 +73,7 @@ void print_solution(a_star_node_t* solution)
 }
 
 // Resolve o problema utilizando a versão paralela do algoritmo
-void solve_parallel(number_link_t* number_link, int num_threads, bool first, bool csv)
+void solve_parallel(number_link_t* number_link, int num_threads, bool first, bool csv, bool show_solution)
 {
   // Criamos a instância do algoritmo A*
   a_star_parallel_t* a_star =
@@ -90,17 +88,18 @@ void solve_parallel(number_link_t* number_link, int num_threads, bool first, boo
   a_star_parallel_solve(a_star, &initial, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_parallel_print_statistics(a_star, csv);
+  a_star_parallel_print_statistics(a_star, csv, show_solution);
 
   // Limpamos a memória
   a_star_parallel_destroy(a_star);
 }
 
 // Resolve o problema utilizando a versão sequencial do algoritmo
-void solve_sequential(number_link_t* number_link, bool csv)
+void solve_sequential(number_link_t* number_link, bool csv, bool show_solution)
 {
   // Criamos a instância do algoritmo A*
-  a_star_sequential_t* a_star = a_star_sequential_create(sizeof(number_link_state_t), goal, visit, heuristic, distance, print_solution);
+  a_star_sequential_t* a_star =
+      a_star_sequential_create(sizeof(number_link_state_t), goal, visit, heuristic, distance, print_solution);
 
   // Criamos o nosso estado inicial para lançar o algoritmo
   number_link_state_t initial = { number_link,
@@ -111,7 +110,7 @@ void solve_sequential(number_link_t* number_link, bool csv)
   a_star_sequential_solve(a_star, &initial, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_sequential_print_statistics(a_star, csv);
+  a_star_sequential_print_statistics(a_star, csv, show_solution);
 
   // Limpamos a memória
   a_star_sequential_destroy(a_star);
@@ -134,6 +133,7 @@ int main(int argc, char* argv[])
   int num_threads = 0;
   bool first = false;
   bool csv = false;
+  bool show_solution = false;
 
   // Verificamos se mais opções foram passadas
   int filename_arg = 1;
@@ -152,30 +152,37 @@ int main(int argc, char* argv[])
         printf("Erro: o número de trabalhadores não é um valor válido.\n");
         return 1;
       }
-      filename_arg +=2;
+      filename_arg += 2;
       continue;
     }
 
     if(strcmp(opt, "-p") == 0)
     {
       first = true;
-      filename_arg ++;
+      filename_arg++;
       continue;
     }
 
     if(strcmp(opt, "-r") == 0)
     {
       csv = true;
-      filename_arg ++;
+      filename_arg++;
+      continue;
+    }
+
+    if(strcmp(opt, "-s") == 0)
+    {
+      show_solution = true;
+      filename_arg++;
       continue;
     }
   }
 
-  if (filename_arg >= argc ) {
-        printf("Erro: o falta nome do ficheiro com dados .\n");
-        return 1;
+  if(filename_arg >= argc)
+  {
+    printf("Erro: o falta nome do ficheiro com dados .\n");
+    return 1;
   }
-  
 
   number_link_t* number_link = init_number_link_puzzle(argv[filename_arg]);
 
@@ -188,11 +195,11 @@ int main(int argc, char* argv[])
 
   if(num_threads > 0)
   {
-    solve_parallel(number_link, num_threads, first, csv);
+    solve_parallel(number_link, num_threads, first, csv, show_solution);
   }
   else
   {
-    solve_sequential(number_link, csv);
+    solve_sequential(number_link, csv, show_solution);
   }
 
   number_link_destroy(number_link);

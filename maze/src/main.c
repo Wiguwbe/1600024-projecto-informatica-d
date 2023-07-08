@@ -61,8 +61,6 @@ void print_solution(a_star_node_t* solution)
   maze_solver_state_t* state = (maze_solver_state_t*)solution->state->data;
   maze_solver_t* maze_solver = state->maze_solver;
   board_data_t board_data = maze_solver_wrap_board(maze_solver, state->board_data);
-
-  printf("Solução:\n");
   for(int y = 0; y < maze_solver->rows; y++)
   {
     for(int x = 0; x < maze_solver->cols; x++)
@@ -75,7 +73,7 @@ void print_solution(a_star_node_t* solution)
 }
 
 // Resolve o problema utilizando a versão paralela do algoritmo
-void solve_parallel(maze_solver_t* maze_solver, int num_threads, bool first, bool csv)
+void solve_parallel(maze_solver_t* maze_solver, int num_threads, bool first, bool csv, bool show_solution)
 {
   // Criamos a instância do algoritmo A*
   a_star_parallel_t* a_star =
@@ -89,14 +87,14 @@ void solve_parallel(maze_solver_t* maze_solver, int num_threads, bool first, boo
   a_star_parallel_solve(a_star, &initial, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_parallel_print_statistics(a_star, csv);
+  a_star_parallel_print_statistics(a_star, csv, show_solution);
 
   // Limpamos a memória
   a_star_parallel_destroy(a_star);
 }
 
 // Resolve o problema utilizando a versão sequencial do algoritmo
-void solve_sequential(maze_solver_t* maze_solver, bool csv)
+void solve_sequential(maze_solver_t* maze_solver, bool csv, bool show_solution)
 {
   // Criamos a instância do algoritmo A*
   a_star_sequential_t* a_star =
@@ -110,7 +108,7 @@ void solve_sequential(maze_solver_t* maze_solver, bool csv)
   a_star_sequential_solve(a_star, &initial, NULL);
 
   // Imprime as estatísticas da execução
-  a_star_sequential_print_statistics(a_star, csv);
+  a_star_sequential_print_statistics(a_star, csv, show_solution);
 
   // Limpamos a memória
   a_star_sequential_destroy(a_star);
@@ -133,6 +131,7 @@ int main(int argc, char* argv[])
   int num_threads = 0;
   bool first = false;
   bool csv = false;
+  bool show_solution = false;
 
   // Verificamos se mais opções foram passadas
   int filename_arg = 1;
@@ -168,6 +167,13 @@ int main(int argc, char* argv[])
       filename_arg++;
       continue;
     }
+
+    if(strcmp(opt, "-s") == 0)
+    {
+      show_solution = true;
+      filename_arg++;
+      continue;
+    }
   }
 
   if(filename_arg >= argc)
@@ -187,11 +193,11 @@ int main(int argc, char* argv[])
 
   if(num_threads > 0)
   {
-    solve_parallel(maze_solver, num_threads, first, csv);
+    solve_parallel(maze_solver, num_threads, first, csv, show_solution);
   }
   else
   {
-    solve_sequential(maze_solver, csv);
+    solve_sequential(maze_solver, csv, show_solution);
   }
 
   maze_solver_destroy(maze_solver);

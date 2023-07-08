@@ -163,12 +163,14 @@ void* a_star_worker_function(void* arg)
       // Se encontramos o objetivo saímos e retornamos o nó
       if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
       {
+        a_star->common->num_solutions++;
         // Temos de informar que encontramos o nosso objetivo
         pthread_mutex_lock(&(a_star->lock));
         if(a_star->common->solution == NULL)
         {
           // Esta é a primeira solução encontrada nada de especial
           // a fazer
+          a_star->common->num_better_solutions++;
           a_star->common->solution = current_node;
         }
         else
@@ -177,9 +179,13 @@ void* a_star_worker_function(void* arg)
           // solução tem um custo menor
           int existing_cost = a_star->common->solution->g + a_star->common->solution->h;
           int attempt_cost = current_node->g + current_node->h;
+
           if(existing_cost > attempt_cost)
           {
+            a_star->common->num_better_solutions++;
             a_star->common->solution = current_node;
+          } else if(existing_cost == attempt_cost) {
+            a_star->common->num_worst_solutions++;
           }
         }
         pthread_mutex_unlock(&(a_star->lock));
@@ -457,10 +463,15 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
 }
 
 // Imprime estatísticas do algoritmo sequencial no formato desejado
-void a_star_parallel_print_statistics(a_star_parallel_t* a_star, bool csv)
+void a_star_parallel_print_statistics(a_star_parallel_t* a_star, bool csv, bool show_solution)
 {
   if(a_star == NULL)
   {
+    return;
+  }
+
+  if (show_solution) {
+    a_star_print_statistics(a_star->common, csv, true);
     return;
   }
 
@@ -476,7 +487,7 @@ void a_star_parallel_print_statistics(a_star_parallel_t* a_star, bool csv)
     }
   }
 
-  a_star_print_statistics(a_star->common, csv);
+  a_star_print_statistics(a_star->common, csv, false);
 
   if(!csv)
   {

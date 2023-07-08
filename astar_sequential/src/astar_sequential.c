@@ -125,6 +125,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
     if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
     {
       // Guardamos a solução e saímos do ciclo
+      a_star->common->num_solutions = a_star->common->num_better_solutions = 1;
       a_star->common->solution = current_node;
       break;
     }
@@ -209,7 +210,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 }
 
 // Imprime estatísticas do algoritmo sequencial no formato desejado
-void a_star_sequential_print_statistics(a_star_sequential_t* a_star, bool csv)
+void a_star_sequential_print_statistics(a_star_sequential_t* a_star, bool csv, bool show_solution)
 {
-  a_star_print_statistics(a_star->common, csv);
+  a_star_print_statistics(a_star->common, csv, show_solution);
 }

@@ -50,6 +50,9 @@ struct a_star_t
   int nodes_reinserted;
   int paths_worst_or_equals;
   int paths_better;
+  int num_solutions;
+  int num_worst_solutions;
+  int num_better_solutions;
 };
 
 // Funções comuns do algoritmo
@@ -64,6 +67,6 @@ a_star_t* a_star_create(size_t struct_size,
 void a_star_destroy(a_star_t* a_star);
 
 // Imprime as estatísticas possíveis
-void a_star_print_statistics(a_star_t* a_star, bool csv);
+void a_star_print_statistics(a_star_t* a_star, bool csv, bool show_solution);
 
 #endif
