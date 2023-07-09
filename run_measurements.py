@@ -13,7 +13,7 @@ problems = {
                 "hard_1", "hard_2",
                 "impossible_1", "impossible_2"],
     "numberlink": [1, 2, 3, 4, 5, 6],
-    "maze": [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    "maze": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 }
 
 excluded_instances = {
@@ -406,7 +406,7 @@ def save_solutions_image(problem, instance, solutions):
     main_header = f"{solutions_header} - {problem} - {instance}"
     main_header_len = header_font.getlength(main_header)
     widths = [main_header_len]
-    h = spacing * 4
+    h = spacing * 5
 
     # Prepare headers for algorithms names
     algo_headers = []
@@ -591,7 +591,7 @@ def parse_int_list(arg):
         raise argparse.ArgumentTypeError("Invalid integer list format. Should be comma-separated integers.")
 
 # Custom function to convert a comma-separated string to a list of strings
-def parse_int_list(arg):
+def parse_str_list(arg):
     try:
         # Split the string by commas and convert each part to an integer
         values = [str(x) for x in arg.split(',')]
@@ -607,7 +607,7 @@ if __name__ == '__main__':
     # Add command-line arguments
     parser.add_argument('-r', '--runs', help='Número de execuções', default=10)
     parser.add_argument('-t', '--threads', type=parse_int_list, help='Número de trabalhadores', default=[2,4,6])
-    parser.add_argument('-x', '--excluded', type=parse_int_list, help='Problemas excluidos', default=[])
+    parser.add_argument('-x', '--excluded', type=parse_str_list, help='Problemas excluidos', default=[])
     parser.add_argument('-c', '--csv', help='Saida CSV', default=True)
     parser.add_argument('-i', '--images', action='store_true', help='Guarda imagem das soluções')
     parser.add_argument('-d', '--debug', action='store_true', help='Ativa mensagens de debug')
