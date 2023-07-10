@@ -74,6 +74,7 @@ state_t* state_allocator_new(state_allocator_t* allocator, void* state_data)
   }
 
   new_state->struct_size = allocator->struct_size;
+  new_state->hash = hash_function(state_data, allocator->struct_size, HASH_CAPACITY);
   new_state->data = state_data;
 
   // Verifica se o estado expandido já existe

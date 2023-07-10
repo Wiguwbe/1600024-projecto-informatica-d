@@ -70,14 +70,32 @@ def maze_to_image(maze, piece_size):
     return image
 
 
-def run_executable(executable, arguments):
-    logger.debug(f"A correr: {executable} {str(' ').join(arguments)}")
-    output = subprocess.check_output(
-        [executable] + arguments, universal_newlines=True)
-    return output.strip()
+def run_executable(executable, arguments, num_runs):
+    best_execution = None
+    for _ in range(num_runs): 
+        logger.debug(f"A correr: {executable} {str(' ').join(arguments)}")
+        output = subprocess.check_output(
+            [executable] + arguments, universal_newlines=True)
+        try:
+            data = json.loads(output.strip())
+            
+            # first execution
+            if best_execution is None:
+                best_execution = data
+                continue
+
+            # We get the best execution for this algorithim
+            if data["execution_time"] < best_execution["execution_time"]:
+                best_execution = data
+
+        except json.JSONDecodeError as e:
+            logger.error(f"Execução com resultado inválido: {executable} {arguments}")
+            continue
+        
+    return best_execution
 
 
-def run_measurement(problem, instance, thread_num=0, first_solution=False):
+def run_measurement(problem, instance, num_runs, thread_num=0, first_solution=False):
     # Execution arguments
     exec_cmd = f"./{problem}/bin/{problem}"
     # No flags required in this mode
@@ -96,11 +114,7 @@ def run_measurement(problem, instance, thread_num=0, first_solution=False):
     exec_args.append(f"./instances/maze_{instance}")
 
     # Run execution and return json stats data
-    try:
-        return json.loads(run_executable(exec_cmd, exec_args))
-    except json.JSONDecodeError as e:
-        logger.error("Error parsing JSON:", e)
-        return None
+    return run_executable(exec_cmd, exec_args, num_runs)
 
 
 def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
@@ -299,7 +313,7 @@ def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
     video.release()
 
 
-def run_measurements(problem, instance, threads, algo, speed, output_name=None):
+def run_measurements(problem, instance, num_runs, threads, algo, speed, output_name):
 
     # To store measurements
     # 0-> sequential
@@ -308,16 +322,16 @@ def run_measurements(problem, instance, threads, algo, speed, output_name=None):
     stats_data = [None, None, None]
 
     if algo == "seq":
-        stats_data[0] = run_measurement(problem, instance)
+        stats_data[0] = run_measurement(problem, instance, num_runs)
     elif algo == "par-ex":
-        stats_data[1] = run_measurement(problem, instance, threads)
+        stats_data[1] = run_measurement(problem, instance, num_runs, threads)
     elif algo == "par-p":
-        stats_data[2] = run_measurement(problem, instance, threads, True)
+        stats_data[2] = run_measurement(problem, instance, num_runs, threads, True)
     elif algo == "all":
         # Sequential, Parallel first and exhaustive
-        stats_data[0] = run_measurement(problem, instance)
-        stats_data[1] = run_measurement(problem, instance, threads)
-        stats_data[2] = run_measurement(problem, instance, threads, True)
+        stats_data[0] = run_measurement(problem, instance, num_runs)
+        stats_data[1] = run_measurement(problem, instance, num_runs, threads)
+        stats_data[2] = run_measurement(problem, instance, num_runs, threads, True)
 
     create_video(problem, instance, stats_data, speed, output_name)
 
@@ -350,7 +364,8 @@ if __name__ == '__main__':
         '-a', '--algo', choices=['seq', 'par-p', 'par-ex', 'all'], help='Algoritmo a usar', default='all')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Ativa mensagens de debug')
-
+    parser.add_argument('-r', '--runs', default=10,
+                        help='mumber of runs to get the best execution')
     parser.add_argument('problem', type=str, help='problema a utilizar')
     parser.add_argument('instance', type=str, help='instancia a utilizar')
 
@@ -365,9 +380,10 @@ if __name__ == '__main__':
     instance = args.instance
     output = args.output
     algo = args.algo
+    num_runs = int(args.runs)
 
     if debug:
         logger.setLevel(logging.DEBUG)
 
     # Run measurments
-    run_measurements(problem, instance, threads, algo, speed, output)
+    run_measurements(problem, instance, num_runs, threads, algo, speed, output)

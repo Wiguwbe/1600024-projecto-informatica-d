@@ -110,6 +110,22 @@ void linked_list_remove(linked_list_t* list, size_t index) {
     list->size--;
 }
 
+void* linked_list_pop_back(linked_list_t* list){
+   
+   // Verifica se o índice é válido
+    if ( !list->size) {
+        return NULL;
+    }
+
+    linked_list_node_t* node = list->head;
+    list->head = node->next;
+    list->size--;
+
+    void* data = node->data;
+    free(node);  
+    return data;
+}
+
 size_t linked_list_size(linked_list_t* list) {
     return list->size;
 }
@@ -128,3 +144,4 @@ void* linked_list_get(linked_list_t* list, size_t index) {
 
     return current_node->data;
 }
+

@@ -123,6 +123,9 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
   // Inserimos o nó inicial na nossa fila prioritária
   min_heap_insert(a_star->open_set, initial_node->g + initial_node->h, initial_node);
 
+  // Esta lista irá receber os vizinhos de um nó
+  linked_list_t* neighbors = linked_list_create();
+
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->start_time));
 #ifdef STATS_GEN
   printf("\"entries\":[\n");
@@ -153,16 +156,12 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
       a_star->common->solution = current_node;
       break;
     }
-
-    // Esta lista irá receber os vizinhos deste nó
-    linked_list_t* neighbors = linked_list_create();
-
     // Executa a função que visita os vizinhos deste nó
     a_star->common->visit_func(current_node->state, a_star->common->state_allocator, neighbors);
     // Itera por todos os vizinhos gerados e atualiza a nossa árvore de procura
-    for(size_t i = 0; i < linked_list_size(neighbors); i++)
+    while(linked_list_size(neighbors))
     {
-      state_t* neighbor = (state_t*)linked_list_get(neighbors, i);
+      state_t* neighbor = (state_t*)linked_list_pop_back(neighbors);
 
       // Verifica se o nó para este estado já se encontra na nossa lista de nós
       a_star_node_t* child_node = node_allocator_get(a_star->common->node_allocator, neighbor);
@@ -224,10 +223,11 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
         }
       }
     }
-
-    // Liberta a lista de vizinhos
-    linked_list_destroy(neighbors);
   }
+
+  // Liberta a lista de vizinhos
+  linked_list_destroy(neighbors);
+
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
   // Calculamos o tempo de execução
   a_star->common->execution_time = (a_star->common->end_time.tv_sec - a_star->common->start_time.tv_sec);

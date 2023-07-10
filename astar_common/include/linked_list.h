@@ -94,6 +94,9 @@ void linked_list_insert(linked_list_t* list, void* data, size_t index);
 // Função para remover um elemento de uma posição específica da lista encadeada
 void linked_list_remove(linked_list_t* list, size_t index);
 
+// Função retirar o primeiro elemento da lista
+void* linked_list_pop_back(linked_list_t* list);
+
 // Função para obter o tamanho da lista encadeada
 size_t linked_list_size(linked_list_t* list);
 

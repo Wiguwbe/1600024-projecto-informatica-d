@@ -4,13 +4,15 @@ SRC_DIR := src
 OBJ_DIR := obj
 BIN_DIR := bin
 TEST_DIR := tests
+MAKE_FLAGS := 
 
-.PHONY: all clean $(FOLDERS) tests measurements
+.PHONY: all $(FOLDERS) tests run_tests clean all_with_stats measurements measurements_with_solutions solutions_only videos 
 
 all: $(FOLDERS)
 
 $(FOLDERS):
-	@$(MAKE) -C $@
+	@echo ${MAKE_FLAGS}
+	@$(MAKE) ${MAKE_FLAGS} -C $@
 
 tests:
 	for dir in $(FOLDERS); do \
@@ -32,10 +34,27 @@ clean:
 		$(MAKE) -C $$dir clean; \
 	done
 
-measurements: 
-	@rm measurements/*.csv
+all_with_stats:
+	@$(MAKE) STATS_GEN=TRUE all
+
+measurements: clean all
+	@echo "A correr medições"
 	@./run_measurements.py -d 
 
-generate_solutions: 
-	@rm reports/*.png
-	@./generate_solutions.py -r 5 -i -d
+measurements_with_solutions: clean all
+	@echo "A correr medições com geração de soluções"
+	@./run_measurements.py -d -i 
+
+solutions_only: clean all
+	@echo "A gerar soluções apenas"
+	@./run_measurements.py -d -i -c -r 5 
+
+generate_videos: clean all_with_stats 
+	@echo "A gerar videos"
+	@./generate_video.py -s 3 -o reports/maze2_bad_heuristic.mp4 maze_bad 2
+	@./generate_video.py -s 3 -o reports/maze3_bad_heuristic.mp4 maze_bad 3
+	@./generate_video.py -s 3 -o reports/maze4_bad_heuristic.mp4 maze_bad 4
+	@./generate_video.py -s 3 -o reports/maze2_good_heuristic.mp4 maze_good 2
+	@./generate_video.py -s 3 -o reports/maze3_good_heuristic.mp4 maze_good 3
+	@./generate_video.py -s 3 -o reports/maze4_good_heuristic.mp4 maze_good 4
+	@./generate_video.py -s 3 -o reports/search_visualization.mp4 maze_good 11

@@ -1,8 +1,8 @@
 #include "astar_parallel.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#  include <stdio.h>
 
 #define MAX_IDLE_TIME 10000
 
@@ -16,10 +16,12 @@ typedef struct
 // Função para encontrar o next worker baseada na posição de memória do estado
 // Isto garante uma distribuição balanceada entre os trabalhadores e ao mesmo
 // tempo garante que os nós processam sempre os mesmos estados
-static size_t assign_to_worker(a_star_parallel_t* a_star, const state_t* state)
+static size_t assign_to_worker(a_star_parallel_t* a_star, state_t* state)
 {
-  size_t hash = hash_function(state->data, state->struct_size, HASH_CAPACITY);
-  return hash % a_star->scheduler.num_workers;
+  return state->hash % a_star->scheduler.num_workers;
+
+  // size_t hash = hash_function(state->data, state->struct_size, HASH_CAPACITY);
+  // return hash % a_star->scheduler.num_workers;
 }
 
 // Função que implementa a lógica de um trabalhador, aqui se processa o algoritmo A*
@@ -38,6 +40,9 @@ void* a_star_worker_function(void* arg)
   worker->paths_worst_or_equals = 0;
 
   worker->idle = false;
+
+  // Esta lista para receber os vizinhos de um nó
+  linked_list_t* neighbors = linked_list_create();
 
   while(a_star->running)
   {
@@ -202,14 +207,11 @@ void* a_star_worker_function(void* arg)
       }
       else
       {
-        // Esta lista irá receber os vizinhos deste nó
-        linked_list_t* neighbors = linked_list_create();
-
         // Executa a função que visita os vizinhos deste nó
         a_star->common->visit_func(current_node->state, a_star->common->state_allocator, neighbors);
 
         // Itera por todos os vizinhos gerados e envia para a devida tarefa
-        for(size_t i = 0; i < linked_list_size(neighbors); i++)
+        while (linked_list_size(neighbors))
         {
           // Preparamos a mensagem a ser enviada
           a_star_message_t* message = (a_star_message_t*)malloc(sizeof(a_star_message_t));
@@ -222,18 +224,18 @@ void* a_star_worker_function(void* arg)
           // Compomos a mensagem com os dados necessários e identificamos qual
           // o trabalhador que vai tratar deste estado
           message->parent = current_node;
-          message->state = (state_t*)linked_list_get(neighbors, i);
+          message->state = (state_t*)linked_list_pop_back(neighbors);
           size_t worker_id = assign_to_worker(a_star, message->state);
 
           // Enviamos a mensagem para o respetivo trabalhador
           channel_send(a_star->channel, worker_id, message);
         }
-
-        // Liberta a lista de vizinhos
-        linked_list_destroy(neighbors);
       }
     }
   }
+
+  // Liberta a lista de vizinhos
+  linked_list_destroy(neighbors);
 
   pthread_exit(NULL);
 }
