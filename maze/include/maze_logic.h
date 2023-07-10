@@ -19,4 +19,8 @@ bool goal(const state_t*, const state_t*);
 
 int distance(const state_t*, const state_t*);
 
+#ifdef STATS_GEN
+void print_stats(const state_t*,  struct timespec*, int type);
+#endif
+
 #endif

@@ -1,3 +1,12 @@
+#ifdef STATS_GEN
+#include <stdio.h>
+
+int main(int argc, char* argv[])
+{
+  printf("Funcionalidade não implementada para o problema numberlink.\n");
+  return 0;
+}
+#else
 #include "astar_parallel.h"
 #include "astar_sequential.h"
 #include "numberlink_logic.h"
@@ -205,3 +214,4 @@ int main(int argc, char* argv[])
   number_link_destroy(number_link);
   return 0;
 }
+#endif

@@ -5,13 +5,6 @@ OBJ_DIR := obj
 BIN_DIR := bin
 TEST_DIR := tests
 
-ifdef NUM_WORKERS
-WORKERS := ${NUM_WORKERS}
-else
-WORKERS := 6
-endif
-
-
 .PHONY: all clean $(FOLDERS) tests measurements
 
 all: $(FOLDERS)

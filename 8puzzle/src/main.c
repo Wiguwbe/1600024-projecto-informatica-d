@@ -1,3 +1,12 @@
+#ifdef STATS_GEN
+#include <stdio.h>
+
+int main(int argc, char* argv[])
+{
+  printf("Funcionalidade não implementada para o problema puzzle8.\n");
+  return 0;
+}
+#else
 #include "8puzzle_logic.h"
 #include "astar_parallel.h"
 #include "astar_sequential.h"
@@ -174,3 +183,4 @@ int main(int argc, char* argv[])
     solve_sequential(puzzle, csv, show_solution);
   }
 }
+#endif

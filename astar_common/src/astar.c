@@ -5,12 +5,22 @@
 #include <string.h>
 
 // Funções internas do algoritmo
+#ifdef STATS_GEN
+a_star_t* a_star_create(size_t struct_size,
+                        goal_function goal_func,
+                        visit_function visit_func,
+                        heuristic_function h_func,
+                        distance_function d_func,
+                        print_stats_function print_stats_func,
+                        print_function print_func)
+#else
 a_star_t* a_star_create(size_t struct_size,
                         goal_function goal_func,
                         visit_function visit_func,
                         heuristic_function h_func,
                         distance_function d_func,
                         print_function print_func)
+#endif
 {
   a_star_t* a_star = (a_star_t*)malloc(sizeof(a_star_t));
   if(a_star == NULL)
@@ -42,6 +52,9 @@ a_star_t* a_star_create(size_t struct_size,
   a_star->goal_func = goal_func;
   a_star->h_func = h_func;
   a_star->d_func = d_func;
+#ifdef STATS_GEN
+  a_star->print_stats_func = print_stats_func;
+#endif
 
   // Limpa solução e estado a atingir
   a_star->solution = NULL;

@@ -63,13 +63,26 @@ struct a_star_worker_t
 };
 
 // Cria uma nova instância do algoritmo A* para resolver um problema
+#ifdef STATS_GEN
+a_star_parallel_t* a_star_parallel_create(size_t struct_size,
+                                          goal_function goal_func,
+                                          visit_function visit_func,
+                                          heuristic_function h_func,
+                                          distance_function d_func,
+                                          print_stats_function print_stats_func,
+                                          print_function print_func,
+                                          int num_workers,
+                                          bool stop_on_first_solution);
+#else
 a_star_parallel_t* a_star_parallel_create(size_t struct_size,
                                           goal_function goal_func,
                                           visit_function visit_func,
                                           heuristic_function h_func,
                                           distance_function d_func,
                                           print_function print_func,
-                                          int num_workers, bool first);
+                                          int num_workers,
+                                          bool stop_on_first_solution);
+#endif
 
 // Liberta uma instância do algoritmo A* paralelo
 void a_star_parallel_destroy(a_star_parallel_t* a_star);

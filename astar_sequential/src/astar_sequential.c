@@ -2,14 +2,27 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef STATS_GEN
+#  include <stdio.h>
+#endif
 
 // Cria uma nova instância para resolver um problema
+#ifdef STATS_GEN
+a_star_sequential_t* a_star_sequential_create(size_t struct_size,
+                                              goal_function goal_func,
+                                              visit_function visit_func,
+                                              heuristic_function h_func,
+                                              distance_function d_func,
+                                              print_stats_function print_stats_func,
+                                              print_function print_func)
+#else
 a_star_sequential_t* a_star_sequential_create(size_t struct_size,
                                               goal_function goal_func,
                                               visit_function visit_func,
                                               heuristic_function h_func,
                                               distance_function d_func,
                                               print_function print_func)
+#endif
 {
   a_star_sequential_t* a_star = (a_star_sequential_t*)malloc(sizeof(a_star_sequential_t));
   if(a_star == NULL)
@@ -22,7 +35,11 @@ a_star_sequential_t* a_star_sequential_create(size_t struct_size,
   a_star->common = NULL;
 
   // Inicializamos a parte comum do nosso algoritmo
+#ifdef STATS_GEN
+  a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func, print_stats_func, print_func);
+#else
   a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func, print_func);
+#endif
 
   if(a_star->common == NULL)
   {
@@ -107,6 +124,9 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
   min_heap_insert(a_star->open_set, initial_node->g + initial_node->h, initial_node);
 
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->start_time));
+#ifdef STATS_GEN
+  printf("\"entries\":[\n");
+#endif
   while(a_star->open_set->size)
   {
     if(a_star->common->max_min_heap_size < a_star->open_set->size)
@@ -120,6 +140,10 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
     a_star_node_t* current_node = (a_star_node_t*)top_element.data;
     current_node->index_in_open_set = SIZE_MAX;
     a_star->common->expanded++;
+
+#ifdef STATS_GEN
+    a_star->common->print_stats_func(current_node->state, &(a_star->common->start_time), VISITED);
+#endif
 
     // Se encontramos o objetivo saímos e retornamos o nó
     if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
@@ -135,7 +159,6 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 
     // Executa a função que visita os vizinhos deste nó
     a_star->common->visit_func(current_node->state, a_star->common->state_allocator, neighbors);
-
     // Itera por todos os vizinhos gerados e atualiza a nossa árvore de procura
     for(size_t i = 0; i < linked_list_size(neighbors); i++)
     {
@@ -149,7 +172,9 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
         // Este nó ainda não existe, criamos um novo nó
         child_node = node_allocator_new(a_star->common->node_allocator, neighbor);
         child_node->parent = current_node;
-
+#ifdef STATS_GEN
+        a_star->common->print_stats_func(child_node->state, &(a_star->common->start_time), SUCESSOR);
+#endif
         // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
         child_node->g = current_node->g + a_star->common->d_func(current_node->state, child_node->state);
         child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
@@ -169,7 +194,8 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 
         // Se o custo for maior do que o nó já tem, não faz sentido atualizar
         // existe outro caminho mais curto para este nó
-        if(g_attempt >= child_node->g) {
+        if(g_attempt >= child_node->g)
+        {
           a_star->common->paths_worst_or_equals++;
           continue;
         }
@@ -203,10 +229,25 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
     linked_list_destroy(neighbors);
   }
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
-
   // Calculamos o tempo de execução
   a_star->common->execution_time = (a_star->common->end_time.tv_sec - a_star->common->start_time.tv_sec);
   a_star->common->execution_time += (a_star->common->end_time.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
+#ifdef STATS_GEN
+  a_star_node_t* solution_path = a_star->common->solution;
+  while(solution_path != NULL)
+  {
+    a_star->common->print_stats_func(solution_path->state, &(a_star->common->start_time), GOAL);
+    solution_path = solution_path->parent;
+  }
+
+  struct timespec end_timestamp;
+  clock_gettime(CLOCK_MONOTONIC, &end_timestamp);
+  double execution_time = (end_timestamp.tv_sec - a_star->common->start_time.tv_sec);
+  execution_time += (end_timestamp.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
+
+  printf("{\"frametime\":%.9f,\"type\":\"end\"}\n],\n", execution_time);
+  printf("\"execution_time\":%.9f\n", execution_time);
+#endif
 }
 
 // Imprime estatísticas do algoritmo sequencial no formato desejado

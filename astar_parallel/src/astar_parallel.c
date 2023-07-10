@@ -1,8 +1,10 @@
 #include "astar_parallel.h"
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef STATS_GEN
+#  include <stdio.h>
+#endif
 
 #define MAX_IDLE_TIME 10000
 
@@ -80,6 +82,10 @@ void* a_star_worker_function(void* arg)
         child_node->parent = parent_node;
         worker->generated++;
 
+#ifdef STATS_GEN
+        a_star->common->print_stats_func(child_node->state, &(a_star->common->start_time), SUCESSOR);
+#endif
+
         // Encontra o custo de chegar do estado pai a este estado e calculamos a heurística (distância para chegar ao objetivo)
         child_node->g = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
         child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
@@ -145,6 +151,10 @@ void* a_star_worker_function(void* arg)
       current_node->index_in_open_set = SIZE_MAX;
       worker->expanded++;
 
+#ifdef STATS_GEN
+      a_star->common->print_stats_func(current_node->state, &(a_star->common->start_time), VISITED);
+#endif
+
       // Verificamos se já existe uma solução, caso já exista temos de verificar se
       // este trabalhador está a procurar por soluções que se encontram a uma distância maior
       // do que a solução já encontrada, será que vale a pena continuar? Consideramos que não e saímos.
@@ -184,7 +194,9 @@ void* a_star_worker_function(void* arg)
           {
             a_star->common->num_better_solutions++;
             a_star->common->solution = current_node;
-          } else if(existing_cost == attempt_cost) {
+          }
+          else if(existing_cost == attempt_cost)
+          {
             a_star->common->num_worst_solutions++;
           }
         }
@@ -229,6 +241,17 @@ void* a_star_worker_function(void* arg)
 }
 
 // Cria uma nova instância para resolver um problema
+#ifdef STATS_GEN
+a_star_parallel_t* a_star_parallel_create(size_t struct_size,
+                                          goal_function goal_func,
+                                          visit_function visit_func,
+                                          heuristic_function h_func,
+                                          distance_function d_func,
+                                          print_stats_function print_stats_func,
+                                          print_function print_func,
+                                          int num_workers,
+                                          bool stop_on_first_solution)
+#else
 a_star_parallel_t* a_star_parallel_create(size_t struct_size,
                                           goal_function goal_func,
                                           visit_function visit_func,
@@ -237,6 +260,7 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
                                           print_function print_func,
                                           int num_workers,
                                           bool stop_on_first_solution)
+#endif
 {
   a_star_parallel_t* a_star = (a_star_parallel_t*)malloc(sizeof(a_star_parallel_t));
   if(a_star == NULL)
@@ -252,8 +276,11 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
   pthread_mutex_init(&a_star->lock, NULL);
 
   // Inicializamos a parte comum do nosso algoritmo
+#ifdef STATS_GEN
+  a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func, print_stats_func, print_func);
+#else
   a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func, print_func);
-
+#endif
   if(a_star->common == NULL)
   {
     a_star_parallel_destroy(a_star);
@@ -363,6 +390,25 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
     }
   }
 
+#ifdef STATS_GEN
+  printf("\"entries\":[\n");
+#endif
+
+  // Com recurso a esta variável podemos enviar uma mensagem para os nossos trabalhadores
+  // pararem
+  a_star->running = true;
+  // Iniciamos cada trabalhador
+  for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
+  {
+    a_star->scheduler.workers[i].idle = false;
+    int result =
+        pthread_create(&(a_star->scheduler.workers[i].thread), NULL, a_star_worker_function, &(a_star->scheduler.workers[i]));
+    if(result != 0)
+    {
+      return;
+    }
+  }
+
   // Preparamos a mensagem a ser enviada para o estado inicial
   a_star_message_t* message = (a_star_message_t*)malloc(sizeof(a_star_message_t));
   if(message == NULL)
@@ -377,22 +423,6 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
 
   // Enviamos o estado inicial para o respetivo trabalhador
   channel_send(a_star->channel, worker_id, message);
-
-  // Com recurso a esta variável podemos enviar uma mensagem para os nossos trabalhadores
-  // pararem
-  a_star->running = true;
-
-  // Iniciamos cada trabalhador
-  for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
-  {
-    a_star->scheduler.workers[i].idle = false;
-    int result =
-        pthread_create(&(a_star->scheduler.workers[i].thread), NULL, a_star_worker_function, &(a_star->scheduler.workers[i]));
-    if(result != 0)
-    {
-      return;
-    }
-  }
 
   // Ciclo de execução que espera pela solução ou que todos os trabalhadores fiquem
   // sem nós para processar
@@ -425,28 +455,76 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
       idle_workers++;
     }
 
-    if (idle_workers == a_star->scheduler.num_workers) {
-      if (idle_tries == MAX_IDLE_TIME) {
+    if(idle_workers == a_star->scheduler.num_workers)
+    {
+      if(idle_tries == MAX_IDLE_TIME)
+      {
         clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
       }
       idle_tries--;
     }
 
-    if (idle_tries <= 0) {
+    if(idle_tries <= 0)
+    {
       a_star->running = false;
       break;
-    } 
+    }
 
     // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos
     a_star->running = true;
   }
+
+#ifdef STATS_GEN
+  if(a_star->stop_on_first_solution)
+  {
+    a_star_node_t* solution_path = a_star->common->solution;
+    while(solution_path != NULL)
+    {
+      a_star->common->print_stats_func(solution_path->state, &(a_star->common->start_time), GOAL);
+      solution_path = solution_path->parent;
+    }
+
+    struct timespec end_timestamp;
+    clock_gettime(CLOCK_MONOTONIC, &end_timestamp);
+    double execution_time = (end_timestamp.tv_sec - a_star->common->start_time.tv_sec);
+    execution_time += (end_timestamp.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
+
+    printf("{\"frametime\":%.9f,\"type\":\"end\"}\n],\n", execution_time);
+    printf("\"execution_time\":%.9f\n", execution_time);
+  }
+  else
+  {
+    struct timespec start_solution_timestamp;
+    clock_gettime(CLOCK_MONOTONIC, &start_solution_timestamp);
+
+    struct timespec relative_start_timestamp;
+    relative_start_timestamp.tv_sec =
+        a_star->common->start_time.tv_sec + start_solution_timestamp.tv_sec - a_star->common->end_time.tv_sec;
+    relative_start_timestamp.tv_nsec =
+        a_star->common->start_time.tv_nsec + start_solution_timestamp.tv_nsec - a_star->common->end_time.tv_nsec;
+
+    a_star_node_t* solution_path = a_star->common->solution;
+    while(solution_path != NULL)
+    {
+      a_star->common->print_stats_func(solution_path->state, &relative_start_timestamp, GOAL);
+      solution_path = solution_path->parent;
+    }
+
+    struct timespec end_timestamp;
+    clock_gettime(CLOCK_MONOTONIC, &end_timestamp);
+    double execution_time = (end_timestamp.tv_sec - relative_start_timestamp.tv_sec);
+    execution_time += (end_timestamp.tv_nsec - relative_start_timestamp.tv_nsec) / 1000000000.0;
+
+    printf("{\"frametime\":%.9f,\"type\":\"end\"}\n],\n", execution_time);
+    printf("\"execution_time\":%.9f\n", execution_time);
+  }
+#endif
 
   // Esperamos que todas os trabalhadores terminem
   for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
   {
     pthread_join(a_star->scheduler.workers[i].thread, NULL);
   }
-
   // Calculamos o tempo de execução e outras estatísticas
   for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
   {
@@ -470,7 +548,8 @@ void a_star_parallel_print_statistics(a_star_parallel_t* a_star, bool csv, bool 
     return;
   }
 
-  if (show_solution) {
+  if(show_solution)
+  {
     a_star_print_statistics(a_star->common, csv, true);
     return;
   }

@@ -9,6 +9,10 @@ else
 CFLAGS_EXTRA := -O3
 endif
 
+ifdef STATS_GEN
+CFLAGS_EXTRA += -DSTATS_GEN
+endif
+
 SRC_DIR := src
 OBJ_DIR := obj
 LIB_DIR := lib
