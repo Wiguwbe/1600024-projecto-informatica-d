@@ -14,8 +14,8 @@ maze_solver_t* init_maze_solver_puzzle(const char* filename)
     return false;
   }
 
-  char buffer[100]; // Tamanho maximo de uma linha
-  char board[100 * 100]; // Tamanho máximo de um tabuleiro
+  char buffer[1024]; // Tamanho maximo de uma linha
+  char board[1024 * 1024]; // Tamanho máximo de um tabuleiro
 
   char* ptr = (char*)&board;
   int rows = 0;

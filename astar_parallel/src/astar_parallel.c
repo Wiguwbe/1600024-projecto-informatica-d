@@ -2,9 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef STATS_GEN
 #  include <stdio.h>
-#endif
 
 #define MAX_IDLE_TIME 10000
 

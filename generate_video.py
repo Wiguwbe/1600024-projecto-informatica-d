@@ -11,29 +11,10 @@ import cv2
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger()
 
-problems = {
-    "maze": [1, 2, 3, 4, 5, 6, 7, 8, 9]
-}
-
-excluded_instances = {
-    "maze": []
-}
-
-row_par_first_excluded = {
-    "maze": []
-}
-
-row_par_exhaustive_excluded = {
-    "maze": []
-}
-
-# Text variables
-measurement_header = "Procura"
-
 algo_names = [
-    "sequencial",
-    "paralelo - procura exaustiva",
-    "paralelo - primeira solução",
+    "Seq",
+    "Par-Ex",
+    "Par-P",
 ]
 
 # Text fonts
@@ -45,8 +26,8 @@ def maze_to_image(maze, piece_size):
     # Calculate board width and size
     cols = len(maze[0])
     rows = len(maze)
-    h = cols*piece_size
-    w = rows*piece_size
+    h = rows*piece_size
+    w = cols*piece_size
 
     # Draw the numberlink board
     image = Image.new("RGB", (w, h), "white")
@@ -89,12 +70,6 @@ def maze_to_image(maze, piece_size):
     return image
 
 
-# Map of each draw function to each problem
-create_board_func = {
-    "maze": maze_to_image
-}
-
-
 def run_executable(executable, arguments):
     logger.debug(f"A correr: {executable} {str(' ').join(arguments)}")
     output = subprocess.check_output(
@@ -118,7 +93,7 @@ def run_measurement(problem, instance, thread_num=0, first_solution=False):
         exec_args.append(str(thread_num))
 
     # Add instance to run
-    exec_args.append(f"./instances/{problem}_{instance}")
+    exec_args.append(f"./instances/maze_{instance}")
 
     # Run execution and return json stats data
     try:
@@ -128,74 +103,73 @@ def run_measurement(problem, instance, thread_num=0, first_solution=False):
         return None
 
 
-def create_video(problem, instance, stats_data, speed=1.0):
+def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
 
     # generation parameters
     fps = 30
     spacing = 20
-    piece_size = 25
+    piece_size = 10
     time_scale = 100000
     end_delay = 2
 
-    instance_file = f"./instances/{problem}_{instance}"
+    instance_file = f"./instances/maze_{instance}"
 
     # Read the maze and draw it
     with open(instance_file) as fd:
         maze = fd.read().strip().split("\n")
-        board = create_board_func[problem](maze, piece_size)
+        board = maze_to_image(maze, piece_size)
 
     # Some vars to be able to draw the search process
     radius = int((piece_size//2) * 0.7)
     off_w = off_h = piece_size // 2
     time_modifier = time_scale * 1 / speed
+    video_filename = f"reports/{problem}-{instance}.mp4" if output_name is None else output_name
+    algos = []
 
     # Get max execution time to calculate video length
     video_time = 0
+    entries = []
+    i = 0
     for stats in stats_data:
+        if stats is None:
+            i += 1
+            continue
+        algos.append({"name": algo_names[i], "raw_data": stats})
+        entries.append(sorted(stats["entries"], key=lambda x: x["frametime"]))
         exec_time = float(stats["execution_time"]) * time_modifier
         logger.debug(
             f"A processar maior tempo -> {exec_time} ")
         if video_time < exec_time:
             video_time = exec_time
+        i += 1
 
-    # # Sort search data by frametime
-    entries = [
-        sorted(stats_data[0]["entries"], key=lambda x: x["frametime"]),
-        sorted(stats_data[1]["entries"], key=lambda x: x["frametime"]),
-        sorted(stats_data[2]["entries"], key=lambda x: x["frametime"])
-    ]
-
-    # # Sort search data by frametime
-    # entries = [
-    #     stats_data[0]["entries"],
-    #     stats_data[1]["entries"],
-    #     stats_data[2]["entries"],
-    # ]
-
-    video_size = (board.width*3+spacing*4, board.height+spacing*2)
+    available_algos = len(algos)
+    video_size = (board.width*available_algos+spacing *
+                  (available_algos+1), board.height+spacing*2)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     video = cv2.VideoWriter(
-        f"reports/{problem}-{instance}.mp4", fourcc, fps, video_size)
-    frame_image = Image.new('RGB', video_size, color='white')
-    draw = ImageDraw.Draw(frame_image)
+        video_filename, fourcc, fps, video_size)
+    board_image = Image.new('RGB', video_size, color='white')
+    draw = ImageDraw.Draw(board_image)
 
-    # Paste the 3 boards into the frame
     x = y = spacing
     middle = board.width // 2
-    for i in range(3):
-        text_middle = text_font.getlength(algo_names[i]) // 2
+    for data in algos:
+        text_middle = text_font.getlength(data["name"]) // 2
         draw.text([x+middle-text_middle, 0],
-                  algo_names[i], fill=(0, 0, 0), font=text_font)
-        frame_image.paste(board, (x, y))
+                  data["name"], fill=(0, 0, 0), font=text_font)
+        board_image.paste(board, (x, y))
         x += board.width + spacing
 
     counter = [0, 0, 0]
-    current_entry = [ entries[i][0] for i in range(3) ]
+    current_entry = [entries[i][0] for i in range(available_algos)]
     finished_drawing = [False, False, False]
     current_frametime = 0
     time_step = 1 / fps
     logger.debug(
-        f"A gerar video: dimensão: {video_size}, fps: {fps}, video_time: {video_time}, time_step: {time_step}, entries: {[len(entries[i]) for i in range(3)]} ")
+        f"A gerar video: dimensão: {video_size}, fps: {fps}, video_time: {video_time}, time_step: {time_step}, entries: {[len(entries[i]) for i in range(available_algos)]} ")
+    frame_image = board_image.copy()
+    frame_draw = ImageDraw.Draw(frame_image)
     while current_frametime < video_time + end_delay:
         # draw frame specific stuff here.
         logger.debug(
@@ -203,7 +177,10 @@ def create_video(problem, instance, stats_data, speed=1.0):
 
         move_to_next_frame = True
 
-        for i in range(3):
+        # Copy board to current frame
+        frame_image.paste(board_image, (0, 0))
+
+        for i in range(available_algos):
 
             if finished_drawing[i]:
                 continue
@@ -223,10 +200,25 @@ def create_video(problem, instance, stats_data, speed=1.0):
                 row = position[1]
                 col = position[0]
 
-                off_x = x+( col * piece_size) + off_w
-                off_y = y+( row * piece_size) + off_h
+                off_x = x+(col * piece_size) + off_w
+                off_y = y+(row * piece_size) + off_h
+
+                # Draw in both search space and frame
                 draw.ellipse((off_x - radius, off_y - radius, off_x +
-                                radius, off_y + radius), outline='black', fill="red")
+                              radius, off_y + radius), outline='black', fill="red")
+                frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
+                                    radius, off_y + radius), outline='black', fill="red")
+
+                # Draw current path in frame only
+                if "path" in entry:
+                    # draw_path
+                    for position in entry["path"]:
+                        row = position[1]
+                        col = position[0]
+                        off_x = x+(col * piece_size) + off_w
+                        off_y = y+(row * piece_size) + off_h
+                        frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
+                                            radius, off_y + radius), outline='black', fill="green")
 
             elif entry_type == "sucessor":
                 logger.debug(
@@ -241,11 +233,26 @@ def create_video(problem, instance, stats_data, speed=1.0):
                 row = position[1]
                 col = position[0]
 
-                off_x = x+( col * piece_size) + off_w
-                off_y = y+( row * piece_size) + off_h
-                draw.ellipse((off_x - radius, off_y - radius, off_x +
-                                radius, off_y + radius), outline='black', fill="blue")
+                off_x = x+(col * piece_size) + off_w
+                off_y = y+(row * piece_size) + off_h
 
+                # draw in both search space and frame
+                draw.ellipse((off_x - radius, off_y - radius, off_x +
+                              radius, off_y + radius), outline='black', fill="blue")
+
+                frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
+                                    radius, off_y + radius), outline='black', fill="blue")
+
+                # Draw current path on frame only
+                if "path" in entry:
+                    # draw_path
+                    for position in entry["path"]:
+                        row = position[1]
+                        col = position[0]
+                        off_x = x+(col * piece_size) + off_w
+                        off_y = y+(row * piece_size) + off_h
+                        frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
+                                            radius, off_y + radius), outline='black', fill="lightgreen")
 
             elif entry_type == "goal":
                 logger.debug(
@@ -259,8 +266,12 @@ def create_video(problem, instance, stats_data, speed=1.0):
                 position = entry["position"]
                 off_x = x+(position[0] * piece_size) + off_w
                 off_y = y+(position[1] * piece_size) + off_h
+
+                # draw in both search space and frame
                 draw.ellipse((off_x - radius, off_y - radius, off_x +
-                                radius, off_y + radius), outline='black', fill="yellow")
+                              radius, off_y + radius), outline='black', fill="yellow")
+                frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
+                                    radius, off_y + radius), outline='black', fill="yellow")
 
             elif entry_type == "end":
                 finished_drawing[i] = True
@@ -280,46 +291,35 @@ def create_video(problem, instance, stats_data, speed=1.0):
                 next_entry_time = current_entry[i]["frametime"] * time_modifier
                 move_to_next_frame = move_to_next_frame and next_entry_time > current_frametime
 
-
         # Write frame and move to next frame
         if move_to_next_frame:
             video.write(cv2.cvtColor(np.array(frame_image), cv2.COLOR_RGB2BGR))
-            current_frametime += time_step  
-
-
+            current_frametime += time_step
 
     video.release()
 
 
-def run_measurements(problems, threads, excluded_problems, speed):
+def run_measurements(problem, instance, threads, algo, speed, output_name=None):
 
-    # run all measurements
-    problems_measurements = {}
-    for problem, instances in problems.items():
+    # To store measurements
+    # 0-> sequential
+    # 1-> parallel (first solution)
+    # 2-> parallel(exhaustive search))
+    stats_data = [None, None, None]
 
-        # problem excluded? ignore
-        if problem in excluded_problems:
-            continue
+    if algo == "seq":
+        stats_data[0] = run_measurement(problem, instance)
+    elif algo == "par-ex":
+        stats_data[1] = run_measurement(problem, instance, threads)
+    elif algo == "par-p":
+        stats_data[2] = run_measurement(problem, instance, threads, True)
+    elif algo == "all":
+        # Sequential, Parallel first and exhaustive
+        stats_data[0] = run_measurement(problem, instance)
+        stats_data[1] = run_measurement(problem, instance, threads)
+        stats_data[2] = run_measurement(problem, instance, threads, True)
 
-        # To store measurements
-        # 0-> sequential
-        # 1-> parallel (first solution)
-        # 2-> parallel(exhaustive search))
-        measurements = [[], [], []]
-        for instance in instances:
-
-            stats_data = [None, None, None]
-
-            # Excluded instance? ignore
-            if instance in excluded_instances[problem]:
-                continue
-
-            # Sequential, Parallel first and exhaustive
-            stats_data[0] = run_measurement(problem, instance)
-            stats_data[1] = run_measurement(problem, instance, threads)
-            stats_data[2] = run_measurement(problem, instance, threads, True)
-
-            create_video(problem, instance, stats_data, speed)
+    create_video(problem, instance, stats_data, speed, output_name)
 
 # Custom function to convert a comma-separated string to a list of strings
 
@@ -344,22 +344,30 @@ if __name__ == '__main__':
                         help='Número de trabalhadores', default=6)
     parser.add_argument('-s', '--speed',
                         help='Número de trabalhadores', default=1.0)
-    parser.add_argument('-x', '--excluded', type=parse_str_list,
-                        help='Problemas excluidos', default=[])
+    parser.add_argument('-o', '--output',
+                        help='Ficheiro de saida', default=None)
+    parser.add_argument(
+        '-a', '--algo', choices=['seq', 'par-p', 'par-ex', 'all'], help='Algoritmo a usar', default='all')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Ativa mensagens de debug')
+
+    parser.add_argument('problem', type=str, help='problema a utilizar')
+    parser.add_argument('instance', type=str, help='instancia a utilizar')
 
     # Parse the command-line arguments
     args = parser.parse_args()
 
     # Access the parsed arguments
-    threads = args.threads
-    excluded_problems = args.excluded
+    threads = int(args.threads)
     debug = args.debug
     speed = float(args.speed)
+    problem = args.problem
+    instance = args.instance
+    output = args.output
+    algo = args.algo
 
     if debug:
         logger.setLevel(logging.DEBUG)
 
     # Run measurments
-    run_measurements(problems, threads, excluded_problems, speed)
+    run_measurements(problem, instance, threads, algo, speed, output)
