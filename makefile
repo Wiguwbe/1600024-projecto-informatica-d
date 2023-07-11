@@ -57,16 +57,12 @@ generate_videos: clean all_with_stats
 	@echo "A gerar videos"
 	@mkdir -p reports
 	@echo "A gerar video reports/maze2_bad_heuristic.mp4"
-	@./generate_video.py -s 3 -o reports/maze2_bad_heuristic.mp4 maze_bad 2
+	@./generate_video.py -s 4 -o reports/maze2_bad_heuristic.mp4 maze_bad 2
 	@echo "A gerar video reports/maze3_bad_heuristic.mp4"
-	@./generate_video.py -s 3 -o reports/maze3_bad_heuristic.mp4 maze_bad 3
-	@echo "A gerar video reports/maze4_bad_heuristic.mp4"
-	@./generate_video.py -s 3 -o reports/maze4_bad_heuristic.mp4 maze_bad 4
+	@./generate_video.py -s 4 -o reports/maze3_bad_heuristic.mp4 maze_bad 3
 	@echo "A gerar video reports/maze2_good_heuristic.mp4 "
-	@./generate_video.py -s 3 -o reports/maze2_good_heuristic.mp4 maze_good 2
+	@./generate_video.py -s 4 -o reports/maze2_good_heuristic.mp4 maze_good 2
 	@echo "A gerar video reports/maze3_good_heuristic.mp4 "
-	@./generate_video.py -s 3 -o reports/maze3_good_heuristic.mp4 maze_good 3
-	@echo "A gerar video reports/maze4_good_heuristic.mp4 "
-	@./generate_video.py -s 3 -o reports/maze4_good_heuristic.mp4 maze_good 4
+	@./generate_video.py -s 4 -o reports/maze3_good_heuristic.mp4 maze_good 3
 	@echo "A gerar video reports/search_visualization.mp4 m"
-	@./generate_video.py -s 3 -o reports/search_visualization.mp4 maze_good 11
+	@./generate_video.py -s 4 -o reports/search_visualization.mp4 maze_good 11
