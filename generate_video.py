@@ -72,30 +72,38 @@ def maze_to_image(maze, piece_size):
 
 def run_executable(executable, arguments, num_runs):
     best_execution = None
-    for _ in range(num_runs): 
-        logger.debug(f"A correr: {executable} {str(' ').join(arguments)}")
+    run = 0
+    cmd_str = f"{executable} {str(' ').join(arguments)}"
+    while run < num_runs:
+        logger.debug(
+            f"({run}/{num_runs}) A correr: {cmd_str}")
         output = subprocess.check_output(
             [executable] + arguments, universal_newlines=True)
         try:
+            # Try to parse video data
             data = json.loads(output.strip())
-            
+
             # first execution
             if best_execution is None:
+                run += 1
                 best_execution = data
                 continue
 
-            # We get the best execution for this algorithim
+            # We get the best execution for this algorithm
             if data["execution_time"] < best_execution["execution_time"]:
                 best_execution = data
+            run += 1
 
-        except json.JSONDecodeError as e:
-            logger.error(f"Execução com resultado inválido: {executable} {arguments}")
+        except json.JSONDecodeError:
+            logger.error(
+                f"Execução com resultado inválido: {executable} {arguments}")
             continue
-        
+
     return best_execution
 
 
-def run_measurement(problem, instance, num_runs, thread_num=0, first_solution=False):
+def run_measurement(problem, instance, num_runs, thread_num=0,
+                    first_solution=False):
     # Execution arguments
     exec_cmd = f"./{problem}/bin/{problem}"
     # No flags required in this mode
@@ -137,7 +145,7 @@ def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
     radius = int((piece_size//2) * 0.7)
     off_w = off_h = piece_size // 2
     time_modifier = time_scale * 1 / speed
-    video_filename = f"reports/{problem}-{instance}.mp4" if output_name is None else output_name
+    video_filename = f"reports/{problem}-{instance}.mp4" if not output_name else output_name
     algos = []
 
     # Get max execution time to calculate video length
@@ -163,157 +171,133 @@ def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     video = cv2.VideoWriter(
         video_filename, fourcc, fps, video_size)
-    board_image = Image.new('RGB', video_size, color='white')
-    draw = ImageDraw.Draw(board_image)
 
+    # Draw a base frame which is the algo bords side by side
+    base_image = Image.new('RGB', video_size, color='white')
+    base_image_draw = ImageDraw.Draw(base_image)
     x = y = spacing
     middle = board.width // 2
     for data in algos:
         text_middle = text_font.getlength(data["name"]) // 2
-        draw.text([x+middle-text_middle, 0],
-                  data["name"], fill=(0, 0, 0), font=text_font)
-        board_image.paste(board, (x, y))
+        base_image_draw.text([x+middle-text_middle, 0],
+                             data["name"], fill=(0, 0, 0), font=text_font)
+        base_image.paste(board, (x, y))
         x += board.width + spacing
 
+    # the initial frame is the base image (boards)
+    frame = base_image.copy()
+    search_data = base_image.copy()
+
+    # Video generation counters
     counter = [0, 0, 0]
-    current_entry = [entries[i][0] for i in range(available_algos)]
     finished_drawing = [False, False, False]
     current_frametime = 0
     time_step = 1 / fps
+
     logger.debug(
         f"A gerar video: dimensão: {video_size}, fps: {fps}, video_time: {video_time}, time_step: {time_step}, entries: {[len(entries[i]) for i in range(available_algos)]} ")
-    frame_image = board_image.copy()
-    frame_draw = ImageDraw.Draw(frame_image)
+
     while current_frametime < video_time + end_delay:
-        # draw frame specific stuff here.
         logger.debug(
             f"A processar frame -> counter: {counter}, current_frametime: {current_frametime} ")
 
-        move_to_next_frame = True
+        # Path mask for this frame
+        path_mask = Image.new('RGBA', video_size)
 
-        # Copy board to current frame
-        frame_image.paste(board_image, (0, 0))
+        for algo in range(available_algos):
 
-        for i in range(available_algos):
-
-            if finished_drawing[i]:
+            if finished_drawing[algo]:
                 continue
 
-            entry = current_entry[i]
-            entry_type = entry["type"]
-
-            if entry_type == "visited":
-                logger.debug(
-                    f"A gerar frame visit -> frame time: {current_frametime},  entry frametime: {entry['frametime'] * time_modifier }, algo: {algo_names[i]}, ")
-                x = y = spacing
-                # Position x in the board position
-                x += (board.width + spacing) * i
-
-                # Draw a filled circle in the visited
-                position = entry["position"]
-                row = position[1]
-                col = position[0]
-
-                off_x = x+(col * piece_size) + off_w
-                off_y = y+(row * piece_size) + off_h
-
-                # Draw in both search space and frame
-                draw.ellipse((off_x - radius, off_y - radius, off_x +
-                              radius, off_y + radius), outline='black', fill="red")
-                frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
-                                    radius, off_y + radius), outline='black', fill="red")
-
-                # Draw current path in frame only
-                if "path" in entry:
-                    # draw_path
-                    for position in entry["path"]:
-                        row = position[1]
-                        col = position[0]
-                        off_x = x+(col * piece_size) + off_w
-                        off_y = y+(row * piece_size) + off_h
-                        frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
-                                            radius, off_y + radius), outline='black', fill="green")
-
-            elif entry_type == "sucessor":
-                logger.debug(
-                    f"A gerar frame sucessor -> frame time: {current_frametime},  entry frametime: {entry['frametime'] * time_modifier }, algo: {algo_names[i]}, ")
-                # Draw a blue circle in the sucessors
-                x = y = spacing
-                # Position x in the board position
-                x += (board.width + spacing) * i
-
-                # Draw a filled circle in the visited
-                position = entry["position"]
-                row = position[1]
-                col = position[0]
-
-                off_x = x+(col * piece_size) + off_w
-                off_y = y+(row * piece_size) + off_h
-
-                # draw in both search space and frame
-                draw.ellipse((off_x - radius, off_y - radius, off_x +
-                              radius, off_y + radius), outline='black', fill="blue")
-
-                frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
-                                    radius, off_y + radius), outline='black', fill="blue")
-
-                # Draw current path on frame only
-                if "path" in entry:
-                    # draw_path
-                    for position in entry["path"]:
-                        row = position[1]
-                        col = position[0]
-                        off_x = x+(col * piece_size) + off_w
-                        off_y = y+(row * piece_size) + off_h
-                        frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
-                                            radius, off_y + radius), outline='black', fill="lightgreen")
-
-            elif entry_type == "goal":
-                logger.debug(
-                    f"A gerar frame goal -> frame time: {current_frametime}, algo: {algo_names[i]}")
-                # We are now drawing the return
-                x = y = spacing
-                # Position x in the board position
-                x += (board.width + spacing) * i
-
-                # Draw a filled circle in the visited
-                position = entry["position"]
-                off_x = x+(position[0] * piece_size) + off_w
-                off_y = y+(position[1] * piece_size) + off_h
-
-                # draw in both search space and frame
-                draw.ellipse((off_x - radius, off_y - radius, off_x +
-                              radius, off_y + radius), outline='black', fill="yellow")
-                frame_draw.ellipse((off_x - radius, off_y - radius, off_x +
-                                    radius, off_y + radius), outline='black', fill="yellow")
-
-            elif entry_type == "end":
-                finished_drawing[i] = True
-
-            # calculate entry relative time to initial frametime
-            current_entry_time = current_entry[i]["frametime"] * time_modifier
-
-            logger.debug(
-                f"A processar tempo de frame -> frame time: {current_frametime}, current entry time: {current_entry_time} , algo: {algo_names[i]}")
-
-            # check if we need to move to the next entry depending on the entry relative time
-            if current_entry_time < current_frametime and not finished_drawing[i]:
-                counter[i] += 1
-                entry = current_entry[i] = entries[i][counter[i]]
+            while True:
+                # Get current entry
+                entry_idx = counter[algo]
+                entry = entries[algo][entry_idx]
 
                 # calculate entry relative time to initial frametime
-                next_entry_time = current_entry[i]["frametime"] * time_modifier
-                move_to_next_frame = move_to_next_frame and next_entry_time > current_frametime
+                current_entry_time = entry["frametime"] * time_modifier
+
+                # check if we need to move to the next entry depending on the entry relative time
+                if current_entry_time > current_frametime:
+                    draw_event(spacing, piece_size, board, radius, off_h,
+                               off_w, algo, search_data, path_mask, entry)
+                    break
+
+                # Draw current frame
+                if not draw_event(spacing, piece_size, board, radius, off_h, off_w, algo, search_data, path_mask, entry):
+                    finished_drawing[algo] = True
+                    break
+
+                # Move to the next event
+                counter[algo] += 1
+                if counter[algo] == len(entries[algo]):
+                    finished_drawing[algo] = True
+                    break
+
+        # paste the received frame to the frame
+        frame.paste(search_data, (0, 0))
+        frame.paste(path_mask, (0, 0), mask=path_mask)
 
         # Write frame and move to next frame
-        if move_to_next_frame:
-            video.write(cv2.cvtColor(np.array(frame_image), cv2.COLOR_RGB2BGR))
-            current_frametime += time_step
+        video.write(cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
+        current_frametime += time_step
 
     video.release()
 
 
-def run_measurements(problem, instance, num_runs, threads, algo, speed, output_name):
+def draw_event(spacing, piece_size, board, radius, off_h, off_w, algo, search_data, path_mask, entry):
+
+    # Draw according to the type of event
+    event_type = entry["type"]
+
+    if event_type == "end":
+        return False
+
+    # So we can draw in the base image
+    search_data_draw = ImageDraw.Draw(search_data)
+
+    # calculate the initial position where to draw
+    x = y = spacing
+    x += (board.width + spacing) * algo
+
+    # get the event position and calculate offset to draw
+    position = entry["position"]
+    row = position[1]
+    col = position[0]
+    off_x = x+(col * piece_size) + off_w
+    off_y = y+(row * piece_size) + off_h
+
+    # the color is event type dependent
+    if event_type == "visited":
+        color = "red"
+    elif event_type == "sucessor":
+        color = "blue"
+    elif event_type == "goal":
+        color = "yellow"
+
+    # update the base board with the new visited position
+    search_data_draw.ellipse((off_x - radius, off_y - radius, off_x +
+                              radius, off_y + radius), outline='black', fill=color)
+
+    # Draw current path in frame only
+    path = entry.get("path", None)
+    if path is None:
+        return True
+
+    # draw path
+    path_mask_draw = ImageDraw.Draw(path_mask)
+    for position in path:
+        row = position[1]
+        col = position[0]
+        off_x = x+(col * piece_size) + off_w
+        off_y = y+(row * piece_size) + off_h
+        path_mask_draw.ellipse((off_x - radius, off_y - radius, off_x +
+                                radius, off_y + radius), outline='black', fill="lightgreen")
+
+    return True
+
+
+def make_videos(problem, instance, num_runs, threads, algo, speed, output_name):
 
     # To store measurements
     # 0-> sequential
@@ -326,12 +310,14 @@ def run_measurements(problem, instance, num_runs, threads, algo, speed, output_n
     elif algo == "par-ex":
         stats_data[1] = run_measurement(problem, instance, num_runs, threads)
     elif algo == "par-p":
-        stats_data[2] = run_measurement(problem, instance, num_runs, threads, True)
+        stats_data[2] = run_measurement(
+            problem, instance, num_runs, threads, True)
     elif algo == "all":
         # Sequential, Parallel first and exhaustive
         stats_data[0] = run_measurement(problem, instance, num_runs)
         stats_data[1] = run_measurement(problem, instance, num_runs, threads)
-        stats_data[2] = run_measurement(problem, instance, num_runs, threads, True)
+        stats_data[2] = run_measurement(
+            problem, instance, num_runs, threads, True)
 
     create_video(problem, instance, stats_data, speed, output_name)
 
@@ -351,7 +337,7 @@ def parse_str_list(arg):
 if __name__ == '__main__':
     # Create the parser
     parser = argparse.ArgumentParser(
-        description='Gerador de video - algoritmo A*')
+        description='Medidor de performance algoritmo A*')
 
     # Add command-line arguments
     parser.add_argument('-t', '--threads',
@@ -385,5 +371,5 @@ if __name__ == '__main__':
     if debug:
         logger.setLevel(logging.DEBUG)
 
-    # Run measurments
-    run_measurements(problem, instance, num_runs, threads, algo, speed, output)
+    # Run measurements
+    make_videos(problem, instance, num_runs, threads, algo, speed, output)
