@@ -18,7 +18,7 @@ algo_names = [
 ]
 
 # Text fonts
-text_font = ImageFont.truetype("LiberationSans-Regular", size=16)
+text_font = ImageFont.truetype("LiberationSans-Regular.ttf", size=16)
 
 
 def maze_to_image(maze, piece_size):
@@ -351,7 +351,7 @@ def parse_str_list(arg):
 if __name__ == '__main__':
     # Create the parser
     parser = argparse.ArgumentParser(
-        description='Medidor de performance algoritmo A*')
+        description='Gerador de video - algoritmo A*')
 
     # Add command-line arguments
     parser.add_argument('-t', '--threads',

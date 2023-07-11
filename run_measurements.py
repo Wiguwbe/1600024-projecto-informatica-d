@@ -80,8 +80,8 @@ numberlink_fg_color_map = {
 }
 
 # Text fonts
-solution_font = ImageFont.truetype("LiberationSans-Regular", size=10)
-header_font = ImageFont.truetype("LiberationSans-Regular", size=24)
+solution_font = ImageFont.truetype("LiberationSans-Regular.ttf", size=10)
+header_font = ImageFont.truetype("LiberationSans-Regular.ttf", size=24)
 
 
 def puzzle8_to_image(solution: str):
