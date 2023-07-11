@@ -350,7 +350,7 @@ if __name__ == '__main__':
         '-a', '--algo', choices=['seq', 'par-p', 'par-ex', 'all'], help='Algoritmo a usar', default='all')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Ativa mensagens de debug')
-    parser.add_argument('-r', '--runs', default=10,
+    parser.add_argument('-r', '--runs', default=20,
                         help='mumber of runs to get the best execution')
     parser.add_argument('problem', type=str, help='problema a utilizar')
     parser.add_argument('instance', type=str, help='instancia a utilizar')
