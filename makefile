@@ -39,18 +39,23 @@ all_with_stats:
 
 measurements: clean all
 	@echo "A correr medições"
+	@mkdir -p measurements
 	@./run_measurements.py -d 
 
 measurements_with_solutions: clean all
 	@echo "A correr medições com geração de soluções"
+	@mkdir -p measurements
+	@mkdir -p reports
 	@./run_measurements.py -d -i 
 
 solutions_only: clean all
 	@echo "A gerar soluções apenas"
+	@mkdir -p reports
 	@./run_measurements.py -d -i -c -r 5 
 
 generate_videos: clean all_with_stats 
 	@echo "A gerar videos"
+	@mkdir -p reports
 	@./generate_video.py -s 3 -o reports/maze2_bad_heuristic.mp4 maze_bad 2
 	@./generate_video.py -s 3 -o reports/maze3_bad_heuristic.mp4 maze_bad 3
 	@./generate_video.py -s 3 -o reports/maze4_bad_heuristic.mp4 maze_bad 4
