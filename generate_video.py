@@ -270,7 +270,7 @@ def draw_event(spacing, piece_size, board, radius, off_h, off_w, algo,
     TODO
     """
     # Draw according to the type of event
-    event_type = entry["type"]
+    event_type = entry["action"]
 
     if event_type == "end":
         return False
@@ -283,7 +283,7 @@ def draw_event(spacing, piece_size, board, radius, off_h, off_w, algo,
     x += (board.width + spacing) * algo
 
     # get the event position and calculate offset to draw
-    position = entry["position"]
+    position = entry["data"]["position"]
     row = position[1]
     col = position[0]
     off_x = x+(col * piece_size) + off_w
@@ -304,7 +304,7 @@ def draw_event(spacing, piece_size, board, radius, off_h, off_w, algo,
                              ), outline='black', fill=color)
 
     # Draw current path in frame only
-    path = entry.get("path", None)
+    path = entry["data"].get("path", None)
     if path is None:
         return True
 
