@@ -4,6 +4,9 @@
 #include "node.h"
 #include "state.h"
 #include <time.h>
+#ifdef STATS_GEN
+#  include "search_data.h"
+#endif
 
 // Informação comum partilhada por ambas as versões do algoritmo A*
 typedef struct a_star_t a_star_t;
@@ -23,13 +26,6 @@ typedef bool (*goal_function)(const state_t*, const state_t*);
 // Tipo para funções que devolvem a distancia de um estado para o seu vizinho
 typedef int (*distance_function)(const state_t*, const state_t*);
 
-#ifdef STATS_GEN
-#define VISITED 0
-#define GOAL 1
-#define SUCESSOR 2
-typedef void (*print_stats_function)(const state_t*, struct timespec*, int type);
-#endif
-
 // Estrutura que contem o estado do algoritmo A*
 struct a_star_t
 {
@@ -42,9 +38,6 @@ struct a_star_t
   visit_function visit_func;
   heuristic_function h_func;
   distance_function d_func;
-#ifdef STATS_GEN
-  print_stats_function print_stats_func;
-#endif
 
   // Solução e estado a atingir
   a_star_node_t* solution;
@@ -63,30 +56,29 @@ struct a_star_t
   int num_solutions;
   int num_worst_solutions;
   int num_better_solutions;
+
+#ifdef STATS_GEN
+  // Search data
+  search_data_t* search_data;
+#endif
 };
 
 // Funções comuns do algoritmo
-#ifdef STATS_GEN
-a_star_t* a_star_create(size_t struct_size,
-                        goal_function goal_func,
-                        visit_function visit_func,
-                        heuristic_function h_func,
-                        distance_function d_func,
-                        print_stats_function print_stats_func,
-                        print_function print_func);
-#else
 a_star_t* a_star_create(size_t struct_size,
                         goal_function goal_func,
                         visit_function visit_func,
                         heuristic_function h_func,
                         distance_function d_func,
                         print_function print_func);
-#endif
 
 // Liberta uma instância do algoritmo A* sequencial
 void a_star_destroy(a_star_t* a_star);
 
 // Imprime as estatísticas possíveis
 void a_star_print_statistics(a_star_t* a_star, bool csv, bool show_solution);
+
+#ifdef STATS_GEN
+void a_star_attach_search_data(a_star_t* a_star);
+#endif
 
 #endif

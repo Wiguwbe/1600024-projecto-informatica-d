@@ -94,41 +94,11 @@ int distance(const state_t*, const state_t*)
 }
 
 #ifdef STATS_GEN
-void print_stats(const state_t* current_state, struct timespec* start_timestamp, int type)
+size_t maze_serialize_function(char* buffer, const search_data_entry_t* entry)
 {
-  struct timespec timestamp;
+  maze_solver_state_t* state = (maze_solver_state_t*)entry->state->data;
 
-  maze_solver_state_t* state = (maze_solver_state_t*)current_state->data;
-
-  // Print entry for video generation
-  clock_gettime(CLOCK_MONOTONIC, &timestamp);
-  double frametime = (timestamp.tv_sec - start_timestamp->tv_sec);
-  frametime += (timestamp.tv_nsec - start_timestamp->tv_nsec) / 1000000000.0;
-
-  switch(type)
-  {
-    case 0:
-      /* code */
-      printf("{\"frametime\":%.9f,\"type\":\"visited\",\"position\":[%d,%d]},\n",
-             frametime,
-             state->position.col,
-             state->position.row);
-      break;
-    case 1:
-      /* code */
-      printf("{\"frametime\":%.9f,\"type\":\"goal\",\"position\":[%d,%d]},\n",
-             frametime,
-             state->position.col,
-             state->position.row);
-      break;
-    case 2:
-      /* code */
-      printf("{\"frametime\":%.9f,\"type\":\"sucessor\",\"position\":[%d,%d]},\n",
-             frametime,
-             state->position.col,
-             state->position.row);
-      break;
-    default: break;
-  }
+  // We always print the position
+  return sprintf(buffer, "\"position\":[%d,%d]", state->position.col, state->position.row);
 }
 #endif

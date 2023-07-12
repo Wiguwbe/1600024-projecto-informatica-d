@@ -7,22 +7,12 @@
 #endif
 
 // Cria uma nova instância para resolver um problema
-#ifdef STATS_GEN
-a_star_sequential_t* a_star_sequential_create(size_t struct_size,
-                                              goal_function goal_func,
-                                              visit_function visit_func,
-                                              heuristic_function h_func,
-                                              distance_function d_func,
-                                              print_stats_function print_stats_func,
-                                              print_function print_func)
-#else
 a_star_sequential_t* a_star_sequential_create(size_t struct_size,
                                               goal_function goal_func,
                                               visit_function visit_func,
                                               heuristic_function h_func,
                                               distance_function d_func,
                                               print_function print_func)
-#endif
 {
   a_star_sequential_t* a_star = (a_star_sequential_t*)malloc(sizeof(a_star_sequential_t));
   if(a_star == NULL)
@@ -35,19 +25,13 @@ a_star_sequential_t* a_star_sequential_create(size_t struct_size,
   a_star->common = NULL;
 
   // Inicializamos a parte comum do nosso algoritmo
-#ifdef STATS_GEN
-  a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func, print_stats_func, print_func);
-#else
   a_star->common = a_star_create(struct_size, goal_func, visit_func, h_func, d_func, print_func);
-#endif
 
   if(a_star->common == NULL)
   {
     a_star_sequential_destroy(a_star);
     return NULL;
   }
-
-  // Inicializamos a parte especifica para o algoritmo sequencial
 
   // Conjunto com os nós por explorar
   a_star->open_set = min_heap_create();
@@ -69,16 +53,10 @@ void a_star_sequential_destroy(a_star_sequential_t* a_star)
   }
 
   // Limpamos a nossa fronteira
-  if(a_star->open_set != NULL)
-  {
-    min_heap_destroy(a_star->open_set);
-  }
+  min_heap_destroy(a_star->open_set);
 
   // Invocamos o destroy da parte comum
-  if(a_star->common != NULL)
-  {
-    a_star_destroy(a_star->common);
-  }
+  a_star_destroy(a_star->common);
 
   // Destruímos o nosso algoritmo
   free(a_star);
@@ -128,7 +106,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->start_time));
 #ifdef STATS_GEN
-  printf("\"entries\":[\n");
+  search_data_start();
 #endif
   while(a_star->open_set->size)
   {
@@ -143,11 +121,9 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
     a_star_node_t* current_node = (a_star_node_t*)top_element.data;
     current_node->index_in_open_set = SIZE_MAX;
     a_star->common->expanded++;
-
 #ifdef STATS_GEN
-    a_star->common->print_stats_func(current_node->state, &(a_star->common->start_time), VISITED);
+    search_data_add_entry(0,current_node->state, ACTION_VISITED, 0);
 #endif
-
     // Se encontramos o objetivo saímos e retornamos o nó
     if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
     {
@@ -172,7 +148,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
         child_node = node_allocator_new(a_star->common->node_allocator, neighbor);
         child_node->parent = current_node;
 #ifdef STATS_GEN
-        a_star->common->print_stats_func(child_node->state, &(a_star->common->start_time), SUCESSOR);
+        search_data_add_entry(0,child_node->state, ACTION_SUCESSOR, 0);
 #endif
         // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
         child_node->g = current_node->g + a_star->common->d_func(current_node->state, child_node->state);
@@ -236,17 +212,10 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
   a_star_node_t* solution_path = a_star->common->solution;
   while(solution_path != NULL)
   {
-    a_star->common->print_stats_func(solution_path->state, &(a_star->common->start_time), GOAL);
+    search_data_add_entry(0,solution_path->state, ACTION_GOAL, 0);
     solution_path = solution_path->parent;
   }
-
-  struct timespec end_timestamp;
-  clock_gettime(CLOCK_MONOTONIC, &end_timestamp);
-  double execution_time = (end_timestamp.tv_sec - a_star->common->start_time.tv_sec);
-  execution_time += (end_timestamp.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
-
-  printf("{\"frametime\":%.9f,\"type\":\"end\"}\n],\n", execution_time);
-  printf("\"execution_time\":%.9f\n", execution_time);
+  search_data_end(0);
 #endif
 }
 

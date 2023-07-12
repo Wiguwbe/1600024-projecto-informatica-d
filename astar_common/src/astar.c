@@ -5,22 +5,12 @@
 #include <string.h>
 
 // Funções internas do algoritmo
-#ifdef STATS_GEN
-a_star_t* a_star_create(size_t struct_size,
-                        goal_function goal_func,
-                        visit_function visit_func,
-                        heuristic_function h_func,
-                        distance_function d_func,
-                        print_stats_function print_stats_func,
-                        print_function print_func)
-#else
 a_star_t* a_star_create(size_t struct_size,
                         goal_function goal_func,
                         visit_function visit_func,
                         heuristic_function h_func,
                         distance_function d_func,
                         print_function print_func)
-#endif
 {
   a_star_t* a_star = (a_star_t*)malloc(sizeof(a_star_t));
   if(a_star == NULL)
@@ -53,7 +43,7 @@ a_star_t* a_star_create(size_t struct_size,
   a_star->h_func = h_func;
   a_star->d_func = d_func;
 #ifdef STATS_GEN
-  a_star->print_stats_func = print_stats_func;
+  a_star->search_data = NULL;
 #endif
 
   // Limpa solução e estado a atingir
@@ -77,22 +67,14 @@ a_star_t* a_star_create(size_t struct_size,
 
 void a_star_destroy(a_star_t* a_star)
 {
-
   if(a_star == NULL)
   {
     return;
   }
 
-  if(a_star->state_allocator != NULL)
-  {
-    state_allocator_destroy(a_star->state_allocator);
-  }
-
-  if(a_star->node_allocator != NULL)
-  {
-    node_allocator_destroy(a_star->node_allocator);
-  }
-
+  // Limpamos a nossas estruturas
+  state_allocator_destroy(a_star->state_allocator);
+  node_allocator_destroy(a_star->node_allocator);
   // Destruímos o nosso algoritmo
   free(a_star);
 }
@@ -153,3 +135,14 @@ void a_star_print_statistics(a_star_t* a_star, bool csv, bool show_solution)
            a_star->execution_time);
   }
 }
+
+#ifdef STATS_GEN
+void a_star_attach_search_data(a_star_t* a_star) {
+
+  if (a_star == NULL) {
+    return;
+  }
+
+  a_star->search_data = search_data_attach();
+}
+#endif

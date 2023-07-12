@@ -3,6 +3,9 @@
 #include "maze_common.h"
 #include "linked_list.h"
 #include "state.h"
+#ifdef STATS_GEN
+#include "search_data.h"
+#endif
 
 // Estrutura do que contem o estado do nosso number link
 typedef struct
@@ -20,7 +23,7 @@ bool goal(const state_t*, const state_t*);
 int distance(const state_t*, const state_t*);
 
 #ifdef STATS_GEN
-void print_stats(const state_t*,  struct timespec*, int type);
+size_t maze_serialize_function(char*, const search_data_entry_t*);
 #endif
 
 #endif

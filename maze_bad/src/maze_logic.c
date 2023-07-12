@@ -110,60 +110,47 @@ int distance(const state_t*, const state_t*)
 }
 
 #ifdef STATS_GEN
-void print_stats(const state_t* current_state, struct timespec* start_timestamp, int type)
+size_t maze_serialize_function(char* buffer, const search_data_entry_t* entry)
 {
-  struct timespec timestamp;
-
-  maze_solver_state_t* state = (maze_solver_state_t*)current_state->data;
+  maze_solver_state_t* state = (maze_solver_state_t*)entry->state->data;
   board_data_t board_data = maze_solver_wrap_board(state->maze_solver, state->board_data);
 
-  // Print entry for video generation
-  clock_gettime(CLOCK_MONOTONIC, &timestamp);
-  double frametime = (timestamp.tv_sec - start_timestamp->tv_sec);
-  frametime += (timestamp.tv_nsec - start_timestamp->tv_nsec) / 1000000000.0;
+  // We always print the position
+  int pos = sprintf(buffer, "\"position\":[%d,%d]", board_data.position.col, board_data.position.row);
 
-  char buffer[65535];
-  int position = 0;
-  for(int y = 0; y < state->maze_solver->rows; y++)
+  switch(entry->action)
   {
-    for(int x = 0; x < state->maze_solver->cols; x++)
-    {
-      int index = y * state->maze_solver->cols + x;
-      if(board_data.board[index] != 'c')
+    case ACTION_VISITED:
+    case ACTION_SUCESSOR:
+      pos += sprintf(buffer + pos, ",\"path\":[");
+      int i = 0;
+      for(int y = 0; y < state->maze_solver->rows; y++)
       {
-        continue;
-      };
-      if(position > 0)
-      {
-        position += sprintf(buffer + position, ",");
+        for(int x = 0; x < state->maze_solver->cols; x++)
+        {
+          int index = y * state->maze_solver->cols + x;
+          if(board_data.board[index] != 'c')
+          {
+            continue;
+          };
+          if(i > 0)
+          {
+            pos += sprintf(buffer + pos, ",[%d,%d]", x, y);
+          }
+          else
+          {
+            pos += sprintf(buffer + pos, "[%d,%d]", x, y);
+            i = 1;
+          }
+        }
       }
-      position += sprintf(buffer + position, "[%d,%d]", x, y);
-    }
-  }
-
-  switch(type)
-  {
-    case 0:
-      printf("{\"frametime\":%.9f,\"type\":\"visited\",\"position\":[%d,%d],\"path\":[%s]},\n",
-             frametime,
-             board_data.position.col,
-             board_data.position.row,
-             buffer);
+      pos += sprintf(buffer + pos, "]");
       break;
-    case 1:
-      printf("{\"frametime\":%.9f,\"type\":\"goal\",\"position\":[%d,%d]},\n",
-             frametime,
-             board_data.position.col,
-             board_data.position.row);
-      break;
-    case 2:
-      printf("{\"frametime\":%.9f,\"type\":\"sucessor\",\"position\":[%d,%d],\"path\":[%s]},\n",
-             frametime,
-             board_data.position.col,
-             board_data.position.row,
-             buffer);
-      break;
+    case ACTION_GOAL:
     default: break;
   }
+
+  return pos;
 }
+
 #endif

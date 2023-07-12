@@ -29,7 +29,7 @@ struct a_star_parallel_t
   // Configuração comum do algoritmo
   a_star_t* common;
 
-  // Gestor de tarefas e canal de comunicação, e lock para sincronixação
+  // Gestor de tarefas e canal de comunicação, e lock para sincronização
   a_star_scheduler_t scheduler;
   channel_t* channel;
   pthread_mutex_t lock;
@@ -63,17 +63,6 @@ struct a_star_worker_t
 };
 
 // Cria uma nova instância do algoritmo A* para resolver um problema
-#ifdef STATS_GEN
-a_star_parallel_t* a_star_parallel_create(size_t struct_size,
-                                          goal_function goal_func,
-                                          visit_function visit_func,
-                                          heuristic_function h_func,
-                                          distance_function d_func,
-                                          print_stats_function print_stats_func,
-                                          print_function print_func,
-                                          int num_workers,
-                                          bool stop_on_first_solution);
-#else
 a_star_parallel_t* a_star_parallel_create(size_t struct_size,
                                           goal_function goal_func,
                                           visit_function visit_func,
@@ -82,7 +71,6 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
                                           print_function print_func,
                                           int num_workers,
                                           bool stop_on_first_solution);
-#endif
 
 // Liberta uma instância do algoritmo A* paralelo
 void a_star_parallel_destroy(a_star_parallel_t* a_star);

@@ -91,25 +91,21 @@ void print_solution(a_star_node_t* solution)
 void solve_parallel(maze_solver_t* maze_solver, int num_threads, bool first, bool csv, bool show_solution)
 {
   // Criamos a instância do algoritmo A*
-#ifdef STATS_GEN
-  a_star_parallel_t* a_star = a_star_parallel_create(
-      sizeof(maze_solver_state_t), goal, visit, heuristic, distance, print_stats, print_solution, num_threads, first);
-#else
   a_star_parallel_t* a_star =
       a_star_parallel_create(sizeof(maze_solver_state_t), goal, visit, heuristic, distance, print_solution, num_threads, first);
+#ifdef STATS_GEN
+  a_star_attach_search_data(a_star->common);
 #endif
-
   // Criamos o nosso estado inicial para lançar o algoritmo
   maze_solver_state_t initial = { maze_solver, maze_solver->entry_coord };
-
   // Tentamos resolver o problema
   a_star_parallel_solve(a_star, &initial, NULL);
-
-#ifndef STATS_GEN
+#ifdef STATS_GEN
+  search_data_print();
+#else
   // Imprime as estatísticas da execução
   a_star_parallel_print_statistics(a_star, csv, show_solution);
 #endif
-
   // Limpamos a memória
   a_star_parallel_destroy(a_star);
 }
@@ -118,21 +114,18 @@ void solve_parallel(maze_solver_t* maze_solver, int num_threads, bool first, boo
 void solve_sequential(maze_solver_t* maze_solver, bool csv, bool show_solution)
 {
   // Criamos a instância do algoritmo A*
-#ifdef STATS_GEN
-  a_star_sequential_t* a_star =
-      a_star_sequential_create(sizeof(maze_solver_state_t), goal, visit, heuristic, distance, print_stats, print_solution);
-#else
   a_star_sequential_t* a_star =
       a_star_sequential_create(sizeof(maze_solver_state_t), goal, visit, heuristic, distance, print_solution);
+#ifdef STATS_GEN
+  a_star_attach_search_data(a_star->common);
 #endif
-
   // Criamos o nosso estado inicial para lançar o algoritmo
   maze_solver_state_t initial = { maze_solver, maze_solver->entry_coord };
-
   // Tentamos resolver o problema
   a_star_sequential_solve(a_star, &initial, NULL);
-
-#ifndef STATS_GEN
+#ifdef STATS_GEN
+  search_data_print();
+#else
   // Imprime as estatísticas da execução
   a_star_sequential_print_statistics(a_star, csv, show_solution);
 #endif
@@ -216,37 +209,27 @@ int main(int argc, char* argv[])
     printf("Erro a inicializar o puzzle, verifique o ficheiro com os dados\n");
     return 1;
   }
-#ifdef STATS_GEN
-  printf("{\n");
-  printf("\"problem\":\"maze\",\n");
-  printf("\"instance\":\"%s\",\n", argv[filename_arg]);
-#endif
   if(num_threads > 0)
   {
-#ifdef STATS_GEN
+ #ifdef STATS_GEN
     if(first)
     {
-      printf("\"type\":\"parallel_first\",\n");
+      search_data_create("maze", argv[filename_arg], ALGO_PARALLEL_FIRST, num_threads, maze_serialize_function);
     }
     else
     {
-      printf("\"type\":\"parallel_exhaustive\",\n");
+      search_data_create("maze", argv[filename_arg], ALGO_PARALLEL_EXHAUSTIVE, num_threads, maze_serialize_function);
     }
-    printf("\"workers\":%d,\n", num_threads);
 #endif
-    solve_parallel(maze_solver, num_threads, first, csv, show_solution);
+   solve_parallel(maze_solver, num_threads, first, csv, show_solution);
   }
   else
   {
 #ifdef STATS_GEN
-    printf("\"type\":\"sequential\",\n");
-    printf("\"workers\":1,\n");
+    search_data_create("maze", argv[filename_arg], ALGO_SEQUENTIAL, 1, maze_serialize_function);
 #endif
     solve_sequential(maze_solver, csv, show_solution);
   }
-#ifdef STATS_GEN
-  printf("}\n");
-#endif
   maze_solver_destroy(maze_solver);
   return 0;
 }
