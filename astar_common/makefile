@@ -1,6 +1,6 @@
-CC := gcc
+CC := clang
 AR := ar
-CFLAGS := -Wall -Wextra -I./include
+CFLAGS := -Wno-c2x-extensions -Wall -Wextra -march=native -flto -I./include
 LDFLAGS := -lcheck -lm -lpthread
 
 ifdef DEBUG_BUILD

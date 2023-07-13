@@ -14,7 +14,7 @@ problems = {
                 "impossible_1", "impossible_2"],
     "numberlink": [1, 2, 3, 4, 5, 6],
     "maze_bad": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    "maze_good": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    "maze_good": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 }
 
 excluded_instances = {
@@ -619,7 +619,7 @@ if __name__ == '__main__':
     # Add command-line arguments
     parser.add_argument('-r', '--runs', help='Número de execuções', default=10)
     parser.add_argument('-t', '--threads', type=parse_int_list,
-                        help='Número de trabalhadores', default=[2, 4, 6])
+                        help='Número de trabalhadores', default=[2, 4, 6, 8])
     parser.add_argument('-x', '--excluded', type=parse_str_list,
                         help='Problemas excluidos', default=[])
     parser.add_argument('-c', '--csv', help='Saida CSV', action='store_false')

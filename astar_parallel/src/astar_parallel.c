@@ -330,6 +330,7 @@ void a_star_parallel_destroy(a_star_parallel_t* a_star)
     {
       min_heap_destroy(a_star->scheduler.workers[i].open_set);
     }
+    free(a_star->scheduler.workers);
   }
   channel_destroy(a_star->channel, true);
 

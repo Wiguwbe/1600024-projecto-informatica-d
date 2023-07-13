@@ -372,9 +372,9 @@ if __name__ == '__main__':
 
     # Add command-line arguments
     parser.add_argument('-t', '--threads',
-                        help='Número de trabalhadores', default=6)
+                        help='Número de trabalhadores', default=8)
     parser.add_argument('-s', '--speed',
-                        help='Número de trabalhadores', default=1.0)
+                        help='Velocidade do video', default=1.0)
     parser.add_argument('-o', '--output',
                         help='Ficheiro de saida', default=None)
     parser.add_argument('-a', '--algo',
@@ -382,7 +382,7 @@ if __name__ == '__main__':
                         help='Algoritmo a usar', default='all')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Ativa mensagens de debug')
-    parser.add_argument('-r', '--runs', default=20,
+    parser.add_argument('-r', '--runs', default=50,
                         help='Número de execuções')
     parser.add_argument('problem', type=str, help='problema a utilizar')
     parser.add_argument('instance', type=str, help='instância a utilizar')
