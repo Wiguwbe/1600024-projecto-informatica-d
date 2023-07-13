@@ -2,6 +2,7 @@
 #  include "search_data.h"
 #  include <stdio.h>
 #  include <stdlib.h>
+#  include <string.h>
 #  define BUFFER_LEN 65535
 
 static char* serialize_buffer;

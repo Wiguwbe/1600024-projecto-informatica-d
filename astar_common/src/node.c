@@ -24,10 +24,10 @@ static bool compare_a_star_nodes(const void* node_a, const void* node_b)
 // Tal como a comparação esta função tem de ser especifica para
 // esta estrutura já que é necessário usar os dados do estado
 // para gerar o índice do hash
-static size_t a_star_nodes_hash(hashtable_t* hashtable, const void* data)
+static size_t a_star_nodes_hash(hashtable_t* , const void* data)
 {
   a_star_node_t* node = (a_star_node_t*)data;
-  return hash_function(node->state->data, node->state->struct_size, hashtable->capacity);
+  return node->state->hash;
 }
 
 // Cria um gestor de nós

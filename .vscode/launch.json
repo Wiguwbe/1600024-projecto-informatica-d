@@ -70,12 +70,12 @@
       "miDebuggerPath": "gdb"
     },
     {
-      "name": "maze sequencial",
+      "name": "maze_good sequencial",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/maze/bin/maze",
+      "program": "${workspaceFolder}/maze_good/bin/maze_good",
       "args": [
-        "${workspaceFolder}/instances/maze_1"
+        "${workspaceFolder}/instances/maze_2"
       ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
@@ -85,6 +85,26 @@
       "preLaunchTask": "build makefile",
       "miDebuggerPath": "gdb"
     },
+    {
+      "name": "maze_good paralelo",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/maze_good/bin/maze_good",
+      "args": [
+        "-n",
+        "2",
+        "-s",
+        "-p",
+        "${workspaceFolder}/instances/maze_2"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build makefile",
+      "miDebuggerPath": "gdb"
+    },    
     {
       "name": "test_allocator",
       "type": "cppdbg",

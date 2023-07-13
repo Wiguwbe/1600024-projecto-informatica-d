@@ -6,12 +6,12 @@
 START_TEST(test_channel_create)
 {
   size_t num_queues = 5;
-  channel_t* channel = channel_create(num_queues);
+  channel_t* channel = channel_create(num_queues, 1);
 
   ck_assert_ptr_nonnull(channel);
   ck_assert_uint_eq(channel->num_queues, num_queues);
 
-  channel_destroy(channel,false);
+  channel_destroy(channel);
 }
 END_TEST
 
@@ -19,7 +19,7 @@ END_TEST
 START_TEST(test_channel_send_receive)
 {
   size_t num_queues = 2;
-  channel_t* channel = channel_create(num_queues);
+  channel_t* channel = channel_create(num_queues, sizeof(int));
 
   int data1 = 10;
   int data2 = 20;
@@ -28,16 +28,22 @@ START_TEST(test_channel_send_receive)
   channel_send(channel, 0, &data1);
   channel_send(channel, 0, &data2);
 
-  // Recebe as mensagens da primeira fila
-  int* received1 = (int*)channel_receive(channel, 0);
-  int* received2 = (int*)channel_receive(channel, 0);
+  ck_assert_int_eq(channel_has_messages(channel, 0), 1);
 
-  ck_assert_ptr_nonnull(received1);
-  ck_assert_ptr_nonnull(received2);
-  ck_assert_int_eq(*received1, data1);
-  ck_assert_int_eq(*received2, data2);
+  size_t len;
+  int* data = (int*)channel_receive(channel, 0, &len);
 
-  channel_destroy(channel, false);
+  ck_assert_int_eq(channel_has_messages(channel, 0), 0);
+
+  ck_assert_ptr_nonnull(data);
+  ck_assert_int_eq(len, 2);
+
+  ck_assert_int_eq(data[0], data1);
+  ck_assert_int_eq(data[1], data2);
+
+  free(data);
+
+  channel_destroy(channel);
 }
 END_TEST
 

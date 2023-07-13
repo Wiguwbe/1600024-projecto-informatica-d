@@ -1,5 +1,5 @@
-#include "linked_list.h"
 #include "8puzzle_logic.h"
+#include "linked_list.h"
 #include "state.h"
 #include <check.h>
 #include <stdlib.h>
@@ -9,10 +9,10 @@ START_TEST(test_visit_case_1)
 {
   // Criação do estado inicial do puzzle
   puzzle_state initial_state = { { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '-' } } };
-  
+
   // Espaço moveu para cima
   puzzle_state expected_1 = { { { '1', '2', '3' }, { '4', '5', '-' }, { '7', '8', '6' } } };
-  
+
   // Espaço moveu para a esquerda
   puzzle_state expected_2 = { { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '-', '8' } } };
 
@@ -55,16 +55,16 @@ START_TEST(test_visit_case_2)
 {
   // Criação do estado inicial do puzzle
   puzzle_state initial_state = { { { '1', '2', '3' }, { '4', '-', '5' }, { '6', '7', '8' } } };
-  
+
   // Espaço moveu para cima
   puzzle_state expected_1 = { { { '1', '-', '3' }, { '4', '2', '5' }, { '6', '7', '8' } } };
-  
+
   // Espaço moveu para baixo
   puzzle_state expected_2 = { { { '1', '2', '3' }, { '4', '7', '5' }, { '6', '-', '8' } } };
-  
+
   // Espaço moveu para a esquerda
   puzzle_state expected_3 = { { { '1', '2', '3' }, { '-', '4', '5' }, { '6', '7', '8' } } };
-  
+
   // Espaço moveu para a direita
   puzzle_state expected_4 = { { { '1', '2', '3' }, { '4', '5', '-' }, { '6', '7', '8' } } };
 
@@ -117,10 +117,10 @@ START_TEST(test_visit_case_3)
 {
   // Criação do estado inicial do puzzle
   puzzle_state initial_state = { { { '-', '1', '2' }, { '3', '4', '5' }, { '6', '7', '8' } } };
-  
+
   // Espaço moveu para baixo
   puzzle_state expected_1 = { { { '3', '1', '2' }, { '-', '4', '5' }, { '6', '7', '8' } } };
-  
+
   // Espaço moveu para a direita
   puzzle_state expected_2 = { { { '1', '-', '2' }, { '3', '4', '5' }, { '6', '7', '8' } } };
 
@@ -163,10 +163,10 @@ START_TEST(test_visit_case_4)
 {
   // Criação do estado inicial do puzzle
   puzzle_state initial_state = { { { '1', '2', '-' }, { '3', '4', '5' }, { '6', '7', '8' } } };
-  
+
   // Espaço moveu para baixo
   puzzle_state expected_1 = { { { '1', '2', '5' }, { '3', '4', '-' }, { '6', '7', '8' } } };
-  
+
   // Espaço moveu para a esquerda
   puzzle_state expected_2 = { { { '1', '-', '2' }, { '3', '4', '5' }, { '6', '7', '8' } } };
 
@@ -209,10 +209,10 @@ START_TEST(test_visit_case_5)
 {
   // Criação do estado inicial do puzzle
   puzzle_state initial_state = { { { '1', '2', '3' }, { '3', '4', '5' }, { '-', '7', '8' } } };
-  
+
   // Espaço moveu para cima
   puzzle_state expected_1 = { { { '1', '2', '3' }, { '-', '4', '5' }, { '3', '7', '8' } } };
-  
+
   // Espaço moveu para a direita
   puzzle_state expected_2 = { { { '1', '2', '3' }, { '3', '4', '5' }, { '7', '-', '8' } } };
 
@@ -256,8 +256,8 @@ START_TEST(test_goal)
   puzzle_state ok_state_data = { { { '1', '2', '3' }, { '4', '-', '5' }, { '6', '7', '8' } } };
   puzzle_state nok_state_data = { { { '1', '2', '3' }, { '-', '4', '5' }, { '3', '7', '8' } } };
 
-  state_t ok_state = {sizeof(puzzle_state), &ok_state_data};
-  state_t nok_state = {sizeof(puzzle_state), &nok_state_data};
+  state_t ok_state = { 0, sizeof(puzzle_state), &ok_state_data };
+  state_t nok_state = { 0, sizeof(puzzle_state), &nok_state_data };
 
   ck_assert(!goal(&nok_state, NULL));
   ck_assert(!goal(&ok_state, NULL));
@@ -270,8 +270,8 @@ START_TEST(test_distance)
   puzzle_state ok_state_data = { { { '1', '2', '3' }, { '4', '-', '5' }, { '6', '7', '8' } } };
   puzzle_state nok_state_data = { { { '1', '2', '3' }, { '-', '4', '5' }, { '3', '7', '8' } } };
 
-  state_t ok_state = {sizeof(puzzle_state), &ok_state_data};
-  state_t nok_state = {sizeof(puzzle_state), &nok_state_data};
+  state_t ok_state = { 0, sizeof(puzzle_state), &ok_state_data };
+  state_t nok_state = { 0, sizeof(puzzle_state), &nok_state_data };
 
   ck_assert(distance(&nok_state, &ok_state) == 1);
 }
@@ -280,29 +280,29 @@ END_TEST
 // Teste unitário para a função heuristic
 START_TEST(test_heuristic)
 {
-    // Criação dos estados de teste
-    puzzle_state current_puzzle = {{{'1', '2', '3'}, {'4', '5', '6'}, {'7', '8', '-'}}};
-    puzzle_state goal_puzzle = {{{'1', '2', '3'}, {'4', '5', '6'}, {'7', '8', '-'}}};
-    
-    // Criação dos objetos state_t para os estados de teste
-    state_t current_state = {sizeof(puzzle_state), &current_puzzle};
-    state_t goal_state = {sizeof(puzzle_state), &goal_puzzle};
-    
-    // Chamada da função heuristic para calcular a heurística
-    int h = heuristic(&current_state, &goal_state);
-    
-    // Verificação do resultado da heurística
-    ck_assert_int_eq(h, 0);  // O estado atual é igual ao estado objetivo, portanto, a heurística deve ser 0
-    
-    // Alteração do estado atual para um estado diferente do objetivo
-    current_puzzle.board[2][2] = '3';
-    current_puzzle.board[2][0] = '-';
-    
-    // Chamada da função heuristic novamente
-    h = heuristic(&current_state, &goal_state);
-    
-    // Verificação do resultado da heurística
-    ck_assert_int_eq(h, 2);  // O estado atual difere do estado objetivo em 2 peças, portanto, a heurística deve ser 2
+  // Criação dos estados de teste
+  puzzle_state current_puzzle = { { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '-' } } };
+  puzzle_state goal_puzzle = { { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '-' } } };
+
+  // Criação dos objetos state_t para os estados de teste
+  state_t current_state = { 0, sizeof(puzzle_state), &current_puzzle };
+  state_t goal_state = { 0, sizeof(puzzle_state), &goal_puzzle };
+
+  // Chamada da função heuristic para calcular a heurística
+  int h = heuristic(&current_state, &goal_state);
+
+  // Verificação do resultado da heurística
+  ck_assert_int_eq(h, 0); // O estado atual é igual ao estado objetivo, portanto, a heurística deve ser 0
+
+  // Alteração do estado atual para um estado diferente do objetivo
+  current_puzzle.board[2][2] = '3';
+  current_puzzle.board[2][0] = '-';
+
+  // Chamada da função heuristic novamente
+  h = heuristic(&current_state, &goal_state);
+
+  // Verificação do resultado da heurística
+  ck_assert_int_eq(h, 2); // O estado atual difere do estado objetivo em 2 peças, portanto, a heurística deve ser 2
 }
 END_TEST
 

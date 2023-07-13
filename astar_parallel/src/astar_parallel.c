@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_IDLE_TIME 10000
+#define MAX_IDLE_TIME 100000
 
 // Estrutura que contem a mensagem a ser passada nas queues
 typedef struct
@@ -51,90 +51,98 @@ void* a_star_worker_function(void* arg)
 
     // Processamos todos os estados que estão no canal para esta tarefa
     // Aqui que ocorre a atualização do custo do estado
-    while(channel_has_messages(a_star->channel, worker->thread_id))
+    if(channel_has_messages(a_star->channel, worker->thread_id))
     {
       worker->idle = false;
-      a_star_message_t* message = channel_receive(a_star->channel, worker->thread_id);
+      size_t messages_count = 0;
+      a_star_message_t* messages = channel_receive(a_star->channel, worker->thread_id, &messages_count);
 
-      // Retiramos os dados da mensagem e libertamos a memória
-      a_star_node_t* parent_node = message->parent;
-      state_t* state = message->state;
-      free(message);
-
-      // Se o nó pai não foi enviado é porque estamos a lidar com o estado inicial
-      if(parent_node == NULL)
+      for(size_t i = 0; i < messages_count; i++)
       {
-        a_star_node_t* initial_node = node_allocator_new(a_star->common->node_allocator, state);
-        // Atribui ao nó inicial um custo total de 0
-        initial_node->g = 0;
-        initial_node->h = a_star->common->h_func(initial_node->state, a_star->common->goal_state);
+        // Retiramos os dados da mensagem e libertamos a memória
+        a_star_node_t* parent_node = messages[i].parent;
+        state_t* state = messages[i].state;
 
-        // Inserimos o nó na nossa fila e saímos já que não existem mais mensagens
-        initial_node->index_in_open_set = min_heap_insert(worker->open_set, initial_node->h, initial_node);
-        break;
-      }
-
-      // Recebemos um estado para ser processado, verificamos se já existe um nó para este estado
-      a_star_node_t* child_node = node_allocator_get(a_star->common->node_allocator, state);
-
-      // Este é um novo no
-      if(!child_node)
-      {
-        // Este nó ainda não existe, criamos um novo nó para este estado
-        child_node = node_allocator_new(a_star->common->node_allocator, state);
-        child_node->parent = parent_node;
-        worker->generated++;
-
-#ifdef STATS_GEN
-        search_data_add_entry(worker->thread_id, child_node->state, ACTION_SUCESSOR, 0);
-#endif
-
-        // Encontra o custo de chegar do estado pai a este estado e calculamos a heurística (distância para chegar ao objetivo)
-        child_node->g = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
-        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
-
-        // Calculamos o custo
-        int cost = child_node->g + child_node->h;
-
-        // Inserimos o nó na nossa fila
-        child_node->index_in_open_set = min_heap_insert(worker->open_set, cost, child_node);
-        worker->nodes_new++;
-      }
-      else
-      {
-        // Encontra o custo de chegar do estado pai para este estado
-        int g_attempt = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
-
-        // Se o custo for maior do que o nó já tem, não faz sentido atualizar
-        // existe outro caminho mais curto para este estado
-        if(g_attempt >= child_node->g)
+        // Se o nó pai não foi enviado é porque estamos a lidar com o estado inicial
+        if(parent_node == NULL)
         {
-          worker->paths_worst_or_equals++;
-          continue;
+          a_star_node_t* initial_node = node_allocator_new(a_star->common->node_allocator, state);
+          // Atribui ao nó inicial um custo total de 0
+          initial_node->g = 0;
+          initial_node->h = a_star->common->h_func(initial_node->state, a_star->common->goal_state);
+
+          // Inserimos o nó na nossa fila e saímos já que não existem mais mensagens
+          initial_node->index_in_open_set = min_heap_insert(worker->open_set, initial_node->h, initial_node);
+          break;
         }
 
-        // O estado pai é o caminho mais curto para este estado, atualizamos o pai deste estado
-        child_node->parent = parent_node;
+        // Recebemos um estado para ser processado, verificamos se já existe um nó para este estado
+        a_star_node_t* child_node = node_allocator_get(a_star->common->node_allocator, state);
 
-        // Atualizamos os parâmetros do nó
-        child_node->g = g_attempt;
-        child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
-
-        // Calculamos o novo custo
-        int cost = child_node->g + child_node->h;
-
-        worker->paths_better++;
-        if(child_node->index_in_open_set == SIZE_MAX)
+        // Este é um novo no
+        if(!child_node)
         {
-          // Inserimos o nó na nossa fila novamente
+          // Este nó ainda não existe, criamos um novo nó para este estado
+          child_node = node_allocator_new(a_star->common->node_allocator, state);
+          child_node->parent = parent_node;
+          worker->generated++;
+
+#ifdef STATS_GEN
+          search_data_add_entry(worker->thread_id, child_node->state, ACTION_SUCESSOR, 0);
+#endif
+
+          // Encontra o custo de chegar do estado pai a este estado e calculamos a heurística (distância para chegar ao objetivo)
+          child_node->g = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
+          child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
+
+          // Calculamos o custo
+          int cost = child_node->g + child_node->h;
+
+          // Inserimos o nó na nossa fila
           child_node->index_in_open_set = min_heap_insert(worker->open_set, cost, child_node);
-          worker->nodes_reinserted++;
+          worker->nodes_new++;
         }
         else
         {
-          // Atualizamos a nossa fila prioritária
-          min_heap_update_cost(worker->open_set, child_node->index_in_open_set, cost);
+          // Encontra o custo de chegar do estado pai para este estado
+          int g_attempt = parent_node->g + a_star->common->d_func(parent_node->state, child_node->state);
+
+          // Se o custo for maior do que o nó já tem, não faz sentido atualizar
+          // existe outro caminho mais curto para este estado
+          if(g_attempt >= child_node->g)
+          {
+            worker->paths_worst_or_equals++;
+            continue;
+          }
+
+          // O estado pai é o caminho mais curto para este estado, atualizamos o pai deste estado
+          child_node->parent = parent_node;
+
+          // Atualizamos os parâmetros do nó
+          child_node->g = g_attempt;
+          child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
+
+          // Calculamos o novo custo
+          int cost = child_node->g + child_node->h;
+
+          worker->paths_better++;
+          if(child_node->index_in_open_set == SIZE_MAX)
+          {
+            // Inserimos o nó na nossa fila novamente
+            child_node->index_in_open_set = min_heap_insert(worker->open_set, cost, child_node);
+            worker->nodes_reinserted++;
+          }
+          else
+          {
+            // Atualizamos a nossa fila prioritária
+            min_heap_update_cost(worker->open_set, child_node->index_in_open_set, cost);
+          }
         }
+      }
+
+      if(messages_count > 0)
+      {
+        free(messages);
       }
     }
 
@@ -213,22 +221,12 @@ void* a_star_worker_function(void* arg)
         // Itera por todos os vizinhos gerados e envia para a devida tarefa
         while(linked_list_size(neighbors))
         {
-          // Preparamos a mensagem a ser enviada
-          a_star_message_t* message = (a_star_message_t*)malloc(sizeof(a_star_message_t));
-          if(message == NULL)
-          {
-            // Falha na alocação, continuamos e assim eventualmente a thread irá parar
-            continue;
-          }
-
           // Compomos a mensagem com os dados necessários e identificamos qual
           // o trabalhador que vai tratar deste estado
-          message->parent = current_node;
-          message->state = (state_t*)linked_list_pop_back(neighbors);
-          size_t worker_id = assign_to_worker(a_star, message->state);
-
+          a_star_message_t message = { current_node, (state_t*)linked_list_pop_back(neighbors) };
+          size_t worker_id = assign_to_worker(a_star, message.state);
           // Enviamos a mensagem para o respetivo trabalhador
-          channel_send(a_star->channel, worker_id, message);
+          channel_send(a_star->channel, worker_id, (void*)&message);
         }
       }
     }
@@ -282,7 +280,7 @@ a_star_parallel_t* a_star_parallel_create(size_t struct_size,
   }
 
   // Criamos um canal para que os trabalhadores possam comunicar
-  a_star->channel = channel_create(num_workers);
+  a_star->channel = channel_create(num_workers, sizeof(a_star_message_t));
   if(a_star->channel == NULL)
   {
     a_star_parallel_destroy(a_star);
@@ -331,7 +329,7 @@ void a_star_parallel_destroy(a_star_parallel_t* a_star)
       min_heap_destroy(a_star->scheduler.workers[i].open_set);
     }
   }
-  channel_destroy(a_star->channel, true);
+  channel_destroy(a_star->channel);
 
   // Invocamos o destroy da parte comum
   a_star_destroy(a_star->common);
@@ -386,20 +384,10 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
   double offset = 0;
   search_data_start();
 #endif
-  // Preparamos a mensagem a ser enviada para o estado inicial
-  a_star_message_t* message = (a_star_message_t*)malloc(sizeof(a_star_message_t));
-  if(message == NULL)
-  {
-    return;
-  }
-
-  message->parent = NULL;
-  message->state = initial_state;
-
-  int worker_id = assign_to_worker(a_star, message->state);
-
+  a_star_message_t message = { NULL, initial_state };
+  size_t worker_id = assign_to_worker(a_star, message.state);
   // Enviamos o estado inicial para o respetivo trabalhador
-  channel_send(a_star->channel, worker_id, message);
+  channel_send(a_star->channel, worker_id, (void*)&message);
 
   // Ciclo de execução que espera pela solução ou que todos os trabalhadores fiquem
   // sem nós para processar
