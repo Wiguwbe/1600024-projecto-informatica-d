@@ -570,7 +570,7 @@ def run_measurements(problems, threads, num_runs, excluded_problems,
                     continue
 
                 measurements = problems_measurements[problem]
-                f.write(f"{measurement_header} - {problem}")
+                f.write(f"{measurement_header} - {problem}\n")
                 for algo in range(3):
                     f.write(f"Algoritmo A* - {algo_names[algo]}\n")
                     for instance in measurements[algo]:
@@ -584,9 +584,9 @@ def run_measurements(problems, threads, num_runs, excluded_problems,
             measurements = problems_measurements[problem]
             print(f"{measurement_header} - {problem}")
             for algo in range(3):
-                print(f"Algoritmo A* - {algo_names[algo]}\n")
+                print(f"Algoritmo A* - {algo_names[algo]}")
                 for instance in measurements[algo]:
-                    print(row_to_str(instance)+"\n")
+                    print(row_to_str(instance))
 
 # Custom function to convert a comma-separated string to a list of integers
 def parse_int_list(arg):
