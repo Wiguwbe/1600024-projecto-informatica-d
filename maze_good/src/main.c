@@ -93,9 +93,6 @@ void solve_parallel(maze_solver_t* maze_solver, int num_threads, bool first, boo
   // Criamos a instância do algoritmo A*
   a_star_parallel_t* a_star =
       a_star_parallel_create(sizeof(maze_solver_state_t), goal, visit, heuristic, distance, print_solution, num_threads, first);
-#ifdef STATS_GEN
-  a_star_attach_search_data(a_star->common);
-#endif
   // Criamos o nosso estado inicial para lançar o algoritmo
   maze_solver_state_t initial = { maze_solver, maze_solver->entry_coord };
   // Tentamos resolver o problema
@@ -116,9 +113,6 @@ void solve_sequential(maze_solver_t* maze_solver, bool csv, bool show_solution)
   // Criamos a instância do algoritmo A*
   a_star_sequential_t* a_star =
       a_star_sequential_create(sizeof(maze_solver_state_t), goal, visit, heuristic, distance, print_solution);
-#ifdef STATS_GEN
-  a_star_attach_search_data(a_star->common);
-#endif
   // Criamos o nosso estado inicial para lançar o algoritmo
   maze_solver_state_t initial = { maze_solver, maze_solver->entry_coord };
   // Tentamos resolver o problema
@@ -230,6 +224,9 @@ int main(int argc, char* argv[])
 #endif
     solve_sequential(maze_solver, csv, show_solution);
   }
+#ifdef STATS_GEN
+  search_data_destroy();
+#endif
   maze_solver_destroy(maze_solver);
   return 0;
 }

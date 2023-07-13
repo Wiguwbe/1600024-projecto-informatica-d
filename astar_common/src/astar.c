@@ -42,9 +42,6 @@ a_star_t* a_star_create(size_t struct_size,
   a_star->goal_func = goal_func;
   a_star->h_func = h_func;
   a_star->d_func = d_func;
-#ifdef STATS_GEN
-  a_star->search_data = NULL;
-#endif
 
   // Limpa solução e estado a atingir
   a_star->solution = NULL;
@@ -135,14 +132,3 @@ void a_star_print_statistics(a_star_t* a_star, bool csv, bool show_solution)
            a_star->execution_time);
   }
 }
-
-#ifdef STATS_GEN
-void a_star_attach_search_data(a_star_t* a_star) {
-
-  if (a_star == NULL) {
-    return;
-  }
-
-  a_star->search_data = search_data_attach();
-}
-#endif

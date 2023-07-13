@@ -56,11 +56,6 @@ struct a_star_t
   int num_solutions;
   int num_worst_solutions;
   int num_better_solutions;
-
-#ifdef STATS_GEN
-  // Search data
-  search_data_t* search_data;
-#endif
 };
 
 // Funções comuns do algoritmo

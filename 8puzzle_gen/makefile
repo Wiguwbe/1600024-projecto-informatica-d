@@ -1,5 +1,5 @@
-CC := gcc
-CFLAGS := -Wall -Wextra -I./include -Wno-unused-parameter
+CC := clang
+CFLAGS := -Wno-c2x-extensions -Wall -Wextra -march=native -flto -I./include -Wno-unused-parameter
 LDFLAGS := -lcheck -lm -lpthread 
 
 ifdef DEBUG_BUILD
