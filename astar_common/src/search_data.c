@@ -69,7 +69,7 @@ void search_data_destroy()
       free(entry);
     }
 
-    // linked_list_destroy(singleton->entries[i]);
+    linked_list_destroy(singleton->entries[i]);
   }
 
   free(singleton->entries);
