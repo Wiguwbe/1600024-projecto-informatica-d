@@ -157,6 +157,7 @@ void channel_destroy(channel_t* channel)
     pthread_mutex_unlock(&channel->queue_lock[i]);
     pthread_mutex_destroy(&channel->queue_lock[i]);
   }
+  free(channel->queue_lock);
   free(channel->queue_size);
   free(channel->queue_pos);
   free(channel->queues);

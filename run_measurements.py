@@ -617,7 +617,7 @@ if __name__ == '__main__':
         description='Medidor de performance algoritmo A*')
 
     # Add command-line arguments
-    parser.add_argument('-r', '--runs', help='Número de execuções', default=10)
+    parser.add_argument('-r', '--runs', help='Número de execuções', default=100)
     parser.add_argument('-t', '--threads', type=parse_int_list,
                         help='Número de trabalhadores', default=[2, 4, 6, 8])
     parser.add_argument('-x', '--excluded', type=parse_str_list,

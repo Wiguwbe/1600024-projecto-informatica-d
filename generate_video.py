@@ -292,7 +292,7 @@ def draw_event(spacing, piece_size, board, radius, off_h, off_w, algo,
     # the color is event type dependent
     if event_type == "visited":
         color = "red"
-    elif event_type == "sucessor":
+    elif event_type == "successor":
         color = "blue"
     elif event_type == "goal":
         color = "yellow"
@@ -382,7 +382,7 @@ if __name__ == '__main__':
                         help='Algoritmo a usar', default='all')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Ativa mensagens de debug')
-    parser.add_argument('-r', '--runs', default=50,
+    parser.add_argument('-r', '--runs', default=200,
                         help='Número de execuções')
     parser.add_argument('problem', type=str, help='problema a utilizar')
     parser.add_argument('instance', type=str, help='instância a utilizar')

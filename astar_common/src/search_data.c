@@ -72,19 +72,32 @@ void search_data_destroy()
   }
   free(search_entries);
   search_entries = NULL;
-
 }
 
 void search_data_start()
 {
-  clock_gettime(CLOCK_MONOTONIC, &search_start_time);
+  if(search_algorithm == ALGO_SEQUENTIAL)
+  {
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &search_start_time);
+  }
+  else
+  {
+    clock_gettime(CLOCK_MONOTONIC_RAW, &search_start_time);
+  }
   search_active = true;
 }
 
 void search_data_end(double offset)
 {
   struct timespec timestamp;
-  clock_gettime(CLOCK_MONOTONIC, &timestamp);
+  if(search_algorithm == ALGO_SEQUENTIAL)
+  {
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &timestamp);
+  }
+  else
+  {
+    clock_gettime(CLOCK_MONOTONIC_RAW, &timestamp);
+  }
   search_data_add_entry(0, NULL, ACTION_END, offset);
   search_execution_time = (timestamp.tv_sec - search_start_time.tv_sec);
   search_execution_time += (timestamp.tv_nsec - search_start_time.tv_nsec) / 1000000000.0;
@@ -105,7 +118,14 @@ void search_data_add_entry(int worker, state_t* state, enum search_action_e acti
     return;
   }
 
-  clock_gettime(CLOCK_MONOTONIC, &entry->timestamp);
+  if(search_algorithm == ALGO_SEQUENTIAL)
+  {
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &entry->timestamp);
+  }
+  else
+  {
+    clock_gettime(CLOCK_MONOTONIC_RAW, &entry->timestamp);
+  }
   entry->offset = offset;
   entry->action = action;
   entry->state = state;
@@ -143,17 +163,12 @@ void search_data_print()
       }
       if(w + i > 0)
       {
-        printf(",{\"frametime\":%.9f,\"action\":\"%s\",\"data\":{%s}}",
-               frametime,
-               action_to_str(entry->action),
-               serialize_buffer);
+        printf(
+            ",{\"frametime\":%.9f,\"action\":\"%s\",\"data\":{%s}}", frametime, action_to_str(entry->action), serialize_buffer);
       }
       else
       {
-        printf("{\"frametime\":%.9f,\"action\":\"%s\",\"data\":{%s}}",
-               frametime,
-               action_to_str(entry->action),
-               serialize_buffer);
+        printf("{\"frametime\":%.9f,\"action\":\"%s\",\"data\":{%s}}", frametime, action_to_str(entry->action), serialize_buffer);
       }
     }
   }
