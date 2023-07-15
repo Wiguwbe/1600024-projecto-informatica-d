@@ -43,17 +43,17 @@ measurements: clean all
 
 measurements_with_solutions: clean all
 	@echo "A correr medições com geração de soluções"
-	@mkdir -p reports/solutions
+	@mkdir -p report/solutions
 	@./run_measurements.py -d -i
 
 solutions_only: clean all
 	@echo "A gerar soluções apenas"
-	@mkdir -p reports/solutions
+	@mkdir -p report/solutions
 	@./run_measurements.py -d -i -c -r 5 
 
 generate_videos: clean all_with_stats 
 	@echo "A gerar videos"
-	@mkdir -p reports/videos
+	@mkdir -p report/videos
 	@./generate_video.py -s 5 -d -o report/videos/maze_4.mp4 maze 4
 	@./generate_video.py -s 10 -d -o report/videos/maze_5.mp4 maze 5
 	@./generate_video.py -s 10 -d -o report/videos/maze_7.mp4 maze 7

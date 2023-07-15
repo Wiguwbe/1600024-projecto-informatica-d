@@ -169,11 +169,11 @@ def create_video(problem, instance, stats_data, measurements, speed=1.0, output_
     time_modifier = time_scale * 1 / speed
 
     # video filename
-    video_filename = f"reports/{problem}-{instance}.mp4"
+    video_filename = f"report/{problem}-{instance}.mp4"
     if output_name:
         video_filename = output_name
     else:
-        video_filename = f"reports/{problem}-{instance}.mp4"
+        video_filename = f"report/{problem}-{instance}.mp4"
 
     algos = []
 
@@ -283,7 +283,7 @@ def create_video(problem, instance, stats_data, measurements, speed=1.0, output_
                 continue
 
             while True:
-                # Get current entry
+                # Get current entry+
                 entry_idx = event_counter[a]
                 entry = entries[a][entry_idx]
                 scaler = algos[a]["scaler"]

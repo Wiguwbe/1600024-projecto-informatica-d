@@ -398,7 +398,7 @@ def draw_solutions(draw_function, solutions, statistic):
     return image
 
 
-def save_solutions_image(problem, instance, solutions, output):
+def save_solutions_image(problem, instance, solutions, output, threads):
 
     # draw parameters
     spacing = 30
@@ -553,7 +553,7 @@ def run_measurements(problems, threads, num_runs, excluded_problems,
             # We must have at least a solution in one of the algorithms
             if solution_images[0] or solution_images[1] or solution_images[2]:
                 save_solutions_image(
-                    problem, instance, solution_images, output_images)
+                    problem, instance, solution_images, output_images, threads)
 
             # Store measurements for later save
             problems_measurements[problem] = measurements
@@ -628,9 +628,9 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Ativa mensagens de debug')
     parser.add_argument('-o', '--output',
-                        help='Nome do ficheiro CSV', default="reports/measurements.csv")
+                        help='Nome do ficheiro CSV', default="report/measurements.csv")
     parser.add_argument('-s', '--output_images',
-                        help='Localização para gravar imagens', default="reports/solutions")
+                        help='Localização para gravar imagens', default="report/solutions")
 
     # Parse the command-line arguments
     args = parser.parse_args()
