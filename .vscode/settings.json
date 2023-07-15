@@ -38,4 +38,5 @@
     },
     "C_Cpp.errorSquiggles": "disabled",
     "cSpell.language": "en,pt_PT",
+    "python.linting.enabled": true,
 }

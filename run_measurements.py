@@ -13,29 +13,25 @@ problems = {
                 "hard_1", "hard_2",
                 "impossible_1", "impossible_2"],
     "numberlink": [1, 2, 3, 4, 5, 6],
-    "maze_bad": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    "maze_good": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    "maze": [ i+1 for i in range(21)],
 }
 
 excluded_instances = {
     "8puzzle": [],
     "numberlink": [6],
-    "maze_bad": [8,9,10],
-    "maze_good": []
+    "maze": []
 }
 
 row_par_first_excluded = {
     "8puzzle": [],
     "numberlink": [],
-    "maze_bad": [],
-    "maze_good": []
+    "maze": []
 }
 
 row_par_exhaustive_excluded = {
     "8puzzle": [],
     "numberlink": [6],
-    "maze_bad": [],
-    "maze_good": []
+    "maze": []
 }
 
 # Text variables
@@ -80,8 +76,8 @@ numberlink_fg_color_map = {
 }
 
 # Text fonts
-solution_font = ImageFont.truetype("LiberationSans-Regular.ttf", size=10)
-header_font = ImageFont.truetype("LiberationSans-Regular.ttf", size=24)
+solution_font = ImageFont.truetype("resources/LiberationSans-Regular.ttf", size=10)
+header_font = ImageFont.truetype("resources/LiberationSans-Regular.ttf", size=24)
 
 
 def puzzle8_to_image(solution: str):
@@ -209,8 +205,8 @@ def maze_to_image(solution):
                 continue
 
             # Get color from map
-            wall_color = (0, 0, 0)
-            path_color = (255, 128, 0)
+            wall_color = "black"
+            path_color = "yellow"
 
             # Fill according to type
             if ch == "X":
@@ -220,7 +216,7 @@ def maze_to_image(solution):
             else:
                 # Path
                 draw.rectangle((x, y, x+piece_size, y+piece_size),
-                               path_color, (0, 0, 0), 1)
+                               path_color, path_color, 1)
 
             x += piece_size
         y += piece_size
@@ -232,8 +228,7 @@ def maze_to_image(solution):
 draw_solution_func = {
     "8puzzle": puzzle8_to_image,
     "numberlink": numberlink_to_image,
-    "maze_bad": maze_to_image,
-    "maze_good": maze_to_image
+    "maze": maze_to_image,
 }
 
 
@@ -403,7 +398,7 @@ def draw_solutions(draw_function, solutions, statistic):
     return image
 
 
-def save_solutions_image(problem, instance, solutions):
+def save_solutions_image(problem, instance, solutions, output):
 
     # draw parameters
     spacing = 30
@@ -486,11 +481,12 @@ def save_solutions_image(problem, instance, solutions):
             image.paste(solution, (middle - solution.width // 2, y))
             y += solution.height + spacing // 2
 
-    image.save(f"reports/{problem}-{instance}.png", "PNG")
+    # Save image in location
+    image.save(f"{output}/{problem}-{instance}.png", "PNG")
 
 
 def run_measurements(problems, threads, num_runs, excluded_problems,
-                     csv_output=True, save_solutions=False):
+                     save_csv, output, save_images, output_images):
 
     # run all measurements
     problems_measurements = {}
@@ -504,8 +500,8 @@ def run_measurements(problems, threads, num_runs, excluded_problems,
 
         # To store measurements
         # 0-> sequential
-        # 1-> parallel (first solution)
-        # 2-> parallel(exhaustive search))
+        # 1-> parallel(exhaustive search))
+        # 2-> parallel (first solution)
         measurements = [[], [], []]
         for instance in instances:
 
@@ -521,13 +517,25 @@ def run_measurements(problems, threads, num_runs, excluded_problems,
             # Base time for calculating speed-up
             base_exec_time = row[-1]
             # Store row and draw solutions
-            if len(solutions) and save_solutions:
+            if len(solutions) and save_images:
                 solution_images[0] = draw_solutions(
                     draw_function, solutions, row)
             measurements[0].append(row)
 
             # Parallel
             for thread_num in threads:
+                if instance not in row_par_exhaustive_excluded[problem]:
+                    # First solution average
+                    row, solutions = run_measurement(problem, instance,
+                                                     num_runs, thread_num)
+                    # Calculate speed-up and append to row
+                    speed_up = round(base_exec_time/row[-1], 3)
+                    row.append(speed_up)
+                    # Store row and draw solutions
+                    if len(solutions) and save_images:
+                        solution_images[1].append(
+                            draw_solutions(draw_function, solutions, row))
+                    measurements[1].append(row)
                 if instance not in row_par_first_excluded[problem]:
                     # First solution average
                     row, solutions = run_measurement(problem, instance,
@@ -537,33 +545,22 @@ def run_measurements(problems, threads, num_runs, excluded_problems,
                     speed_up = round(base_exec_time/row[-1], 3)
                     row.append(speed_up)
                     # Store row and draw solutions
-                    if len(solutions) and save_solutions:
-                        solution_images[1].append(
-                            draw_solutions(draw_function, solutions, row))
-                    measurements[1].append(row)
-                if instance not in row_par_exhaustive_excluded[problem]:
-                    # First solution average
-                    row, solutions = run_measurement(problem, instance,
-                                                     num_runs, thread_num)
-                    # Calculate speed-up and append to row
-                    speed_up = round(base_exec_time/row[-1], 3)
-                    row.append(speed_up)
-                    # Store row and draw solutions
-                    if len(solutions) and save_solutions:
+                    if len(solutions) and save_images:
                         solution_images[2].append(
                             draw_solutions(draw_function, solutions, row))
                     measurements[2].append(row)
 
             # We must have at least a solution in one of the algorithms
             if solution_images[0] or solution_images[1] or solution_images[2]:
-                save_solutions_image(problem, instance, solution_images)
+                save_solutions_image(
+                    problem, instance, solution_images, output_images)
 
             # Store measurements for later save
             problems_measurements[problem] = measurements
 
-    if csv_output:
+    if save_csv:
         # Write results to CSV file
-        with open(f"measurements/measurements.csv", "wt") as f:
+        with open(output, "wt") as f:
             for problem, _ in problems.items():
 
                 if problem not in problems_measurements:
@@ -589,6 +586,8 @@ def run_measurements(problems, threads, num_runs, excluded_problems,
                     print(row_to_str(instance))
 
 # Custom function to convert a comma-separated string to a list of integers
+
+
 def parse_int_list(arg):
     try:
         # Split the string by commas and convert each part to an integer
@@ -617,32 +616,29 @@ if __name__ == '__main__':
         description='Medidor de performance algoritmo A*')
 
     # Add command-line arguments
-    parser.add_argument('-r', '--runs', help='Número de execuções', default=100)
+    parser.add_argument(
+        '-r', '--runs', help='Número de execuções', default=10)
     parser.add_argument('-t', '--threads', type=parse_int_list,
                         help='Número de trabalhadores', default=[2, 4, 6, 8])
     parser.add_argument('-x', '--excluded', type=parse_str_list,
-                        help='Problemas excluidos', default=[])
+                        help='Problemas excluídos', default=[])
     parser.add_argument('-c', '--csv', help='Saida CSV', action='store_false')
     parser.add_argument('-i', '--images', action='store_true',
                         help='Guarda imagem das soluções')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Ativa mensagens de debug')
+    parser.add_argument('-o', '--output',
+                        help='Nome do ficheiro CSV', default="reports/measurements.csv")
+    parser.add_argument('-s', '--output_images',
+                        help='Localização para gravar imagens', default="reports/solutions")
 
     # Parse the command-line arguments
     args = parser.parse_args()
 
-    # Access the parsed arguments
-    num_runs = int(args.runs)
-    threads = args.threads
-    excluded_problems = args.excluded
-    csv_output = args.csv
-    print(csv_output)
-    save_solutions = args.images
-    debug = args.debug
-
-    if debug:
+    if args.debug:
         logger.setLevel(logging.DEBUG)
 
-    # Run measurments
-    run_measurements(problems, threads, num_runs,
-                     excluded_problems, csv_output, save_solutions)
+    # Run measurements
+    run_measurements(problems, args.threads, int(args.runs),
+                     args.excluded, args.csv, args.output, args.images,
+                     args.output_images)

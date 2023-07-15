@@ -110,6 +110,9 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 #endif
   while(a_star->open_set->size)
   {
+#ifdef STATS_GEN
+    search_data_tick();
+#endif
     if(a_star->common->max_min_heap_size < a_star->open_set->size)
       a_star->common->max_min_heap_size = a_star->open_set->size;
 
@@ -122,7 +125,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
     current_node->index_in_open_set = SIZE_MAX;
     a_star->common->expanded++;
 #ifdef STATS_GEN
-    search_data_add_entry(0,current_node->state, ACTION_VISITED, 0);
+    search_data_add_entry(0, current_node->state, ACTION_VISITED);
 #endif
     // Se encontramos o objetivo saímos e retornamos o nó
     if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
@@ -130,6 +133,14 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
       // Guardamos a solução e saímos do ciclo
       a_star->common->num_solutions = a_star->common->num_better_solutions = 1;
       a_star->common->solution = current_node;
+#ifdef STATS_GEN
+      a_star_node_t* solution_path = a_star->common->solution;
+      while(solution_path != NULL)
+      {
+        search_data_add_entry(0, solution_path->state, ACTION_GOAL);
+        solution_path = solution_path->parent;
+      }
+#endif
       break;
     }
     // Executa a função que visita os vizinhos deste nó
@@ -148,7 +159,7 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
         child_node = node_allocator_new(a_star->common->node_allocator, neighbor);
         child_node->parent = current_node;
 #ifdef STATS_GEN
-        search_data_add_entry(0,child_node->state, ACTION_SUCESSOR, 0);
+        search_data_add_entry(0, child_node->state, ACTION_SUCESSOR);
 #endif
         // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
         child_node->g = current_node->g + a_star->common->d_func(current_node->state, child_node->state);
@@ -208,15 +219,6 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
   // Calculamos o tempo de execução
   a_star->common->execution_time = (a_star->common->end_time.tv_sec - a_star->common->start_time.tv_sec);
   a_star->common->execution_time += (a_star->common->end_time.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
-#ifdef STATS_GEN
-  a_star_node_t* solution_path = a_star->common->solution;
-  while(solution_path != NULL)
-  {
-    search_data_add_entry(0,solution_path->state, ACTION_GOAL, 0);
-    solution_path = solution_path->parent;
-  }
-  search_data_end(0);
-#endif
 }
 
 // Imprime estatísticas do algoritmo sequencial no formato desejado

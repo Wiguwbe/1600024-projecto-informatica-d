@@ -2,7 +2,7 @@
 import subprocess
 import logging
 import sys
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 import argparse
 import json
 import numpy as np
@@ -18,7 +18,10 @@ algo_names = [
 ]
 
 # Text fonts
-text_font = ImageFont.truetype("LiberationSans-Regular.ttf", size=16)
+text_font = ImageFont.truetype("resources/LiberationSans-Regular.ttf", size=16)
+
+# Solution colors
+sol_colors = ['yellow','darkturquoise','forestgreen','royalblue','springgreen','coral']
 
 
 def maze_to_image(maze, piece_size):
@@ -65,7 +68,11 @@ def maze_to_image(maze, piece_size):
             x += piece_size
         y += piece_size
 
-    return image
+    # our start/goal is always in this position
+    start = [cols+1, 0]
+    goal = [cols-1, rows]
+
+    return image, start, goal
 
 
 def run_executable(executable, arguments, runs):
@@ -78,11 +85,17 @@ def run_executable(executable, arguments, runs):
     while run < runs:
         try:
             logger.debug(
-                "(%d/%d) A correr: %s", run, runs, cmd_str)
+                "(%d/%d) A correr: %s", run+1, runs, cmd_str)
             output = subprocess.check_output(
-            [executable] + arguments, universal_newlines=True)
+                [executable] + arguments, universal_newlines=True)
+            logger.debug(
+                "(%d/%d) A processar resultado", run+1, runs)
+
             # Try to parse video data
             data = json.loads(output.strip())
+
+            logger.debug(
+                "(%d/%d) Resultado processado", run+1, runs)
 
             # first execution
             if best_execution is None:
@@ -132,7 +145,7 @@ def run_measurement(problem, instance, num_runs, thread_num=0,
     return run_executable(exec_cmd, exec_args, num_runs)
 
 
-def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
+def create_video(problem, instance, stats_data, measurements, speed=1.0, output_name=None):
     """
     TODO
     """
@@ -148,10 +161,10 @@ def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
     # Read the maze and draw it
     with open(instance_file, encoding="utf-8") as fd:
         maze = fd.read().strip().split("\n")
-        board = maze_to_image(maze, piece_size)
+        board, _, goal = maze_to_image(maze, piece_size)
 
     # Some vars to be able to draw the search process
-    radius = int((piece_size//2) * 0.7)
+    radius = int((piece_size//2) * 0.9)
     off_w = off_h = piece_size // 2
     time_modifier = time_scale * 1 / speed
 
@@ -168,39 +181,80 @@ def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
     video_time = 0
     entries = []
     i = 0
+    base_time = 0
     for stats in stats_data:
         if stats is None:
             i += 1
             continue
-        algos.append({"name": algo_names[i], "raw_data": stats})
-        entries.append(sorted(stats["entries"], key=lambda x: x["frametime"]))
-        exec_time = float(stats["execution_time"]) * time_modifier
+
+        # Get execution time and get scaler to match measurement
+        # value
+        exec_time = float(stats["execution_time"])
+        # We want to match our measurements, so get the scaler
+        try:
+            if i == 0:
+                scaler = float(measurements[i][-1])/exec_time
+            else:
+                scaler = float(measurements[i][-2])/exec_time
+        except IndexError:
+            # Defaults to no scale
+            scaler = 1
+
+        # Scale it to fit measurement and set video_time to max(exec_time)
+        exec_time *= scaler
         if video_time < exec_time:
             video_time = exec_time
+
+        # Set header with name, time and speed-up if parallel
+        header = f"{algo_names[i]} E:{exec_time:.6f}"
+
+        # Parallel with seq, set speed-up
+        if base_time > 0:
+            speed_up = base_time / exec_time
+            header += f" SUp:{speed_up:.3f}"
+
+        # Seq exists set base time so we can calculate speed-up for
+        # parallel
+        if i == 0:
+            base_time = exec_time
+
+        # Add to our data
+        algos.append({"header": header, "raw_data": stats, "scaler": scaler})
+        entries.append(sorted(stats["entries"], key=lambda x: x["frametime"]))
         i += 1
 
     available_algos = len(algos)
-    video_size = (board.width*available_algos+spacing *
-                  (available_algos+1), board.height+spacing*2)
+    original_size = (board.width*available_algos+spacing *
+                     (available_algos+1), board.height+spacing*2)
+
+    if original_size[0] > 1280 or original_size[1] > 720:
+        video_size = (1280, 720)
+    else:
+        video_size = original_size
+
+    # Get ratio in case we have scale image
+    w_ratio =  video_size[0] / original_size[0]
+    h_ratio =  video_size[1] / original_size[1]
+
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     video = cv2.VideoWriter(
         video_filename, fourcc, fps, video_size)
 
     # Draw a base frame which is the algo bords side by side
-    base_image = Image.new('RGB', video_size, color='white')
+    base_image = Image.new('RGB', original_size, color='white')
     base_image_draw = ImageDraw.Draw(base_image)
     x = y = spacing
     middle = board.width // 2
     for data in algos:
-        text_middle = text_font.getlength(data["name"]) // 2
+        text_middle = text_font.getlength(data["header"]) // 2
         base_image_draw.text([x+middle-text_middle, 0],
-                             data["name"], fill=(0, 0, 0), font=text_font)
+                             data["header"], fill=(0, 0, 0), font=text_font)
         base_image.paste(board, (x, y))
         x += board.width + spacing
 
     # the initial frame is the base image (boards)
-    frame = base_image.copy()
-    search_data = base_image.copy()
+    frame = base_image.resize(video_size,Image.Resampling.LANCZOS)
+    search_data = Image.new('RGBA', video_size)
 
     # Video generation counters
     event_counter = [0, 0, 0]
@@ -208,12 +262,15 @@ def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
     current_time = 0
     time_step = 1 / fps
 
+    # Calculate video time with time modifier applied
+    end_time = video_time * time_modifier + end_delay
+
     logger.debug(
-        "Video: d: %s, fps: $d, time: %4f, step: %4f, entries: %s",
-        str(video_size), fps, video_time,
+        "Video: d: %s, fps: %d, time: %4f, step: %4f, entries: %s",
+        str(video_size), fps, end_time, time_step,
         str([len(entries[i]) for i in range(available_algos)]))
 
-    while current_time < video_time + end_delay:
+    while current_time < end_time:
         logger.debug("A processar frame: %.4f, event counter: %s",
                      current_time, str(event_counter))
 
@@ -229,21 +286,25 @@ def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
                 # Get current entry
                 entry_idx = event_counter[a]
                 entry = entries[a][entry_idx]
+                scaler = algos[a]["scaler"]
 
                 # calculate entry relative time to initial frametime
-                current_entry_time = entry["frametime"] * time_modifier
+                current_entry_time = entry["frametime"] * \
+                    time_modifier * scaler
 
                 # check if we need to move to the next entry depending on the
                 # entry relative time
                 if current_entry_time > current_time:
                     draw_event(spacing, piece_size, board, radius, off_h,
-                               off_w, a, search_data, path_mask, entry)
+                               off_w, a, search_data, path_mask, entry, w_ratio, h_ratio)
                     break
 
                 # Draw current frame
                 if not draw_event(spacing, piece_size, board, radius,
                                   off_h, off_w, a, search_data, path_mask,
-                                  entry):
+                                  entry, w_ratio, h_ratio):
+                    draw_solutions(spacing, piece_size, board, radius,
+                                   off_h, off_w, a, search_data, entries[a], goal, w_ratio, h_ratio)
                     finished_drawing[a] = True
                     break
 
@@ -254,7 +315,7 @@ def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
                     break
 
         # paste the received frame to the frame
-        frame.paste(search_data, (0, 0))
+        frame.paste(search_data, (0, 0), mask=search_data)
         frame.paste(path_mask, (0, 0), mask=path_mask)
 
         # Write frame and move to next frame
@@ -265,7 +326,7 @@ def create_video(problem, instance, stats_data, speed=1.0, output_name=None):
 
 
 def draw_event(spacing, piece_size, board, radius, off_h, off_w, algo,
-               search_data, path_mask, entry):
+               search_data, path_mask, entry, w_ratio, h_ratio):
     """
     TODO
     """
@@ -274,6 +335,9 @@ def draw_event(spacing, piece_size, board, radius, off_h, off_w, algo,
 
     if event_type == "end":
         return False
+
+    if event_type == "goal":
+        return True
 
     # So we can draw in the base image
     search_data_draw = ImageDraw.Draw(search_data)
@@ -298,10 +362,10 @@ def draw_event(spacing, piece_size, board, radius, off_h, off_w, algo,
         color = "yellow"
 
     # update the base board with the new visited position
-    search_data_draw.ellipse((
-                              off_x - radius, off_y - radius,
-                              off_x + radius, off_y + radius
-                             ), outline='black', fill=color)
+    search_data_draw.rectangle((
+        int((off_x - radius) * w_ratio), int((off_y - radius) * h_ratio),
+        int((off_x + radius) * w_ratio), int((off_y + radius) * h_ratio)
+    ), outline=color, fill=color)
 
     # Draw current path in frame only
     path = entry["data"].get("path", None)
@@ -315,15 +379,76 @@ def draw_event(spacing, piece_size, board, radius, off_h, off_w, algo,
         col = position[0]
         off_x = x+(col * piece_size) + off_w
         off_y = y+(row * piece_size) + off_h
-        path_mask_draw.ellipse((
-                                off_x - radius, off_y - radius,
-                                off_x + radius, off_y + radius
-                               ), outline='black', fill="lightgreen")
+        path_mask_draw.rectangle((
+            int((off_x - radius) * w_ratio), int((off_y - radius) * h_ratio),
+            int((off_x + radius) * w_ratio), int((off_y + radius) * h_ratio)
+        ), outline=sol_colors[0], fill=sol_colors[0])
 
     return True
 
 
-def make_videos(problem, instance, num_runs, threads, algo, speed, output):
+def draw_solutions(spacing, piece_size, board, radius, off_h, off_w, algo,
+                   frame, entries, goal, w_ratio, h_ratio):
+    """
+    TODO
+    """
+    c_idx = 0
+    for entry in entries:
+        # Draw according to the type of event
+        event_type = entry["action"]
+
+        if event_type != "goal":
+            continue
+
+        position = entry["data"]["position"]
+        if position[0] == goal[0] and position[1] == goal[1]:
+            c_idx += 1
+
+        # So we can draw in the base image
+        frame_draw = ImageDraw.Draw(frame)
+
+        # calculate the initial position where to draw
+        x = y = spacing
+        x += (board.width + spacing) * algo
+
+        # get the event position and calculate offset to draw
+        row = position[1]
+        col = position[0]
+        off_x = x+(col * piece_size) + off_w
+        off_y = y+(row * piece_size) + off_h
+
+        # update the base board with the new visited position
+        frame_draw.rectangle((
+            int((off_x - radius) * w_ratio), int((off_y - radius)*h_ratio),
+            int((off_x + radius) * w_ratio), int((off_y + radius)*h_ratio)
+        ), outline=sol_colors[c_idx], fill=sol_colors[c_idx])
+
+
+def load_measurements(problem, instance, threads, in_file):
+
+    measurements = []
+    try:
+        with open(in_file) as fd:
+            for line in fd.readlines():
+                cells = [str(value).strip().replace("\"", "").replace(",", ".")
+                        for value in line.split(";")]
+                # Must be our instance and if not sequencial the threads
+                # number must match
+                if f"{problem}-{instance}" not in cells:
+                    continue
+                if cells[1] != "sequencial" and int(cells[2]) != threads:
+                    continue
+
+                # Measurement found
+                measurements.append(cells)
+    except FileNotFoundError:
+        logger.debug("Measurements file not found!")
+        pass
+
+    return measurements
+
+
+def make_videos(problem, instance, num_runs, threads, algo, speed, output, in_file):
     """
     TODO
     """
@@ -332,6 +457,7 @@ def make_videos(problem, instance, num_runs, threads, algo, speed, output):
     # 1-> parallel (first solution)
     # 2-> parallel(exhaustive search))
     stats_data = [None, None, None]
+    measurements = load_measurements(problem, instance, threads, in_file)
 
     if algo == "seq":
         stats_data[0] = run_measurement(problem, instance, num_runs)
@@ -347,7 +473,7 @@ def make_videos(problem, instance, num_runs, threads, algo, speed, output):
         stats_data[2] = run_measurement(
             problem, instance, num_runs, threads, True)
 
-    create_video(problem, instance, stats_data, speed, output)
+    create_video(problem, instance, stats_data, measurements, speed, output)
 
 # Custom function to convert a comma-separated string to a list of strings
 
@@ -382,8 +508,10 @@ if __name__ == '__main__':
                         help='Algoritmo a usar', default='all')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Ativa mensagens de debug')
-    parser.add_argument('-r', '--runs', default=200,
+    parser.add_argument('-r', '--runs', default=1,
                         help='Número de execuções')
+    parser.add_argument('-m', '--measurements', default="report/measurements.csv",
+                        help='Measurements file')
     parser.add_argument('problem', type=str, help='problema a utilizar')
     parser.add_argument('instance', type=str, help='instância a utilizar')
 
@@ -395,4 +523,4 @@ if __name__ == '__main__':
 
     # Make videos
     make_videos(args.problem, args.instance, int(args.runs), int(args.threads),
-                args.algo, float(args.speed), args.output)
+                args.algo, float(args.speed), args.output, args.measurements)

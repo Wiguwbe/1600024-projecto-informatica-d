@@ -12,16 +12,15 @@ static char* search_problem;
 static char* search_instance;
 static enum algorithm_type_e search_algorithm;
 static int search_workers;
-static double search_execution_time;
 static linked_list_t** search_entries;
-static struct timespec search_start_time;
-static bool search_active;
+static struct timespec current_timestamp;
 static allocator_t* search_entry_allocator;
+static double current_frametime;
 
 // Callbacks necessárias para guardar estatísticas
 serialize_function search_serialize_func;
 
-static char* action_labels[] = { "visited", "goal", "successor", "end" };
+static char* action_labels[] = { "visited", "goal", "successor" };
 const char* action_to_str(enum search_action_e action)
 {
   return action_labels[(int)action];
@@ -54,7 +53,6 @@ void search_data_create(char* problem, char* instance, enum algorithm_type_e alg
   search_algorithm = algo;
   search_workers = workers;
   search_serialize_func = serialize_fn;
-  search_active = false;
 }
 
 void search_data_destroy()
@@ -76,38 +74,21 @@ void search_data_destroy()
 
 void search_data_start()
 {
-  if(search_algorithm == ALGO_SEQUENTIAL)
-  {
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &search_start_time);
-  }
-  else
-  {
-    clock_gettime(CLOCK_MONOTONIC_RAW, &search_start_time);
-  }
-  search_active = true;
+  clock_gettime(CLOCK_MONOTONIC, &current_timestamp);
+  current_frametime = 0;
 }
 
-void search_data_end(double offset)
+void search_data_tick()
 {
-  struct timespec timestamp;
-  if(search_algorithm == ALGO_SEQUENTIAL)
-  {
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &timestamp);
-  }
-  else
-  {
-    clock_gettime(CLOCK_MONOTONIC_RAW, &timestamp);
-  }
-  search_data_add_entry(0, NULL, ACTION_END, offset);
-  search_execution_time = (timestamp.tv_sec - search_start_time.tv_sec);
-  search_execution_time += (timestamp.tv_nsec - search_start_time.tv_nsec) / 1000000000.0;
-  search_execution_time -= offset;
-  search_active = false;
+  struct timespec timestamp = current_timestamp;
+  clock_gettime(CLOCK_MONOTONIC, &current_timestamp);
+  current_frametime += (current_timestamp.tv_sec - timestamp.tv_sec);
+  current_frametime += (current_timestamp.tv_nsec - timestamp.tv_nsec) / 1000000000.0;
 }
 
-void search_data_add_entry(int worker, state_t* state, enum search_action_e action, double offset)
+void search_data_add_entry(int worker, state_t* state, enum search_action_e action)
 {
-  if(worker > search_workers || !search_active)
+  if(worker > search_workers)
   {
     return;
   }
@@ -118,15 +99,7 @@ void search_data_add_entry(int worker, state_t* state, enum search_action_e acti
     return;
   }
 
-  if(search_algorithm == ALGO_SEQUENTIAL)
-  {
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &entry->timestamp);
-  }
-  else
-  {
-    clock_gettime(CLOCK_MONOTONIC_RAW, &entry->timestamp);
-  }
-  entry->offset = offset;
+  entry->frametime = current_frametime;
   entry->action = action;
   entry->state = state;
 
@@ -147,32 +120,37 @@ void search_data_print()
   printf("\"type\":\"%s\",", algorithm_to_str(search_algorithm));
   printf("\"workers\":%d,", search_workers);
   printf("\"entries\": [");
+  double execution_time = 0;
   for(int w = 0; w < search_workers; w++)
   {
     for(size_t i = 0; i < linked_list_size(search_entries[w]); i++)
     {
       search_data_entry_t* entry = (search_data_entry_t*)linked_list_get(search_entries[w], i);
       memset(serialize_buffer, 0, BUFFER_LEN);
-      double frametime = (entry->timestamp.tv_sec - search_start_time.tv_sec);
-      frametime += (entry->timestamp.tv_nsec - search_start_time.tv_nsec) / 1000000000.0;
-      frametime -= entry->offset;
 
-      if(entry->action != ACTION_END)
+      if(entry->frametime > execution_time)
       {
-        search_serialize_func(serialize_buffer, entry);
+        execution_time = entry->frametime;
       }
+      search_serialize_func(serialize_buffer, entry);
       if(w + i > 0)
       {
-        printf(
-            ",{\"frametime\":%.9f,\"action\":\"%s\",\"data\":{%s}}", frametime, action_to_str(entry->action), serialize_buffer);
+        printf(",{\"frametime\":%.9f,\"action\":\"%s\",\"data\":{%s}}",
+               entry->frametime,
+               action_to_str(entry->action),
+               serialize_buffer);
       }
       else
       {
-        printf("{\"frametime\":%.9f,\"action\":\"%s\",\"data\":{%s}}", frametime, action_to_str(entry->action), serialize_buffer);
+        printf("{\"frametime\":%.9f,\"action\":\"%s\",\"data\":{%s}}",
+               entry->frametime,
+               action_to_str(entry->action),
+               serialize_buffer);
       }
     }
   }
-  printf("],\"execution_time\":%.9f}\n", search_execution_time);
+  printf(",{\"frametime\":%.9f,\"action\":\"end\",\"data\":{}}", execution_time);
+  printf("],\"execution_time\":%.9f}\n", execution_time);
 
   free(serialize_buffer);
 }

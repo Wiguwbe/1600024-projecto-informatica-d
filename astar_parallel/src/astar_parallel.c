@@ -88,7 +88,7 @@ void* a_star_worker_function(void* arg)
           worker->generated++;
 
 #ifdef STATS_GEN
-          search_data_add_entry(worker->thread_id, child_node->state, ACTION_SUCESSOR, 0);
+          search_data_add_entry(worker->thread_id, child_node->state, ACTION_SUCESSOR);
 #endif
 
           // Encontra o custo de chegar do estado pai a este estado e calculamos a heurística (distância para chegar ao objetivo)
@@ -163,7 +163,7 @@ void* a_star_worker_function(void* arg)
       worker->expanded++;
 
 #ifdef STATS_GEN
-      search_data_add_entry(worker->thread_id, current_node->state, ACTION_VISITED, 0);
+      search_data_add_entry(worker->thread_id, current_node->state, ACTION_VISITED);
 #endif
 
       // Verificamos se já existe uma solução, caso já exista temos de verificar se
@@ -193,6 +193,14 @@ void* a_star_worker_function(void* arg)
           // a fazer
           a_star->common->num_better_solutions++;
           a_star->common->solution = current_node;
+#ifdef STATS_GEN
+          a_star_node_t* solution_path = a_star->common->solution;
+          while(solution_path != NULL)
+          {
+            search_data_add_entry(worker->thread_id, solution_path->state, ACTION_GOAL);
+            solution_path = solution_path->parent;
+          }
+#endif
         }
         else
         {
@@ -205,6 +213,14 @@ void* a_star_worker_function(void* arg)
           {
             a_star->common->num_better_solutions++;
             a_star->common->solution = current_node;
+#ifdef STATS_GEN
+            a_star_node_t* solution_path = a_star->common->solution;
+            while(solution_path != NULL)
+            {
+              search_data_add_entry(worker->thread_id, solution_path->state, ACTION_GOAL);
+              solution_path = solution_path->parent;
+            }
+#endif
           }
           else if(existing_cost == attempt_cost)
           {
@@ -381,10 +397,6 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
       return;
     }
   }
-#ifdef STATS_GEN
-  double offset = 0;
-  search_data_start();
-#endif
   a_star_message_t message = { NULL, initial_state };
   size_t worker_id = assign_to_worker(a_star, message.state);
   // Enviamos o estado inicial para o respetivo trabalhador
@@ -394,8 +406,14 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
   // sem nós para processar
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->start_time));
   int idle_tries = MAX_IDLE_TIME;
+#ifdef STATS_GEN
+  search_data_start();
+#endif
   while(a_star->running)
   {
+#ifdef STATS_GEN
+    search_data_tick();
+#endif
     // Solução já foi encontrada e queremos sair à primeira solução
     if(a_star->common->solution != NULL && a_star->stop_on_first_solution)
     {
@@ -433,29 +451,12 @@ void a_star_parallel_solve(a_star_parallel_t* a_star, void* initial, void* goal)
     if(idle_tries <= 0)
     {
       a_star->running = false;
-#ifdef STATS_GEN
-      // The algorithm have stopped earlier, so we need to calculate the offset
-      // this assures
-      struct timespec offset_time;
-      clock_gettime(CLOCK_MONOTONIC, &offset_time);
-      offset = offset_time.tv_sec - a_star->common->end_time.tv_sec;
-      offset += (offset_time.tv_nsec - a_star->common->end_time.tv_nsec) / 1000000000.0;
-#endif
       break;
     }
 
     // O algoritmo deve continuar a correr enquanto houver trabalhadores que não estejam ociosos
     a_star->running = true;
   }
-#ifdef STATS_GEN
-  a_star_node_t* solution_path = a_star->common->solution;
-  while(solution_path != NULL)
-  {
-    search_data_add_entry(0, solution_path->state, ACTION_GOAL, offset);
-    solution_path = solution_path->parent;
-  }
-  search_data_end(offset);
-#endif
   // Esperamos que todas os trabalhadores terminem
   for(size_t i = 0; i < a_star->scheduler.num_workers; i++)
   {
