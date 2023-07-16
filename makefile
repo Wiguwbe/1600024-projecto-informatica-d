@@ -40,7 +40,6 @@ all_with_stats:
 generate_measurements: clean all
 	@echo "A correr medições 8 puzzle"
 	@mkdir -p report/measurements
-	@rm report/measurements/*.csv
 	@./run_measurement.py -d -c -n -o report/measurements/8puzzle.csv 8puzzle easy_1 
 	@./run_measurement.py -d -c -o report/measurements/8puzzle.csv 8puzzle easy_2
 	@./run_measurement.py -d -c -o report/measurements/8puzzle.csv 8puzzle easy_3 
@@ -82,7 +81,6 @@ generate_measurements: clean all
 generate_solutions: clean all
 	@echo "A gerar imagens de soluções"
 	@mkdir -p report/solutions
-	@rm report/measurements/*.png
 	@./generate_solution.py -d -r 5 8puzzle easy_1 
 	@./generate_solution.py -d -r 5 8puzzle easy_2
 	@./generate_solution.py -d -r 5 8puzzle easy_3 
@@ -110,13 +108,12 @@ generate_solutions: clean all
 generate_videos: clean all_with_stats 
 	@echo "A gerar videos"
 	@mkdir -p report/videos
-	@rm report/measurements/*.mp4
-	@./generate_video.py -s 2 -d -o report/videos/maze_4.mp4 maze 4
-	@./generate_video.py -s 10 -d -o report/videos/maze_5.mp4 maze 5
-	@./generate_video.py -s 10 -d -o report/videos/maze_7.mp4 maze 7
-	@./generate_video.py -s 100 -d -o report/videos/maze_11.mp4 maze 11
-	@./generate_video.py -s 200 -d -o report/videos/maze_12.mp4 maze 12
-	@./generate_video.py -s 400 -d -o report/videos/maze_13.mp4 maze 13
+	@./generate_video.py -m report/measurements/maze.csv -s 2 -d -o report/videos/maze_4.mp4 maze 4
+	@./generate_video.py -m report/measurements/maze.csv -s 10 -d -o report/videos/maze_5.mp4 maze 5
+	@./generate_video.py -m report/measurements/maze.csv -s 10 -d -o report/videos/maze_7.mp4 maze 7
+	@./generate_video.py -m report/measurements/maze.csv -p 1 -s 100 -d -o report/videos/maze_11.mp4 maze 11
+	@./generate_video.py -m report/measurements/maze.csv -p 1 -s 200 -d -o report/videos/maze_12.mp4 maze 12
+	@./generate_video.py -m report/measurements/maze.csv -p 1 -s 400 -d -o report/videos/maze_13.mp4 maze 13
 
 generate_report: generate_measurements generate_solutions generate_videos
 

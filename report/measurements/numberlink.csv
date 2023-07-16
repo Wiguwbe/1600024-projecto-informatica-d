@@ -1,0 +1,45 @@
+"numberlink-1";"sequencial";"sim";8;33;17;18;33;0;6;0;1;0;1;4e-05
+"numberlink-1";"paralelo - procura exaustiva";2;"sim";8;63;54;27;63;0;32;0;5;4;1;0,000136;0,294
+"numberlink-1";"paralelo - procura exaustiva";4;"sim";8;59;55;24;59;0;29;0;4;3;1;0,000118;0,339
+"numberlink-1";"paralelo - procura exaustiva";6;"sim";8;56;54;21;56;0;30;0;4;3;1;0,000119;0,336
+"numberlink-1";"paralelo - procura exaustiva";8;"sim";8;57;56;21;57;0;31;0;4;3;1;0,000122;0,328
+"numberlink-1";"paralelo - primeira solução";2;"sim";8;47;30;25;47;0;10;0;1;0;1;0,000105;0,381
+"numberlink-1";"paralelo - primeira solução";4;"sim";8;48;35;23;48;0;14;0;1;0;1;9,1e-05;0,44
+"numberlink-1";"paralelo - primeira solução";6;"sim";8;49;42;21;49;0;19;0;1;0;1;0,000103;0,388
+"numberlink-1";"paralelo - primeira solução";8;"sim";8;47;42;19;47;0;17;0;1;0;1;0,000104;0,385
+"numberlink-2";"sequencial";"sim";12;158;44;116;158;0;19;0;1;0;1;0,00014
+"numberlink-2";"paralelo - procura exaustiva";2;"sim";12;951;561;380;951;0;387;0;41;40;1;0,000965;0,145
+"numberlink-2";"paralelo - procura exaustiva";4;"sim";12;819;507;318;819;0;349;0;35;34;1;0,000924;0,152
+"numberlink-2";"paralelo - procura exaustiva";6;"sim";12;798;500;318;798;0;380;0;34;33;1;0,00076;0,184
+"numberlink-2";"paralelo - procura exaustiva";8;"sim";12;733;428;320;733;0;327;0;26;25;1;0,001065;0,131
+"numberlink-2";"paralelo - primeira solução";2;"sim";12;185;74;116;185;0;27;0;1;0;1;0,000275;0,509
+"numberlink-2";"paralelo - primeira solução";4;"sim";12;120;44;84;120;0;19;0;1;0;1;0,000205;0,683
+"numberlink-2";"paralelo - primeira solução";6;"sim";12;260;104;165;260;0;45;0;1;0;1;0,00032;0,437
+"numberlink-2";"paralelo - primeira solução";8;"sim";12;95;35;67;95;0;13;0;1;0;1;0,000196;0,714
+"numberlink-3";"sequencial";"sim";31;1723;434;1292;1723;0;589;0;1;0;1;0,001129
+"numberlink-3";"paralelo - procura exaustiva";2;"sim";31;20870;7086;13567;20870;0;13313;0;11;10;1;0,010806;0,104
+"numberlink-3";"paralelo - procura exaustiva";4;"sim";31;23600;8430;13784;23600;0;16984;0;18;17;1;0,008892;0,127
+"numberlink-3";"paralelo - procura exaustiva";6;"sim";31;27657;10733;17029;27657;0;23354;0;18;17;1;0,008534;0,132
+"numberlink-3";"paralelo - procura exaustiva";8;"sim";31;26170;9681;13575;26170;0;19577;0;18;17;1;0,008448;0,134
+"numberlink-3";"paralelo - primeira solução";2;"sim";31;2226;540;1697;2226;0;674;0;1;0;1;0,001546;0,73
+"numberlink-3";"paralelo - primeira solução";4;"sim";31;1942;465;1526;1942;0;683;0;1;0;1;0,001464;0,771
+"numberlink-3";"paralelo - primeira solução";6;"sim";31;5263;1296;3977;5263;0;1676;0;1;0;1;0,001787;0,632
+"numberlink-3";"paralelo - primeira solução";8;"sim";31;2215;523;1935;2215;0;898;0;1;0;1;0,001879;0,601
+"numberlink-4";"sequencial";"sim";24;3482;774;2711;3482;0;1428;0;1;0;1;0,00191
+"numberlink-4";"paralelo - procura exaustiva";2;"sim";24;79084;22036;56739;79084;0;52368;0;48;47;1;0,054387;0,035
+"numberlink-4";"paralelo - procura exaustiva";4;"sim";24;81344;23528;56930;81344;0;56707;0;60;59;1;0,04033;0,047
+"numberlink-4";"paralelo - procura exaustiva";6;"sim";24;83651;24553;57778;83651;0;61332;0;66;65;1;0,037402;0,051
+"numberlink-4";"paralelo - procura exaustiva";8;"sim";24;83695;24985;57898;83695;0;62114;0;62;61;1;0,036714;0,052
+"numberlink-4";"paralelo - primeira solução";2;"sim";24;5019;1165;3858;5019;0;1756;0;1;0;1;0,00272;0,702
+"numberlink-4";"paralelo - primeira solução";4;"sim";24;2205;479;1737;2205;0;539;0;1;0;1;0,001297;1,473
+"numberlink-4";"paralelo - primeira solução";6;"sim";24;609;124;496;609;0;123;0;1;0;1;0,000792;2,412
+"numberlink-4";"paralelo - primeira solução";8;"sim";"24-26";697;144;583;697;0;146;0;1;0;1;0,000931;2,052
+"numberlink-5";"sequencial";"sim";22;112890;41277;71615;112890;0;41885;0;1;0;1;0,153251
+"numberlink-5";"paralelo - procura exaustiva";2;"sim";22;751760;323640;428132;751760;0;349084;0;704;703;1;5,70058;0,027
+"numberlink-5";"paralelo - procura exaustiva";4;"sim";22;756512;328637;427910;756512;0;362807;0;704;703;1;3,151994;0,049
+"numberlink-5";"paralelo - procura exaustiva";6;"sim";22;759004;331311;427736;759004;0;369436;0;704;703;1;2,3563;0,065
+"numberlink-5";"paralelo - procura exaustiva";8;"sim";22;760162;335348;426321;760162;0;372343;0;704;703;1;2,068583;0,074
+"numberlink-5";"paralelo - primeira solução";2;"sim";22;120546;45243;75306;120546;0;49317;0;1;0;1;0,128197;1,195
+"numberlink-5";"paralelo - primeira solução";4;"sim";22;133863;52167;81701;133863;0;62067;0;1;0;1;0,09119;1,681
+"numberlink-5";"paralelo - primeira solução";6;"sim";22;140029;55241;84795;140029;0;66625;0;1;0;1;0,073501;2,085
+"numberlink-5";"paralelo - primeira solução";8;"sim";22;141556;55386;86180;141556;0;66003;0;1;0;1;0,062741;2,443
