@@ -63,10 +63,10 @@ void print_solution(a_star_node_t* solution)
 {
   maze_solver_state_t* state = (maze_solver_state_t*)solution->state->data;
   maze_solver_t* maze_solver = state->maze_solver;
-  char board[maze_solver->board_len];
+  char* board = malloc(maze_solver->board_len);
 
   // Copia a configuração do tabuleiro atual
-  memcpy(&board, maze_solver->initial_board, maze_solver->board_len);
+  memcpy(board, maze_solver->initial_board, maze_solver->board_len);
 
   a_star_node_t* solution_path = solution;
   while(solution_path != NULL)
@@ -88,6 +88,7 @@ void print_solution(a_star_node_t* solution)
     }
     printf("\n");
   }
+  free(board);
 }
 
 // Resolve o problema utilizando a versão paralela do algoritmo

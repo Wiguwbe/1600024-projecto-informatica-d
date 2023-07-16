@@ -448,7 +448,7 @@ def load_measurements(problem, instance, threads, in_file):
     return measurements
 
 
-def make_videos(problem, instance, num_runs, threads, algo, speed, output, in_file):
+def generate_video(problem, instance, num_runs, threads, algo, speed, output, in_file):
     """
     TODO
     """
@@ -522,5 +522,5 @@ if __name__ == '__main__':
         logger.setLevel(logging.DEBUG)
 
     # Make videos
-    make_videos(args.problem, args.instance, int(args.runs), int(args.threads),
+    generate_video(args.problem, args.instance, int(args.runs), int(args.threads),
                 args.algo, float(args.speed), args.output, args.measurements)
