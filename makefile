@@ -77,6 +77,7 @@ generate_measurements: clean all
 	@./run_measurement.py -d -c -o -r 1 report/measurements/maze.csv maze 20
 	@./run_measurement.py -d -c -o -r 1 report/measurements/maze.csv maze 21
 	@./run_measurement.py -d -c -o -r 1 report/measurements/maze.csv maze 22
+	@./run_measurement.py -d -c -o -r 1 report/measurements/maze.csv maze 23
 
 generate_solutions: clean all
 	@echo "A gerar imagens de soluções"
@@ -165,3 +166,5 @@ generate_mazes:
 	python3 maze_gen/maze_gen.py -a 4000 -l 4000 -o instances/maze_21
 	@echo "A gerar labirinto 5000 x 5000"
 	python3 maze_gen/maze_gen.py -a 5000 -l 5000 -o instances/maze_22
+	@echo "A gerar labirinto 10000 x 10000"
+	python3 maze_gen/maze_gen.py -a 10000 -l 10000 -o instances/maze_23
