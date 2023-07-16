@@ -73,11 +73,11 @@ generate_measurements: clean all
 	@./run_measurement.py -d -c -o report/measurements/maze.csv maze 16
 	@./run_measurement.py -d -c -o report/measurements/maze.csv maze 17
 	@./run_measurement.py -d -c -o report/measurements/maze.csv maze 18
-	@./run_measurement.py -d -c -o -r 1 report/measurements/maze.csv maze 19
-	@./run_measurement.py -d -c -o -r 1 report/measurements/maze.csv maze 20
-	@./run_measurement.py -d -c -o -r 1 report/measurements/maze.csv maze 21
-	@./run_measurement.py -d -c -o -r 1 report/measurements/maze.csv maze 22
-	@./run_measurement.py -d -c -o -r 1 report/measurements/maze.csv maze 23
+	@./run_measurement.py -d -c -r 1 -o report/measurements/maze.csv maze 19
+	@./run_measurement.py -d -c -r 1 -o report/measurements/maze.csv maze 20
+	@./run_measurement.py -d -c -r 1 -o report/measurements/maze.csv maze 21
+	@./run_measurement.py -d -c -r 1 -o report/measurements/maze.csv maze 22
+	@./run_measurement.py -d -c -r 1 -o report/measurements/maze.csv maze 23
 
 generate_solutions: clean all
 	@echo "A gerar imagens de soluções"
