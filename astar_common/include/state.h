@@ -32,6 +32,7 @@
 typedef struct state_t state_t;
 struct state_t
 {
+  size_t hash;
   size_t struct_size;
   void* data;
 };

@@ -70,6 +70,42 @@
       "miDebuggerPath": "gdb"
     },
     {
+      "name": "maze_good sequencial",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/maze_good/bin/maze_good",
+      "args": [
+        "${workspaceFolder}/instances/maze_2"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build makefile",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "maze_good paralelo",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/maze_good/bin/maze_good",
+      "args": [
+        "-n",
+        "2",
+        "-s",
+        "-p",
+        "${workspaceFolder}/instances/maze_2"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build makefile",
+      "miDebuggerPath": "gdb"
+    },    
+    {
       "name": "test_allocator",
       "type": "cppdbg",
       "request": "launch",
@@ -207,6 +243,44 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/numberlink/bin/test_numberlink_common",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_maze_common",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/maze/bin/test_maze_common",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "CK_FORK",
+          "value": "no"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "preLaunchTask": "build tests",
+      "miDebuggerPath": "gdb"
+    },
+    {
+      "name": "test_maze_logic",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/maze/bin/test_maze_logic",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

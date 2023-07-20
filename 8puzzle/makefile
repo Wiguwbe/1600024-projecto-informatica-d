@@ -1,11 +1,15 @@
-CC := gcc
-CFLAGS := -Wall -Wextra -I./include -I../astar_parallel/include -I../astar_sequential/include -I../astar_common/include -Wno-unused-parameter 
+CC := clang
+CFLAGS := -Wno-c2x-extensions -Wall -Wextra -march=native -flto -I./include -I../astar_parallel/include -I../astar_sequential/include -I../astar_common/include -Wno-unused-parameter 
 LDFLAGS := -L../astar_parallel/lib -lastar_parallel -L../astar_sequential/lib -lastar_seq  -L../astar_common/lib -lastar_common -lcheck -lm -lpthread 
 
 ifdef DEBUG_BUILD
 CFLAGS_EXTRA := -DDEBUG -g
 else
 CFLAGS_EXTRA := -O3
+endif
+
+ifdef STATS_GEN
+CFLAGS_EXTRA += -DSTATS_GEN
 endif
 
 SRC_DIR := src

@@ -1,12 +1,16 @@
-CC := gcc
+CC := clang
 AR := ar
-CFLAGS := -Wall -Wextra -I./include
+CFLAGS := -Wno-c2x-extensions -Wall -Wextra -march=native -flto -I./include
 LDFLAGS := -lcheck -lm -lpthread
 
 ifdef DEBUG_BUILD
 CFLAGS_EXTRA := -DDEBUG -g
 else
 CFLAGS_EXTRA := -O3
+endif
+
+ifdef STATS_GEN
+CFLAGS_EXTRA += -DSTATS_GEN
 endif
 
 SRC_DIR := src

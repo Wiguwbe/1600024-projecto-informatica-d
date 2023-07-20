@@ -2,6 +2,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef STATS_GEN
+#  include <stdio.h>
+#endif
 
 // Cria uma nova instância para resolver um problema
 a_star_sequential_t* a_star_sequential_create(size_t struct_size,
@@ -30,8 +33,6 @@ a_star_sequential_t* a_star_sequential_create(size_t struct_size,
     return NULL;
   }
 
-  // Inicializamos a parte especifica para o algoritmo sequencial
-
   // Conjunto com os nós por explorar
   a_star->open_set = min_heap_create();
   if(a_star->open_set == NULL)
@@ -52,16 +53,10 @@ void a_star_sequential_destroy(a_star_sequential_t* a_star)
   }
 
   // Limpamos a nossa fronteira
-  if(a_star->open_set != NULL)
-  {
-    min_heap_destroy(a_star->open_set);
-  }
+  min_heap_destroy(a_star->open_set);
 
   // Invocamos o destroy da parte comum
-  if(a_star->common != NULL)
-  {
-    a_star_destroy(a_star->common);
-  }
+  a_star_destroy(a_star->common);
 
   // Destruímos o nosso algoritmo
   free(a_star);
@@ -106,9 +101,18 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
   // Inserimos o nó inicial na nossa fila prioritária
   min_heap_insert(a_star->open_set, initial_node->g + initial_node->h, initial_node);
 
+  // Esta lista irá receber os vizinhos de um nó
+  linked_list_t* neighbors = linked_list_create();
+
   clock_gettime(CLOCK_MONOTONIC, &(a_star->common->start_time));
+#ifdef STATS_GEN
+  search_data_start();
+#endif
   while(a_star->open_set->size)
   {
+#ifdef STATS_GEN
+    search_data_tick();
+#endif
     if(a_star->common->max_min_heap_size < a_star->open_set->size)
       a_star->common->max_min_heap_size = a_star->open_set->size;
 
@@ -120,25 +124,31 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
     a_star_node_t* current_node = (a_star_node_t*)top_element.data;
     current_node->index_in_open_set = SIZE_MAX;
     a_star->common->expanded++;
-
+#ifdef STATS_GEN
+    search_data_add_entry(0, current_node->state, ACTION_VISITED);
+#endif
     // Se encontramos o objetivo saímos e retornamos o nó
     if(a_star->common->goal_func(current_node->state, a_star->common->goal_state))
     {
       // Guardamos a solução e saímos do ciclo
+      a_star->common->num_solutions = a_star->common->num_better_solutions = 1;
       a_star->common->solution = current_node;
+#ifdef STATS_GEN
+      a_star_node_t* solution_path = a_star->common->solution;
+      while(solution_path != NULL)
+      {
+        search_data_add_entry(0, solution_path->state, ACTION_GOAL);
+        solution_path = solution_path->parent;
+      }
+#endif
       break;
     }
-
-    // Esta lista irá receber os vizinhos deste nó
-    linked_list_t* neighbors = linked_list_create();
-
     // Executa a função que visita os vizinhos deste nó
     a_star->common->visit_func(current_node->state, a_star->common->state_allocator, neighbors);
-
     // Itera por todos os vizinhos gerados e atualiza a nossa árvore de procura
-    for(size_t i = 0; i < linked_list_size(neighbors); i++)
+    while(linked_list_size(neighbors))
     {
-      state_t* neighbor = (state_t*)linked_list_get(neighbors, i);
+      state_t* neighbor = (state_t*)linked_list_pop_back(neighbors);
 
       // Verifica se o nó para este estado já se encontra na nossa lista de nós
       a_star_node_t* child_node = node_allocator_get(a_star->common->node_allocator, neighbor);
@@ -148,7 +158,9 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
         // Este nó ainda não existe, criamos um novo nó
         child_node = node_allocator_new(a_star->common->node_allocator, neighbor);
         child_node->parent = current_node;
-
+#ifdef STATS_GEN
+        search_data_add_entry(0, child_node->state, ACTION_SUCESSOR);
+#endif
         // Encontra o custo de chegar do nó a este vizinho e calcula a heurística para chegar ao objetivo
         child_node->g = current_node->g + a_star->common->d_func(current_node->state, child_node->state);
         child_node->h = a_star->common->h_func(child_node->state, a_star->common->goal_state);
@@ -168,7 +180,8 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
 
         // Se o custo for maior do que o nó já tem, não faz sentido atualizar
         // existe outro caminho mais curto para este nó
-        if(g_attempt >= child_node->g) {
+        if(g_attempt >= child_node->g)
+        {
           a_star->common->paths_worst_or_equals++;
           continue;
         }
@@ -197,19 +210,19 @@ void a_star_sequential_solve(a_star_sequential_t* a_star, void* initial, void* g
         }
       }
     }
-
-    // Liberta a lista de vizinhos
-    linked_list_destroy(neighbors);
   }
-  clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
 
+  // Liberta a lista de vizinhos
+  linked_list_destroy(neighbors);
+
+  clock_gettime(CLOCK_MONOTONIC, &(a_star->common->end_time));
   // Calculamos o tempo de execução
   a_star->common->execution_time = (a_star->common->end_time.tv_sec - a_star->common->start_time.tv_sec);
   a_star->common->execution_time += (a_star->common->end_time.tv_nsec - a_star->common->start_time.tv_nsec) / 1000000000.0;
 }
 
 // Imprime estatísticas do algoritmo sequencial no formato desejado
-void a_star_sequential_print_statistics(a_star_sequential_t* a_star, bool csv)
+void a_star_sequential_print_statistics(a_star_sequential_t* a_star, bool csv, bool show_solution)
 {
-  a_star_print_statistics(a_star->common, csv);
+  a_star_print_statistics(a_star->common, csv, show_solution);
 }

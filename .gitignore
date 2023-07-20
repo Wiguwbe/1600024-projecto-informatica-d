@@ -13,4 +13,7 @@
 /**/obj/
 /**/obj/*
 tmp/
-resultados/
+*.png
+*.mp4
+.venv
+Notas.txt
