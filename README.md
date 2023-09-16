@@ -1,3 +1,26 @@
+# Porting C to D
+
+This is an example of porting a C codebase, part by part to D (with -betterC).
+
+The makefiles were adapted to also compile with D.
+
+The D structs maintain compatibility with C, some are templated.
+
+The exported functions in the C headers files are also provided in D
+for compatibility purposes.
+
+## Process
+
+The files first ported are the ones that have no dependencies, since
+D can't import header files.
+
+The external functions (that are now struct methods) are kept for
+compatibility (hopefully) until they are no longer needed.
+
+_old README maintained for reference_
+
+---
+
 # Projecto de informática 
 
 Este repositório contêm o código desenvolvido no âmbito da disciplina de Projecto de Informática do curso de Licenciatura de Informática. 
