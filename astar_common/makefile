@@ -4,12 +4,14 @@ LDFLAGS := -lcheck -lm -lpthread
 
 ifdef DEBUG_BUILD
 CFLAGS_EXTRA := -DDEBUG -g
+DFLAGS_EXTRA := -fdebug
 else
 CFLAGS_EXTRA := -O3
 endif
 
 ifdef STATS_GEN
 CFLAGS_EXTRA += -DSTATS_GEN
+DFLAGS_EXTRA += -fversion=STATS_GEN
 endif
 
 include ../makefile.vars
