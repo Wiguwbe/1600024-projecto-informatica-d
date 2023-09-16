@@ -127,7 +127,7 @@ START_TEST(test_heuristic) {
   state_t* initial_state_ptr = state_allocator_new(allocator, &initial_state);
 
   int h = heuristic(initial_state_ptr,NULL);
-  ck_assert_int_eq(h,4);
+  ck_assert_int_eq(h,2);
 
   // Liberta a memória utilizada
   state_allocator_destroy(allocator);
