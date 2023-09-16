@@ -1,0 +1,55 @@
+# base flags
+CFLAGS += -Wno-c2x-extensions -Wall -Wextra -march=native -flto
+DFLAGS += -Wall -Wextra -march=native -flto -fno-druntime
+
+SRCS := $(wildcard $(SRC_DIR)/*.c)
+DSRCS := $(wildcard $(SRC_DIR)/*.d)
+OBJS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
+OBJS += $(patsubst $(SRC_DIR)/%.d,$(OBJ_DIR)/%.o,$(DSRCS))
+DEPS := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.d,$(SRCS))
+DEPS += $(patsubst $(SRC_DIR)/%.d,$(OBJ_DIR)/%.d,$(DSRCS))
+TEST_SRCS := $(wildcard $(TEST_DIR)/*.c)
+TEST_BINS := $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SRCS))
+
+.PHONY: all clean tests
+
+all: $(TARGET)
+
+# create binary or archive
+$(TARGET): $(OBJS)
+	@mkdir -p $(dir $(TARGET))
+ifeq (.a,$(findstring .a,$(TARGET)))
+	# archive
+	$(AR) rcs $@ $^
+else
+	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) $^ -o $@ $(LDFLAGS)
+endif
+
+# compile .c to .o
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) -c $< -o $@
+
+# compile .d to .o
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.d
+	@mkdir -p $(dir $@)
+	$(DC) $(DFLAGS) $(CFLAGS_EXTRA) -c $< -o $@
+
+-include $(DEPS)
+
+# c deps
+$(OBJ_DIR)/%.d: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(CFLAGS_EXTRA) -MM -MT '$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$<)' $< -MF $@
+
+# d deps
+$(OBJ_DIR)/%.d: $(SRC_DIR)/%.d
+	@mkdir -p $(dir $@)
+	$(DC) $(CFLAGS) $(CFLAGS_EXTRA) -MM -MT '$(patsubst $(SRC_DIR)/%.d,$(OBJ_DIR)/%.o,$<)' $< -MF $@
+
+# TODO tests
+
+# cleanup
+clean:
+	rm -rf $(LIB_DIR) $(OBJ_DIR) $(BIN_DIR)
+
