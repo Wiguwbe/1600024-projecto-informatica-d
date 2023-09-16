@@ -1,3 +1,9 @@
+#
+# partial makefile with common rules and variables
+# to be included after definined the TARGET and
+# any custom C/D/LD flags
+#
+
 # base flags
 CFLAGS += -Wno-c2x-extensions -Wall -Wextra -march=native -flto
 DFLAGS += -Wall -Wextra -march=native -flto -fno-druntime
