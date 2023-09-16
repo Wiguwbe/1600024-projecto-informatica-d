@@ -1,3 +1,12 @@
+# Port to D
+
+This repo is an example of a C project being ported to D,
+
+See the [`port_to_d`](https://github.com/Wiguwbe/1600024-projecto-informatica-d/tree/port_to_d) branch for the code/changes.
+
+(Old README kept for reference)
+
+
 # Projecto de informática 
 
 Este repositório contêm o código desenvolvido no âmbito da disciplina de Projecto de Informática do curso de Licenciatura de Informática. 
