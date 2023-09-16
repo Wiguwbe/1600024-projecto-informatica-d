@@ -1,7 +1,7 @@
 module astar_common.state;
 
-import astar_common.allocator;
-import astar_common.hashtable;
+public import astar_common.allocator;
+public import astar_common.hashtable;
 
 import core.stdc.string;
 import core.stdc.stdlib;
